@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, ObjectId } from "mongoose";
-import { SavedJob, appliedJObs } from "../interfaces/common/entityInterfaces/Iuser";
+import { AppliedJob, SavedJob } from "../interfaces/entityInterface/Iuser";
 
 export interface userInterface extends Document {
     _id: ObjectId;
@@ -7,15 +7,15 @@ export interface userInterface extends Document {
     password: string;
     email: string;
     phoneNumber: string;
-    isBlocked: boolean;
-    gender: string;
-    role: string | null;
-    image: string | null;
-    resume: string | undefined;
-    location: string | null;
-    skills: string[];
-    savedJobs: SavedJob[];
-    appliedJobs: appliedJObs[];
+    isBlocked?: boolean;
+    gender?: "male" | "female" | "custom";
+    role: 'recruiter' | 'user';
+    image?: string | null;
+    resume?: string | undefined;
+    location?: string | null;
+    skills?: string[];
+    savedJobs?: SavedJob[];
+    appliedJobs?: AppliedJob[];
 }
 
 const userSchema: Schema = new Schema({

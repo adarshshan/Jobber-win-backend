@@ -7,6 +7,10 @@ class adminController {
     async adminLogin(req: Request, res: Response) {
         res.send('admin login')
     }
+    async adminSignup(req:Request,res:Response){
+        req.app.locals.adminData=req.body;
+        await this.adminService.adminSignup(req.app.locals.adminData);
+    }
     async getSubscriptionList(req: Request, res: Response) {
 
     }

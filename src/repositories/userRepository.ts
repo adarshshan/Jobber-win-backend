@@ -11,8 +11,8 @@ class UserRepository {
             return null;
         }
     }
-    sample(email: string, password: string) {
-        console.log(`your email is ${email} and your password is ${password}`);
+    async saveUser(userData: { name: string, phone: number, password: string, location: string, email: string }) {
+        
     }
 }
 

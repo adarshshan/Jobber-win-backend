@@ -11,8 +11,8 @@ class userController {
         console.log('googleLogin..')
     }
     async userSingnup(req: Request, res: Response) {
-        const { name, email, phone, password, location } = req.body;
-        this.userServices.userSignup(name, email, phone, password, location )
+        req.app.locals.userData = req.body;
+        this.userServices.userSignup(req.app.locals.userData);
     }
     async profile(req: Request, res: Response) {
         console.log('profile page .....')
