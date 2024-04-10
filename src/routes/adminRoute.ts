@@ -1,10 +1,31 @@
 import express, { Request, Response } from "express";
 import adminController from "../controllers/adminController";
+import AdminService from "../service/adminService";
+import AdminRepository from "../repositories/adminRepository";
 
 const adminRouter = express.Router();
-const controller = new adminController();
 
-adminRouter.get('/login', async (req: Request, res: Response) => controller.adminLogin(req, res));
+
+const adminReopsitory = new AdminRepository();
+const adminService: AdminService = new AdminService(adminReopsitory);
+const controller = new adminController(adminService);
+
+//admin login
+adminRouter.post('/login', async (req: Request, res: Response) => controller.adminLogin(req, res));
+
+//users
+adminRouter.get('/users', async (req: Request, res: Response) => controller.getUserList(req, res));
+adminRouter.put('/users', async (req: Request, res: Response) => controller.blockUser(req, res));
+adminRouter.post('/users', async (req: Request, res: Response) => controller.sentNotification(req, res));
+
+//jobs
+adminRouter.get('/all-jobs', async (req: Request, res: Response) => controller.getUserList(req, res));
+
+///subscriptions
+adminRouter.get('/subscription', async (req: Request, res: Response) => controller.getSubscriptionList(req, res));
+adminRouter.post('/subscription', async (req: Request, res: Response) => controller.createSubscription(req, res));
+adminRouter.put('/subscription', async (req: Request, res: Response) => controller.editSubscription(req, res));
+adminRouter.delete('/subscription', async (req: Request, res: Response) => controller.deleteSubscription(req, res));
 
 
 
