@@ -14,6 +14,7 @@ const controller = new userController(userServices);
 userRouter.post('/login', async (req: Request, res: Response) => await controller.userLogin(req, res));
 userRouter.post('/google-login', async (req: Request, res: Response) => await controller.googleLogin(req, res));
 userRouter.post('/registration', async (req: Request, res: Response) => await controller.userSingnup(req, res));
+userRouter.post('/veryfy-otp', async (req: Request, res: Response) => await controller.veryfyOtp(req, res));
 userRouter.get('/profile', async (req: Request, res: Response) => await controller.profile(req, res));
 userRouter.put('/edit-user', async (req: Request, res: Response) => await controller.editUserDetails(req, res));
 userRouter.put('/edit-about', async (req: Request, res: Response) => await controller.changeAboutInfo(req, res));

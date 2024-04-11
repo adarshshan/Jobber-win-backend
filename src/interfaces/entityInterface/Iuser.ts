@@ -2,10 +2,10 @@ import { ObjectId } from "mongoose";
 
 interface UserInterface {
     id?: string;
-    name: string;
+    name?: string;
     email: string;
-    phone: number;
-    password: string;
+    phone?: number;
+    password?: string;
     designation?: string;
     about?: string;
     profile_picture?: string;
