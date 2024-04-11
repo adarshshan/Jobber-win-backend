@@ -1,8 +1,10 @@
 import { Secret } from "jsonwebtoken";
+import dotenv from 'dotenv';
 
 const jwt = require('jsonwebtoken');
+dotenv.config();
 
-const generateToken = (id: string | number) => {
+const generateToken = (id: string|undefined):string|undefined => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 }
 const generateTokenForAdmin = (id: string | number) => {
@@ -15,7 +17,7 @@ export class createJWT {
     };
 }
 
-module.exports = {
+export {
     generateToken,
     generateTokenForAdmin
 };

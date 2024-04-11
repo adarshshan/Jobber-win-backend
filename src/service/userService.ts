@@ -2,6 +2,7 @@ import UserInterface from "../interfaces/entityInterface/Iuser";
 import { UserAuthResponse } from "../interfaces/serviceInterfaces/IuserService";
 import UserRepository from "../repositories/userRepository";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
+import { generateToken } from "../utils/generateToken";
 
 const { OK, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 
@@ -36,6 +37,7 @@ class userService {
                     success: true,
                     message: 'Success',
                     userId: userData.id,
+                    token: generateToken(user?.id)
                 }
             }
         } catch (error) {
