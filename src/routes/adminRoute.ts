@@ -13,6 +13,7 @@ const controller = new adminController(adminService);
 //admin login
 adminRouter.post('/login', async (req: Request, res: Response) => controller.adminLogin(req, res));
 adminRouter.post('/registration', async (req: Request, res: Response) => controller.adminSignup(req, res));
+adminRouter.post('/verify-otp', async (req: Request, res: Response) => controller.veryfyOtp(req, res));
 
 //users
 adminRouter.get('/users', async (req: Request, res: Response) => controller.getUserList(req, res));
