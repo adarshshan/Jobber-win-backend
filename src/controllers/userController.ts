@@ -2,18 +2,28 @@ import { Request, Response } from "express"
 import userService from "../service/userService"
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { generateAndSendOTP } from "../utils/otpGenerator";
-const { BAD_REQUEST, OK,INTERNAL_SERVER_ERROR } = STATUS_CODES;
+const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 
 class userController {
     constructor(private userServices: userService) { }
 
-    async userLogin(req: Request, res: Response) {
-        this.userServices.userLogin('adarshshanu', 'shanshanu');
+    async userLogin(req: Request, res: Response): Promise<void> {
+        try {
+            const { email, password }: { email: string; password: string } = req.body;
+            const loginStatus = await this.userServices.userLogin(email, password);
+            if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
+                res.status(loginStatus.status).json(loginStatus);
+            } else {
+                res.status(UNAUTHORIZED).json(loginStatus);
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
     }
     async googleLogin(req: Request, res: Response) {
         console.log('googleLogin..')
     }
-    async userSingnup(req: Request, res: Response) {
+    async userSingnup(req: Request, res: Response): Promise<void> {
         req.app.locals.userData = req.body;
         const newUser = await this.userServices.userSignup(req.app.locals.userData);
         if (!newUser) {
@@ -34,7 +44,7 @@ class userController {
             res.status(BAD_REQUEST).json({ message: 'The email is already in use!' });
         }
     }
-    async veryfyOtp(req: Request, res: Response) {
+    async veryfyOtp(req: Request, res: Response): Promise<void> {
         try {
             const { otp } = req.body;
             const isNuewUser = req.app.locals.newUser;
@@ -57,7 +67,7 @@ class userController {
             res.status(INTERNAL_SERVER_ERROR).json({ message: 'Internal server Error.' });
         }
     }
-    
+
     async profile(req: Request, res: Response) {
         console.log('profile page .....')
     }

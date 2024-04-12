@@ -2,13 +2,17 @@ import express, { Router, Request, Response } from "express";
 import userController from "../controllers/userController";
 import UserRepository from '../repositories/userRepository';
 import userService from "../service/userService";
+import Encrypt from "../utils/comparePassword";
+import { CreateJWT } from "../utils/generateToken";
 
 
 
 const userRouter: Router = express.Router();
 
+const encrypt = new Encrypt();
+const createjwt = new CreateJWT();
 const userRepository = new UserRepository()
-const userServices = new userService(userRepository)
+const userServices = new userService(userRepository, encrypt, createjwt);
 const controller = new userController(userServices);
 
 userRouter.post('/login', async (req: Request, res: Response) => await controller.userLogin(req, res));

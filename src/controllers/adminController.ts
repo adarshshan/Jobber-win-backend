@@ -9,8 +9,17 @@ class adminController {
     constructor(private adminService: AdminService) { }
 
     async adminLogin(req: Request, res: Response) {
-        req.app.locals.adminLoginData = req.body;
-        await this.adminService.adminLogin(req.app.locals.adminLoginData, req);
+        try {
+            const { email, password } = req.body;
+            const loginStatus = await this.adminService.adminLogin(email, password);
+            if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
+                res.status(loginStatus.status).json(loginStatus);
+            } else {
+                res.status(UNAUTHORIZED).json(loginStatus);
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
     }
     async adminSignup(req: Request, res: Response) {
         try {

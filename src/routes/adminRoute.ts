@@ -2,12 +2,15 @@ import express, { Request, Response } from "express";
 import adminController from "../controllers/adminController";
 import AdminService from "../service/adminService";
 import AdminRepository from "../repositories/adminRepository";
+import Encrypt from "../utils/comparePassword";
+import { CreateJWT } from "../utils/generateToken";
 
 const adminRouter = express.Router();
 
-
+const encrypt=new Encrypt();
+const createjwt=new CreateJWT()
 const adminReopsitory = new AdminRepository();
-const adminService: AdminService = new AdminService(adminReopsitory);
+const adminService: AdminService = new AdminService(adminReopsitory,encrypt,createjwt);
 const controller = new adminController(adminService);
 
 //admin login
