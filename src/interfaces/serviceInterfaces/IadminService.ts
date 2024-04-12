@@ -1,4 +1,5 @@
 import Admin from "../entityInterface/Iadmin";
+import UserInterface from "../entityInterface/Iuser";
 
 export interface AdminAuthResponse {
     status: number;
@@ -9,4 +10,8 @@ export interface AdminAuthResponse {
         adminId?: string;
         token?: string;
     };
+}
+export interface IUsersAndCount {
+    users: UserInterface[],
+    usersCount: number
 }

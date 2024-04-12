@@ -1,10 +1,13 @@
 import nodemailer from 'nodemailer'
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'shanuadarsh143@gmail.com',
-        pass: 'lpgf tiio bycp znjf',
+        user: process.env.TRANSPORTER_EMAIL,
+        pass: process.env.TRANSPORTER_PASS,
     }
 })
 
@@ -12,7 +15,7 @@ export const generateAndSendOTP = async (toEmail: string): Promise<string> => {
     const otp: string | null = generateRandomOTP()
 
     const mailOptions = {
-        from: 'shanuadarsh143@gmail.com',
+        from: process.env.TRANSPORTER_EMAIL,
         to: toEmail,
         subject: 'OTP Verification',
         text: `Welcome to JobberWin. Your OTP for registration is: ${otp}`

@@ -83,11 +83,23 @@ class adminController {
 
     }
     //users
-    getUserList(req: Request, res: Response) {
-
+    async getUserList(req: Request, res: Response) {
+        const page = parseInt(req.query.page as string);
+        const limit = parseInt(req.query.limit as string);
+        const searchQuery = req.query.searchQuery as string | undefined
+        const data = await this.adminService.getUserList(page, limit, searchQuery);
+        res.status(OK).json(data);
     }
-    blockUser(req: Request, res: Response) {
-
+    async blockNunblockUser(req: Request, res: Response): Promise<void> {
+        try {
+            await this.adminService.blockNunblockUser(req.params.userId as string);
+            res.status(OK).json({
+                success: true,
+                message: 'block or unblocked the user'
+            })
+        } catch (error) {
+            console.log(error as Error);
+        }
     }
     sentNotification(req: Request, res: Response) {
 

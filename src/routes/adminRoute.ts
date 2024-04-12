@@ -7,10 +7,10 @@ import { CreateJWT } from "../utils/generateToken";
 
 const adminRouter = express.Router();
 
-const encrypt=new Encrypt();
-const createjwt=new CreateJWT()
+const encrypt = new Encrypt();
+const createjwt = new CreateJWT()
 const adminReopsitory = new AdminRepository();
-const adminService: AdminService = new AdminService(adminReopsitory,encrypt,createjwt);
+const adminService: AdminService = new AdminService(adminReopsitory, encrypt, createjwt);
 const controller = new adminController(adminService);
 
 //admin login
@@ -20,7 +20,7 @@ adminRouter.post('/verify-otp', async (req: Request, res: Response) => controlle
 
 //users
 adminRouter.get('/users', async (req: Request, res: Response) => controller.getUserList(req, res));
-adminRouter.put('/users', async (req: Request, res: Response) => controller.blockUser(req, res));
+adminRouter.patch('/users/block/:userId', async (req: Request, res: Response) => controller.blockNunblockUser(req, res));
 adminRouter.post('/users', async (req: Request, res: Response) => controller.sentNotification(req, res));
 
 //jobs
