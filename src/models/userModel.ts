@@ -10,7 +10,7 @@ export interface UserInterface extends Document {
     isBlocked: boolean;
     gender?: "male" | "female" | "custom";
     role: 'recruiter' | 'user';
-    image?: string | null;
+    profilePicture?: string | null;
     resume?: string | undefined;
     location?: string | null;
     skills?: string[];
@@ -55,8 +55,9 @@ const userSchema: Schema<UserInterface> = new Schema({
     role: {
         type: String
     },
-    image: {
-        type: String
+    profilePicture: {
+        type: String,
+        default: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/680px-Default_pfp.svg.png"
     },
     resume: {
         type: String
@@ -75,7 +76,7 @@ const userSchema: Schema<UserInterface> = new Schema({
             jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
             appliedAt: { type: Date, default: Date.now }
         }
-    ], 
+    ],
     skills: [{
         type: String
     }]

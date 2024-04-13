@@ -1,11 +1,11 @@
 import { ObjectId } from "mongoose";
 
 interface UserInterface {
-    id?: string;
+    id?: string | undefined;
     name?: string;
     email: string;
     phone?: number;
-    password?: string;
+    password?: string | Promise<string>;
     designation?: string;
     about?: string;
     profile_picture?: string;

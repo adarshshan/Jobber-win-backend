@@ -1,7 +1,9 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import userService from "../service/userService"
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { generateAndSendOTP } from "../utils/otpGenerator";
+import { UserAuthResponse } from "../interfaces/serviceInterfaces/IuserService";
+
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 
 class userController {
@@ -20,8 +22,28 @@ class userController {
             console.log(error as Error);
         }
     }
-    async googleLogin(req: Request, res: Response) {
-        console.log('googleLogin..')
+    async googleLogin(req: Request, res: Response, next: NextFunction) {
+        const { email } = req.body;
+        try {
+            const user = await this.userServices.getUserByEmail(email);
+            if (user) {
+                const token = this.userServices.generateToken(user.id);
+                const { password, ...rest } = user;
+
+                res.status(OK).cookie('access_token', token, { httpOnly: true }).json(rest);
+            } else {
+                const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+                const hashedPassword = this.userServices.hashPassword(generatedPassword);
+
+                const newUser: UserAuthResponse | undefined = await this.userServices.saveUser({
+                    email: email,
+                    password: hashedPassword,
+                })
+
+            }
+        } catch (error) {
+            next(error);
+        }
     }
     async userSingnup(req: Request, res: Response): Promise<void> {
         req.app.locals.userData = req.body;

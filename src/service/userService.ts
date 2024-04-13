@@ -27,7 +27,7 @@ class userService {
                 } as const;
             }
             if (user?.password && password) {
-                const passwordMatch = await this.encrypt.compare(password, user.password);
+                const passwordMatch = await this.encrypt.compare(password, user.password as string);
                 if (passwordMatch) {
                     const token = this.createjwt.generateToken(user.id);
                     console.log(`your token is ${token}`);
@@ -92,7 +92,15 @@ class userService {
             return { status: INTERNAL_SERVER_ERROR, data: { success: false, message: 'Internal server error' } };
         }
     }
-    // async userSignup()
+    async getUserByEmail(email: string): Promise<UserInterface | null> {
+        return this.userRepository.emailExistCheck(email);
+    }
+    generateToken(payload: string | undefined): string | undefined {
+        if (payload) return this.createjwt.generateToken(payload);
+    }
+    hashPassword(password: string) {
+        return this.encrypt.hashPassword(password);
+    }
 }
 
 export default userService;
