@@ -21,7 +21,7 @@ class adminController {
             console.log(error as Error);
         }
     }
-    async adminSignup(req: Request, res: Response) {
+    async adminSignup(req: Request, res: Response): Promise<void> {
         try {
             const admin = await this.adminService.adminSignup(req.body);
             if (!admin) {
