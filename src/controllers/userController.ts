@@ -11,13 +11,16 @@ const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 class userController {
     constructor(private userServices: userService) { }
 
+    milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
+
     async userLogin(req: Request, res: Response): Promise<void> {
         try {
             const { email, password }: { email: string; password: string } = req.body;
             const loginStatus = await this.userServices.userLogin(email, password);
             if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
+                const time = this.milliseconds(23, 30, 0);
                 res.status(loginStatus.status).cookie('access_token', loginStatus.data.token, {
-                    expires: new Date(Date.now() + 25892000000),
+                    expires: new Date(Date.now() + time),
                     httpOnly: true
                 }).json(loginStatus);
             } else {
@@ -27,6 +30,9 @@ class userController {
             console.log(error as Error);
         }
     }
+
+
+
     async googleLogin(req: Request, res: Response, next: NextFunction) {
         const { email } = req.body;
         try {
@@ -34,9 +40,9 @@ class userController {
             if (user) {
                 const token = this.userServices.generateToken(user.id);
                 const { password, ...rest } = user;
-
+                const time = this.milliseconds(23, 30, 0);
                 res.status(OK).cookie('access_token', token, {
-                    expires: new Date(Date.now() + 25892000000),
+                    expires: new Date(Date.now() + time),
                     httpOnly: true
                 }).json(rest);
             } else {
@@ -85,13 +91,15 @@ class userController {
                 if (isNuewUser) {
                     const newUser = await this.userServices.saveUser(savedUser);
                     req.app.locals = {};
+                    const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', newUser?.data.token, {
-                        expires: new Date(Date.now() + 25892000000),
+                        expires: new Date(Date.now() + time),
                         httpOnly: true
                     }).json(newUser);
                 } else {
+                    const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', isNuewUser.data.token, {
-                        expires: new Date(Date.now() + 25892000000),
+                        expires: new Date(Date.now() + time),
                         httpOnly: true
                     }).json();
                 }
@@ -147,7 +155,6 @@ class userController {
             res.status(200).json({ success: true })
         } catch (err) {
             console.log(err);
-
         }
     }
 

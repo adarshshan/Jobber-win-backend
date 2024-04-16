@@ -8,12 +8,19 @@ const { OK, UNAUTHORIZED, BAD_REQUEST, INTERNAL_SERVER_ERROR } = STATUS_CODES;
 class adminController {
     constructor(private adminService: AdminService) { }
 
+    milliseconds = (h: number, m: number, s: number) => ((h * 60 * 60 + m * 60 + s) * 1000);
+
     async adminLogin(req: Request, res: Response) {
         try {
             const { email, password } = req.body;
             const loginStatus = await this.adminService.adminLogin(email, password);
             if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
-                res.status(loginStatus.status).json(loginStatus);
+                const time = this.milliseconds(23, 30, 0);
+                console.log(loginStatus.data.token); console.log('helke')
+                res.status(loginStatus.status).cookie('admin_access_token', loginStatus.data.token, {
+                    expires: new Date(Date.now() + time),
+                    httpOnly: true
+                }).json(loginStatus);
             } else {
                 res.status(UNAUTHORIZED).json(loginStatus);
             }
@@ -84,19 +91,35 @@ class adminController {
     }
     //users
     async getUserList(req: Request, res: Response) {
-        const page = parseInt(req.query.page as string);
-        const limit = parseInt(req.query.limit as string);
-        const searchQuery = req.query.searchQuery as string | undefined
-        const data = await this.adminService.getUserList(page, limit, searchQuery);
-        res.status(OK).json(data);
+        try {
+            const page = parseInt(req.query.page as string);
+            const limit = parseInt(req.query.limit as string);
+            const searchQuery = req.query.searchQuery as string | undefined
+            const data = await this.adminService.getUserList(page, limit, searchQuery);
+            res.status(OK).json(data);
+        } catch (error) {
+            console.log(error as Error);
+        }
     }
     async blockNunblockUser(req: Request, res: Response): Promise<void> {
         try {
+            console.log(req.params.userId);
             await this.adminService.blockNunblockUser(req.params.userId as string);
             res.status(OK).json({
                 success: true,
                 message: 'block or unblocked the user'
             })
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async adminLogout(req: Request, res: Response) {
+        try {
+            res.cookie('admin_access_token', '', {
+                httpOnly: true,
+                expires: new Date(0)
+            })
+            res.status(200).json({ success: true })
         } catch (error) {
             console.log(error as Error);
         }

@@ -21,7 +21,7 @@ userRouter.post('/google-login', async (req: Request, res: Response, next: NextF
 userRouter.post('/registration', async (req: Request, res: Response) => await controller.userSingnup(req, res));
 userRouter.post('/veryfy-otp', async (req: Request, res: Response) => await controller.veryfyOtp(req, res));
 userRouter.get('/logout', async (req: Request, res: Response) => await controller.logout(req, res));
-userRouter.get('/profile',authenticate, async (req: Request, res: Response) => await controller.getProfile(req, res));
+userRouter.get('/profile', authenticate, async (req: Request, res: Response) => await controller.getProfile(req, res));
 
 userRouter.put('/edit-user', async (req: Request, res: Response) => await controller.editUserDetails(req, res));
 userRouter.put('/edit-about', async (req: Request, res: Response) => await controller.changeAboutInfo(req, res));

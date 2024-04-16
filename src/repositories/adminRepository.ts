@@ -70,6 +70,15 @@ class AdminRepository {
             console.log(error as Error);
         }
     }
+    async getAdminById(id: string): Promise<UserInterface | null> {
+        try {
+            const admin = await AdminModel.findById(id);
+            return admin;
+        } catch (error) {
+            console.log(error as Error);
+            return null;
+        }
+    }
 }
 
 export default AdminRepository;

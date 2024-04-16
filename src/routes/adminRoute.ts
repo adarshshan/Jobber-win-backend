@@ -4,6 +4,7 @@ import AdminService from "../service/adminService";
 import AdminRepository from "../repositories/adminRepository";
 import Encrypt from "../utils/comparePassword";
 import { CreateJWT } from "../utils/generateToken";
+import adminAuth from '../middlewares/adminAuthMiddleware'
 
 const adminRouter = express.Router();
 
@@ -17,10 +18,11 @@ const controller = new adminController(adminService);
 adminRouter.post('/login', async (req: Request, res: Response) => controller.adminLogin(req, res));
 adminRouter.post('/registration', async (req: Request, res: Response) => controller.adminSignup(req, res));
 adminRouter.post('/verify-otp', async (req: Request, res: Response) => controller.veryfyOtp(req, res));
+adminRouter.get('/logout', async (req: Request, res: Response) => controller.adminLogout(req, res));
 
 //users
-adminRouter.get('/users', async (req: Request, res: Response) => controller.getUserList(req, res));
-adminRouter.patch('/users/block/:userId', async (req: Request, res: Response) => controller.blockNunblockUser(req, res));
+adminRouter.get('/users', adminAuth, async (req: Request, res: Response) => controller.getUserList(req, res));
+adminRouter.put('/users/block/:userId', async (req: Request, res: Response) => controller.blockNunblockUser(req, res));
 adminRouter.post('/users', async (req: Request, res: Response) => controller.sentNotification(req, res));
 
 //jobs
