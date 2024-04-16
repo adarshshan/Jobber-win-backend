@@ -3,6 +3,8 @@ import userService from "../service/userService"
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { generateAndSendOTP } from "../utils/otpGenerator";
 import { UserAuthResponse } from "../interfaces/serviceInterfaces/IuserService";
+import { UserInfo } from "os";
+import UserInterface from "../interfaces/entityInterface/Iuser";
 
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 
@@ -14,7 +16,10 @@ class userController {
             const { email, password }: { email: string; password: string } = req.body;
             const loginStatus = await this.userServices.userLogin(email, password);
             if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
-                res.status(loginStatus.status).json(loginStatus);
+                res.status(loginStatus.status).cookie('access_token', loginStatus.data.token, {
+                    expires: new Date(Date.now() + 25892000000),
+                    httpOnly: true
+                }).json(loginStatus);
             } else {
                 res.status(UNAUTHORIZED).json(loginStatus);
             }
@@ -30,7 +35,10 @@ class userController {
                 const token = this.userServices.generateToken(user.id);
                 const { password, ...rest } = user;
 
-                res.status(OK).cookie('access_token', token, { httpOnly: true }).json(rest);
+                res.status(OK).cookie('access_token', token, {
+                    expires: new Date(Date.now() + 25892000000),
+                    httpOnly: true
+                }).json(rest);
             } else {
                 const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
                 const hashedPassword = this.userServices.hashPassword(generatedPassword);
@@ -77,9 +85,15 @@ class userController {
                 if (isNuewUser) {
                     const newUser = await this.userServices.saveUser(savedUser);
                     req.app.locals = {};
-                    res.status(OK).json(newUser);
+                    res.status(OK).cookie('access_token', newUser?.data.token, {
+                        expires: new Date(Date.now() + 25892000000),
+                        httpOnly: true
+                    }).json(newUser);
                 } else {
-                    res.status(OK).json();
+                    res.status(OK).cookie('access_token', isNuewUser.data.token, {
+                        expires: new Date(Date.now() + 25892000000),
+                        httpOnly: true
+                    }).json();
                 }
             } else {
                 res.status(BAD_REQUEST).json({ message: 'Incorrect otp !' });
@@ -90,9 +104,19 @@ class userController {
         }
     }
 
-    async profile(req: Request, res: Response) {
-        console.log('profile page .....')
+    async getProfile(req: Request, res: Response) {
+        try {
+            console.log('the user id is ' + req.userId);
+            const currentUser = await this.userServices.getProfile(req.userId);
+            console.log(currentUser);
+            if (!currentUser) res.status(UNAUTHORIZED).json({ message: 'Authentication failed..!' });
+            else res.status(OK).json(currentUser);
+        } catch (error) {
+            console.log(error as Error);
+            res.status(INTERNAL_SERVER_ERROR).json({ message: 'internal server Error' });
+        }
     }
+
     async editUserDetails(req: Request, res: Response) {
         console.log('edit user detailss.....')
     }
@@ -113,6 +137,18 @@ class userController {
     }
     async changePassword(req: Request, res: Response) {
         console.log('change password...');
+    }
+    async logout(req: Request, res: Response) {
+        try {
+            res.cookie('access_token', '', {
+                httpOnly: true,
+                expires: new Date(0)
+            })
+            res.status(200).json({ success: true })
+        } catch (err) {
+            console.log(err);
+
+        }
     }
 
 }

@@ -17,12 +17,15 @@ class userService {
     async userLogin(email: string, password: string): Promise<UserAuthResponse | undefined> {
         try {
             const user: UserInterface | null = await this.userRepository.emailExistCheck(email);
+            const token = this.createjwt.generateToken(user?.id);
             if (user && user.isBlocked) {
                 return {
                     status: UNAUTHORIZED,
                     data: {
                         success: false,
                         message: 'You have been blocked by the admin !',
+                        token: token,
+                        data: user
                     }
                 } as const;
             }
@@ -100,6 +103,15 @@ class userService {
     }
     hashPassword(password: string) {
         return this.encrypt.hashPassword(password);
+    }
+    getProfile(id: string | undefined): Promise<UserInterface | null> | null {
+        try {
+            if (!id) return null;
+            return this.userRepository.getUserById(id);
+        } catch (error) {
+            console.log(error as Error);
+            return null;
+        }
     }
 }
 

@@ -22,6 +22,14 @@ class UserRepository {
             return null;
         }
     }
+    async getUserById(id: string): Promise<UserInterface | null> {
+        try {
+            return await userModel.findById(id);
+        } catch (error) {
+            console.log(error as Error);
+            return null;
+        }
+    }
 }
 
 export default UserRepository;
