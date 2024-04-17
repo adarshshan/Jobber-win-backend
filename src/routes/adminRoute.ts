@@ -22,7 +22,7 @@ adminRouter.get('/logout', async (req: Request, res: Response) => controller.adm
 
 //users
 adminRouter.get('/users', adminAuth, async (req: Request, res: Response) => controller.getUserList(req, res));
-adminRouter.put('/users/block/:userId', async (req: Request, res: Response) => controller.blockNunblockUser(req, res));
+adminRouter.put('/users/block/:userId',adminAuth, async (req: Request, res: Response) => controller.blockNunblockUser(req, res));
 adminRouter.post('/users', async (req: Request, res: Response) => controller.sentNotification(req, res));
 
 //jobs

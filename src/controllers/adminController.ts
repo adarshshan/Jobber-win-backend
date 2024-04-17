@@ -16,7 +16,6 @@ class adminController {
             const loginStatus = await this.adminService.adminLogin(email, password);
             if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
                 const time = this.milliseconds(23, 30, 0);
-                console.log(loginStatus.data.token); console.log('helke')
                 res.status(loginStatus.status).cookie('admin_access_token', loginStatus.data.token, {
                     expires: new Date(Date.now() + time),
                     httpOnly: true
@@ -26,6 +25,7 @@ class adminController {
             }
         } catch (error) {
             console.log(error as Error);
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
         }
     }
     async adminSignup(req: Request, res: Response): Promise<void> {
@@ -46,11 +46,11 @@ class adminController {
                 res.status(OK).json({ userId: null, success: true, message: 'OTP sent for verification...' });
 
             } else {
-                res.status(BAD_REQUEST).json({ message: 'Email is already exist !' });
+                res.status(BAD_REQUEST).json({ success: false, message: 'Email is already exist !' });
             }
         } catch (error) {
             console.log(error as Error)
-            res.status(INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' })
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal Server Error' })
         }
     }
     async veryfyOtp(req: Request, res: Response) {
@@ -58,8 +58,6 @@ class adminController {
             const { otp } = req.body;
             const isNewAdmin = req.app.locals.newAdmin;
             const savedAdmin = req.app.locals.adminData;
-            console.log(otp, isNewAdmin, savedAdmin);
-            console.log(req.app.locals.otp);
             if (otp === Number(req.app.locals.otp)) {
                 if (isNewAdmin) {
                     const newAdmin = await this.adminService.saveAdmin(savedAdmin);
@@ -69,11 +67,11 @@ class adminController {
                     res.status(OK).json();
                 }
             } else {
-                res.status(BAD_REQUEST).json({ message: 'Incorrect otp !' });
+                res.status(BAD_REQUEST).json({ success: false, message: 'Incorrect otp !' });
             }
         } catch (error) {
             console.log(error as Error);
-            res.status(INTERNAL_SERVER_ERROR).json({ message: 'Internal server Error.' });
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server Error.' });
         }
     }
 
@@ -99,11 +97,11 @@ class adminController {
             res.status(OK).json(data);
         } catch (error) {
             console.log(error as Error);
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' })
         }
     }
     async blockNunblockUser(req: Request, res: Response): Promise<void> {
         try {
-            console.log(req.params.userId);
             await this.adminService.blockNunblockUser(req.params.userId as string);
             res.status(OK).json({
                 success: true,
@@ -111,6 +109,7 @@ class adminController {
             })
         } catch (error) {
             console.log(error as Error);
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
         }
     }
     async adminLogout(req: Request, res: Response) {
@@ -119,9 +118,10 @@ class adminController {
                 httpOnly: true,
                 expires: new Date(0)
             })
-            res.status(200).json({ success: true })
+            res.status(200).json({ success: true, message: 'logout sucessfully' })
         } catch (error) {
             console.log(error as Error);
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' })
         }
     }
     sentNotification(req: Request, res: Response) {

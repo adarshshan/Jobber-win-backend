@@ -18,28 +18,18 @@ declare global {
 const adminAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let token = req.cookies.admin_access_token
-        console.log(await req.cookies.access_token);
-        console.log(await req); console.log('your token is above........')
         if (!token) {
             return res.status(401).json({ success: false, message: "Unauthorized - No token provided" })
         }
-
         const decoded = jwt.verifyToken(token);
-        console.log(`the decoded id is ${decoded}`);
 
         if (decoded) {
             let user = await adminRepository.getAdminById(decoded.toString());
-            console.log('admin details is below');
-            console.log(user);
-
-            console.log('hey im reached here...');
             req.adminId = decoded.toString();
             next();
-
         } else {
             return res.status(401).json({ success: false, message: "Unauthorized - Invalid token" })
         }
-
     } catch (err) {
         console.log(err); console.log('error is in the catch block!');
         return res.status(401).send({ success: false, message: "Unauthorized - Invalid token" })

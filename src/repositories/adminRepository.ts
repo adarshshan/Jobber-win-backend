@@ -34,7 +34,6 @@ class AdminRepository {
                 .limit(limit)
                 .select('-password')
                 .exec();
-            console.log(result);
             return result as UserInterface[];
         } catch (error) {
             console.log(error as Error);

@@ -11,10 +11,7 @@ export class CreateJWT {
     verifyToken(token: string): JwtPayload | null {
         try {
             let secret = process.env.JWT_SECRET;
-            console.log(`secret code is ${secret}`);
             const decoded = jwt.verify(token, secret) as JwtPayload;
-            console.log('your code is checking...');
-            console.log(decoded);console.log('this')
             return decoded;
         } catch (err) {
             console.error('Error while verifying JWT token:', err);

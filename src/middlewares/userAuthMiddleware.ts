@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from 'express'
 import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
 import UserRepository from '../repositories/userRepository';
+import { STATUS_CODES } from '../constants/httpStatusCodes';
+
+const { UNAUTHORIZED } = STATUS_CODES
 
 const jwt = new CreateJWT();
 const userRepository = new UserRepository();
@@ -29,14 +32,14 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
             console.log('user details is below');
             console.log(user);
             if (user?.isBlocked) {
-                return res.status(401).send({ success: false, message: "User is blocked by admin!" })
+                return res.status(UNAUTHORIZED).json({ success: false, message: "User is blocked by admin!" })
             } else {
                 console.log('hey im reached here...');
-                req.userId = decoded.toString();    
+                req.userId = decoded.toString();
                 next();
             }
         } else {
-            return res.status(401).json({ success: false, message: "Unauthorized - Invalid token" })
+            return res.status(UNAUTHORIZED).json({ success: false, message: "Unauthorized - Invalid token" })
         }
 
     } catch (err) {
