@@ -10,7 +10,7 @@ export interface UserInterface extends Document {
     isBlocked: boolean;
     gender?: "male" | "female" | "custom";
     role: 'recruiter' | 'user';
-    profilePicture?: string | null;
+    profile_picture?: string | null;
     resume?: string | undefined;
     location?: string | null;
     skills?: string[];
@@ -55,7 +55,7 @@ const userSchema: Schema<UserInterface> = new Schema({
     role: {
         type: String
     },
-    profilePicture: {
+    profile_picture: {
         type: String,
         default: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/680px-Default_pfp.svg.png"
     },

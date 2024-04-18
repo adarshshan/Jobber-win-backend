@@ -77,18 +77,23 @@ class userService {
 
     }
     async saveUser(userData: UserInterface): Promise<UserAuthResponse | undefined> {
+        console.log(userData);
         try {
-            const user = await this.userRepository.saveUser(userData);
-            const token = this.createjwt.generateToken(user?.id);
-            return {
-                status: OK,
-                data: {
-                    success: true,
-                    message: 'Success',
-                    userId: userData.id,
-                    token: token
+            const user = await this.userRepository.saveUser(userData); console.log(user)
+            if (user) {
+                const token = this.createjwt.generateToken(user?.id);
+                return {
+                    status: OK,
+                    data: {
+                        success: true,
+                        message: 'Success',
+                        userId: userData.id,
+                        token: token,
+                        data: user
+                    }
                 }
             }
+
 
         } catch (error) {
             console.log(error as Error);
@@ -96,13 +101,14 @@ class userService {
         }
     }
     async getUserByEmail(email: string): Promise<UserInterface | null> {
+        console.log(email + 'from service');
         return this.userRepository.emailExistCheck(email);
     }
     generateToken(payload: string | undefined): string | undefined {
         if (payload) return this.createjwt.generateToken(payload);
     }
-    hashPassword(password: string) {
-        return this.encrypt.hashPassword(password);
+    async hashPassword(password: string) {
+        return await this.encrypt.hashPassword(password);
     }
     getProfile(id: string | undefined): Promise<UserInterface | null> | null {
         try {

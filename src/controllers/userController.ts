@@ -38,30 +38,53 @@ class userController {
 
 
 
-    async googleLogin(req: Request, res: Response, next: NextFunction) {
-        const { email } = req.body;
+    async googleLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { name, email, googlePhotoUrl } = req.body;
+        console.log(req.body);
         try {
-            const user = await this.userServices.getUserByEmail(email);
+            const user = await this.userServices.getUserByEmail(email); console.log(user); console.log('this is existing user...');
             if (user) {
-                const token = this.userServices.generateToken(user.id);
-                const { password, ...rest } = user;
-                const time = this.milliseconds(23, 30, 0);
-                res.status(OK).cookie('access_token', token, {
-                    expires: new Date(Date.now() + time),
-                    httpOnly: true
-                }).json(rest);
+                if (user.isBlocked) {
+                    res.status(UNAUTHORIZED).json({ success: false, message: 'user has been blocked by admin.' });
+                    // throw new Error('user has been blocked by admin...');
+                } else {
+                    const token = this.userServices.generateToken(user.id);
+                    const data = {
+                        success: true,
+                        message: 'Success',
+                        userId: user.id,
+                        token: token,
+                        data: user
+                    }
+
+                    const time = this.milliseconds(23, 30, 0);
+                    res.status(OK).cookie('access_token', token, {
+                        expires: new Date(Date.now() + time),
+                        httpOnly: true
+                    }).json(data);
+                }
+
             } else {
                 const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-                const hashedPassword = this.userServices.hashPassword(generatedPassword);
+                const hashedPassword = await this.userServices.hashPassword(generatedPassword);
 
                 const newUser: UserAuthResponse | undefined = await this.userServices.saveUser({
+                    name: name,
                     email: email,
                     password: hashedPassword,
+                    profile_picture: googlePhotoUrl
                 })
-
+                console.log(newUser); console.log('your new user');
+                if (newUser?.data.data) {
+                    const time = this.milliseconds(23, 30, 0);
+                    res.status(OK).cookie('access_token', newUser.data.token, {
+                        expires: new Date(Date.now() + time),
+                        httpOnly: true
+                    }).json(newUser.data);
+                }
             }
         } catch (error) {
-            next(error);
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error......' });
         }
     }
     async userSingnup(req: Request, res: Response): Promise<void> {

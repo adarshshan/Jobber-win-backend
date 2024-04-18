@@ -14,15 +14,23 @@ class adminController {
         try {
             const { email, password } = req.body;
             const loginStatus = await this.adminService.adminLogin(email, password);
-            if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
-                const time = this.milliseconds(23, 30, 0);
-                res.status(loginStatus.status).cookie('admin_access_token', loginStatus.data.token, {
-                    expires: new Date(Date.now() + time),
-                    httpOnly: true
-                }).json(loginStatus);
+            if (loginStatus && !loginStatus.data.success && loginStatus.data.message === 'Incorrect password!') {
+                res.status(UNAUTHORIZED).json({ success: false, message: loginStatus.data.message });
             } else {
-                res.status(UNAUTHORIZED).json(loginStatus);
+                if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
+
+                    const time = this.milliseconds(23, 30, 0);
+                    res.status(loginStatus.status).cookie('admin_access_token', loginStatus.data.token, {
+                        expires: new Date(Date.now() + time),
+                        httpOnly: true
+                    }).json(loginStatus);
+
+
+                } else {
+                    res.status(UNAUTHORIZED).json(loginStatus);
+                }
             }
+
         } catch (error) {
             console.log(error as Error);
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });

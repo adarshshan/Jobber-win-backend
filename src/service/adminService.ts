@@ -36,7 +36,7 @@ class AdminService {
                     status: STATUS_CODES.UNAUTHORIZED,
                     data: {
                         success: false,
-                        message: 'Authentication failed'
+                        message: 'Incorrect password!'
                     }
                 } as const;
             }

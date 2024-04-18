@@ -3,10 +3,11 @@ import userModel from '../models/userModel';
 
 
 class UserRepository {
-    async emailExistCheck(email: string): Promise<UserInterface | null> {
+    async emailExistCheck(email: string): Promise<UserInterface |null> {
         try {
+            console.log(email);console.log('your email');
             const userFound = await userModel.findOne({ email: email });
-            return userFound;
+            return userFound as UserInterface;
         } catch (error) {
             console.log(error as Error);
             return null;
