@@ -160,7 +160,15 @@ class userController {
         console.log('edit user detailss.....')
     }
     async changeAboutInfo(req: Request, res: Response) {
-        console.log('change the about information...');
+        try {
+            const text = req.body.aboutInfo;
+            const id = req.params.id; console.log(text, id);
+            const edited = await this.userServices.changeAboutInfo(id, text);
+            res.json({ success: true, about: edited, message: 'about information successfully updated.' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Failed to update the about information!' });
+        }
     }
     async setProfilePic(req: Request, res: Response) {
         console.log('set the new profile pic...');

@@ -100,6 +100,14 @@ class userService {
             return { status: INTERNAL_SERVER_ERROR, data: { success: false, message: 'Internal server error' } };
         }
     }
+    async changeAboutInfo(id: string, text: string): Promise<string | undefined> {
+        try {
+            const changed = await this.userRepository.changeAboutInfo(id, text);
+            return changed
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async getUserByEmail(email: string): Promise<UserInterface | null> {
         console.log(email + 'from service');
         return this.userRepository.emailExistCheck(email);

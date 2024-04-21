@@ -6,6 +6,7 @@ export interface UserInterface extends Document {
     name: string;
     password: string;
     email: string;
+    aboutInfo:string;
     phoneNumber: string;
     isBlocked: boolean;
     gender?: "male" | "female" | "custom";
@@ -49,6 +50,9 @@ const userSchema: Schema<UserInterface> = new Schema({
     isBlocked: {
         type: Boolean,
         default: false
+    },
+    aboutInfo: {
+        type: String,
     },
     gender: {
         type: String

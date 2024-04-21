@@ -3,9 +3,9 @@ import userModel from '../models/userModel';
 
 
 class UserRepository {
-    async emailExistCheck(email: string): Promise<UserInterface |null> {
+    async emailExistCheck(email: string): Promise<UserInterface | null> {
         try {
-            console.log(email);console.log('your email');
+            console.log(email); console.log('your email');
             const userFound = await userModel.findOne({ email: email });
             return userFound as UserInterface;
         } catch (error) {
@@ -29,6 +29,15 @@ class UserRepository {
         } catch (error) {
             console.log(error as Error);
             return null;
+        }
+    }
+    async changeAboutInfo(id: string, text: string): Promise<string | undefined> {
+        try {
+            console.log(id, text);
+            const updated = await userModel.findByIdAndUpdate(id, { aboutInfo: text }, { new: true });
+            if (updated) return text
+        } catch (error) {
+            console.log(error as Error)
         }
     }
 }
