@@ -19,9 +19,7 @@ declare global {
 }
 
 const userAuth = async (req: Request, res: Response, next: NextFunction) => {
-
     let token = req.cookies.access_token;
-    console.log(req)
     if (!token) {
         return res.status(401).json({ success: false, message: "Unauthorized - No token provided" })
     }
@@ -29,12 +27,9 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
         const decoded = jwt.verifyToken(token);
         if (decoded) {
             let user = await userRepository.getUserById(decoded.toString());
-            console.log('user details is below');
-            console.log(user);
             if (user?.isBlocked) {
                 return res.status(UNAUTHORIZED).json({ success: false, message: "User is blocked by admin!" })
             } else {
-                console.log('hey im reached here...');
                 req.userId = decoded.toString();
                 next();
             }

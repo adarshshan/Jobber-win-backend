@@ -33,11 +33,20 @@ class UserRepository {
     }
     async changeAboutInfo(id: string, text: string): Promise<string | undefined> {
         try {
-            console.log(id, text);
             const updated = await userModel.findByIdAndUpdate(id, { aboutInfo: text }, { new: true });
             if (updated) return text
         } catch (error) {
             console.log(error as Error)
+        }
+    }
+    async setProfilePic(pic: string, id: string) {
+        try {
+            console.log('Yess Its at the end...'); console.log(`data at ${pic + id}`)
+            const updated = await userModel.findByIdAndUpdate(id, { profile_picture: pic });
+            console.log(updated); console.log('yes this is the updated result;')
+            return updated;
+        } catch (error) {
+            console.log(error as Error);
         }
     }
 }

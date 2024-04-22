@@ -3,8 +3,6 @@ import userService from "../service/userService"
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { generateAndSendOTP } from "../utils/otpGenerator";
 import { UserAuthResponse } from "../interfaces/serviceInterfaces/IuserService";
-import { UserInfo } from "os";
-import UserInterface from "../interfaces/entityInterface/Iuser";
 
 const { BAD_REQUEST, OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED, } = STATUS_CODES;
 
@@ -40,9 +38,8 @@ class userController {
 
     async googleLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { name, email, googlePhotoUrl } = req.body;
-        console.log(req.body);
         try {
-            const user = await this.userServices.getUserByEmail(email); console.log(user); console.log('this is existing user...');
+            const user = await this.userServices.getUserByEmail(email);
             if (user) {
                 if (user.isBlocked) {
                     res.status(UNAUTHORIZED).json({ success: false, message: 'user has been blocked by admin.' });
@@ -74,7 +71,6 @@ class userController {
                     password: hashedPassword,
                     profile_picture: googlePhotoUrl
                 })
-                console.log(newUser); console.log('your new user');
                 if (newUser?.data.data) {
                     const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', newUser.data.token, {
@@ -146,7 +142,6 @@ class userController {
     async getProfile(req: Request, res: Response) {
         try {
             const currentUser = await this.userServices.getProfile(req.userId);
-            console.log(currentUser); console.log('this is the result.');
             if (!currentUser) res.status(UNAUTHORIZED).json({ success: false, message: 'Authentication failed..!' });
             else if (currentUser?.isBlocked) res.status(UNAUTHORIZED).json({ success: false, message: 'user has been blocked by the admin!' });
             else res.status(OK).json(currentUser);
@@ -162,7 +157,7 @@ class userController {
     async changeAboutInfo(req: Request, res: Response) {
         try {
             const text = req.body.aboutInfo;
-            const id = req.params.id; console.log(text, id);
+            const id = req.params.id;
             const edited = await this.userServices.changeAboutInfo(id, text);
             res.json({ success: true, about: edited, message: 'about information successfully updated.' });
         } catch (error) {
@@ -171,7 +166,13 @@ class userController {
         }
     }
     async setProfilePic(req: Request, res: Response) {
-        console.log('set the new profile pic...');
+        try {
+            const { pic, id } = req.body; console.log('reached here '); console.log(pic, id);
+            const result = await this.userServices.setProfilePic(pic, id);
+            res.json(result);
+        } catch (error) {
+            console.log(error as Error);
+        }
     }
     async addSkill(req: Request, res: Response) {
         console.log('add skill')

@@ -108,6 +108,15 @@ class userService {
             console.log(error as Error);
         }
     }
+    async setProfilePic(pic: string, id: string) {
+        try {
+            console.log(`data received at service ${pic + id}`);
+            const result = await this.userRepository.setProfilePic(pic, id);
+            return result;
+        } catch (error) {
+            console.log(error);
+        }
+    }
     async getUserByEmail(email: string): Promise<UserInterface | null> {
         console.log(email + 'from service');
         return this.userRepository.emailExistCheck(email);
