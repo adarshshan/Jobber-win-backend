@@ -3,15 +3,15 @@ import mongoose, { Schema, Document, ObjectId } from "mongoose";
 
 export interface jobInterface extends Document {
     _id: ObjectId;
-    title?: string;
+    title: string;
     job_img?: string;
     industry?: string;
-    description?: string;
-    skills?: string[];
+    description: string;
+    skills: string[];
     total_vaccancy?: number;
-    isActive?: boolean;
+    isActive: boolean;
     type?: 'part-time' | 'full-time' | 'remote';
-    salary?: number,
+    salary: number,
     benefits?: {
         title?: string;
         logo?: string;
