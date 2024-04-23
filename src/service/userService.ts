@@ -136,6 +136,22 @@ class userService {
             return null;
         }
     }
+    async addSkill(id: string, skill: string) {
+        try {
+            console.log(skill);
+            const result = await this.userRepository.addSkill(id, skill);
+            return result;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllSkill(userId: string) {
+        try {
+            return await this.userRepository.getAllSkill(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default userService;

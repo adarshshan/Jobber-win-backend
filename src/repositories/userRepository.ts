@@ -49,6 +49,24 @@ class UserRepository {
             console.log(error as Error);
         }
     }
+    async addSkill(id: string, skill: string) {
+        try {
+            const updated = await userModel.findOneAndUpdate({ _id: id }, { $addToSet: { skills: skill } });
+            return updated;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllSkill(userId: string) {
+        try {
+            console.log(userId + 'from the end of the line...');
+            const data = await userModel.findOne({ _id: userId }, { _id: 0, skills: 1 });
+            const skills = data?.skills;
+            return skills;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default UserRepository;

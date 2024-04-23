@@ -175,7 +175,27 @@ class userController {
         }
     }
     async addSkill(req: Request, res: Response) {
-        console.log('add skill')
+        try {
+            const { skill } = req.body;
+            const { id } = req.params;
+            const result = await this.userServices.addSkill(id, skill)
+            if (result) res.json({ success: true, data: result, message: 'skill added successfully..' });
+            else res.json({ success: false, message: 'Something went wrong while adding the skill' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal error occured while adding the skill..' });
+        }
+    }
+    async getAllSkill(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const result = await this.userServices.getAllSkill(id);
+            res.json({ success: true, data: result, message: 'success' });
+            // else res.json({ success: false, message: 'somthing went wrong.' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'somthing went wrong.' });
+        }
     }
     async removeSkill(req: Request, res: Response) {
         console.log('remove skill')

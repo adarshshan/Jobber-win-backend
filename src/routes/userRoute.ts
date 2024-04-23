@@ -29,7 +29,8 @@ userRouter.get('/profile', authenticate, async (req: Request, res: Response) => 
 userRouter.put('/edit-user', async (req: Request, res: Response) => await controller.editUserDetails(req, res));
 userRouter.put('/edit-about/:id', async (req: Request, res: Response) => await controller.changeAboutInfo(req, res));
 userRouter.put('/set-profile', async (req: Request, res: Response) => await controller.setProfilePic(req, res));
-userRouter.patch('/add-skill', async (req: Request, res: Response) => await controller.addSkill(req, res));
+userRouter.patch('/add-skill/:id', async (req: Request, res: Response) => await controller.addSkill(req, res));
+userRouter.get('/get-skills/:id', async (req: Request, res: Response) => await controller.getAllSkill(req, res));
 userRouter.delete('/remove-skill', async (req: Request, res: Response) => await controller.removeSkill(req, res));
 userRouter.patch('/set-profile', async (req: Request, res: Response) => await controller.setProfilePic(req, res));
 
