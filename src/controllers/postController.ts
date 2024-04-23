@@ -24,6 +24,15 @@ class PostController {
             res.json({ success: false, message: 'Somthing trouble when fetching the data.' });
         }
     }
+    async getPostForHome(req: Request, res: Response) {
+        try {
+            const result = await this.postServices.getPostForHome();
+            res.json({ success: true, data: result, message: 'successfully fetched the post details with user.' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'failed to fetch the data' });
+        }
+    }
 }
 
 export default PostController;

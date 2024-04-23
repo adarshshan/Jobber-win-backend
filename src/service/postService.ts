@@ -21,6 +21,14 @@ class PostServices {
             console.log(error as Error);
         }
     }
+    async getPostForHome() {
+        try {
+            const result = await this.PostRepository.getPostForHome();
+            return result;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default PostServices;

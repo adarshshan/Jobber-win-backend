@@ -36,6 +36,25 @@ class PostRepository {
             console.log(error as Error);
         }
     }
+    async getPostForHome() {
+        try {
+            const data = PostModel.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: 'users',
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "result"
+                    }
+                }
+            ])
+            console.log(data);
+            return data;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default PostRepository;
