@@ -198,7 +198,12 @@ class userController {
         }
     }
     async removeSkill(req: Request, res: Response) {
-        console.log('remove skill')
+        try {
+            const { skill, id } = req.params;
+            return await this.userServices.removeSkill(id, skill);
+        } catch (error) {
+            console.log(error as Error);
+        }
     }
     async forgotPassword(req: Request, res: Response) {
         console.log('forgot password password...');

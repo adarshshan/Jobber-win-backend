@@ -31,7 +31,7 @@ userRouter.put('/edit-about/:id', async (req: Request, res: Response) => await c
 userRouter.put('/set-profile', async (req: Request, res: Response) => await controller.setProfilePic(req, res));
 userRouter.patch('/add-skill/:id', async (req: Request, res: Response) => await controller.addSkill(req, res));
 userRouter.get('/get-skills/:id', async (req: Request, res: Response) => await controller.getAllSkill(req, res));
-userRouter.delete('/remove-skill', async (req: Request, res: Response) => await controller.removeSkill(req, res));
+userRouter.delete('/remove-skill/:skill/:id', async (req: Request, res: Response) => await controller.removeSkill(req, res));
 userRouter.patch('/set-profile', async (req: Request, res: Response) => await controller.setProfilePic(req, res));
 
 

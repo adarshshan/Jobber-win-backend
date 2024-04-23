@@ -67,6 +67,15 @@ class UserRepository {
             console.log(error as Error);
         }
     }
+    async removeSkill(id: string, skill: string) {
+        try {
+            console.log(skill + '  from the end...');
+            const updated = await userModel.updateOne({ _id: id }, { $pull: { skills: skill } });
+            return updated;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default UserRepository;

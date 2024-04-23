@@ -152,6 +152,14 @@ class userService {
             console.log(error as Error);
         }
     }
+    async removeSkill(id:string,skill: string) {
+        try {
+            console.log(skill);
+            return await this.userRepository.removeSkill(id,skill);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default userService;
