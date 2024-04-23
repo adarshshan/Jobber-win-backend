@@ -13,10 +13,9 @@ class PostServices {
             console.log(error as Error);
         }
     }
-    async getPosts() {
+    async getPosts(userId: string) {
         try {
-            const result = await this.PostRepository.getPosts();
-            return result;
+            if (userId) return await this.PostRepository.getPosts(userId);
         } catch (error) {
             console.log(error as Error);
         }

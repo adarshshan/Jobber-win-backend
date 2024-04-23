@@ -17,7 +17,8 @@ class PostController {
     }
     async getPosts(req: Request, res: Response) {
         try {
-            const result = await this.postServices.getPosts();
+            const { userId } = req.params;
+            const result = await this.postServices.getPosts(userId);
             res.json({ success: true, data: result, message: 'Data is Fetched successfully.' });
         } catch (error) {
             console.log(error as Error);

@@ -26,10 +26,10 @@ class PostRepository {
             return null;
         }
     }
-    async getPosts() {
+    async getPosts(userId: string) {
         try {
             console.log('Yess, reached at the end and your id is ')
-            const data = await PostModel.find();
+            const data = await PostModel.find({ userId }).sort({ createdAt: -1 });
             console.log(data); console.log('this is your all data..');
             return data;
         } catch (error) {
@@ -48,7 +48,7 @@ class PostRepository {
                         as: "result"
                     }
                 }
-            ])
+            ]).sort({ createdAt: -1 });
             console.log(data);
             return data;
         } catch (error) {
