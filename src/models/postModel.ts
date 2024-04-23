@@ -1,8 +1,8 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, Model, ObjectId } from "mongoose";
 
 
 export interface PostInterface extends Document {
-    userId: mongoose.Types.ObjectId;
+    userId: ObjectId;
     caption?: string;
     imageUrl?: string;
     isPrivate: boolean;
@@ -31,4 +31,6 @@ const postSchema: Schema<PostInterface> = new Schema({
     timestamps: true,
 });
 
-module.exports = mongoose.model('post', postSchema)
+
+const PostModel: Model<PostInterface> = mongoose.model<PostInterface>('post', postSchema)
+export default PostModel;

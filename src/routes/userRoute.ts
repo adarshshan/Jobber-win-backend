@@ -5,6 +5,9 @@ import userService from "../service/userService";
 import authenticate from '../middlewares/userAuthMiddleware';
 import Encrypt from "../utils/comparePassword";
 import { CreateJWT } from "../utils/generateToken";
+import PostRepository from "../repositories/postRepository";
+import PostServices from "../service/postService";
+import PostController from "../controllers/postController";
 
 
 
@@ -29,6 +32,16 @@ userRouter.put('/set-profile', async (req: Request, res: Response) => await cont
 userRouter.patch('/add-skill', async (req: Request, res: Response) => await controller.addSkill(req, res));
 userRouter.delete('/remove-skill', async (req: Request, res: Response) => await controller.removeSkill(req, res));
 userRouter.patch('/set-profile', async (req: Request, res: Response) => await controller.setProfilePic(req, res));
+
+
+
+
+const postRepository = new PostRepository();
+const postService = new PostServices(postRepository);
+const postController = new PostController(postService);
+
+
+userRouter.post('/new-post', async (req: Request, res: Response) => await postController.savePost(req, res))
 
 
 export default userRouter;
