@@ -26,6 +26,16 @@ class PostRepository {
             return null;
         }
     }
+    async getPosts() {
+        try {
+            console.log('Yess, reached at the end and your id is ')
+            const data = await PostModel.find();
+            console.log(data); console.log('this is your all data..');
+            return data;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default PostRepository;

@@ -42,6 +42,7 @@ const postController = new PostController(postService);
 
 
 userRouter.post('/new-post', async (req: Request, res: Response) => await postController.savePost(req, res))
+userRouter.get('/getposts', async (req: Request, res: Response) => await postController.getPosts(req, res))
 
 
 export default userRouter;

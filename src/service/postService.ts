@@ -7,7 +7,15 @@ class PostServices {
     async savePost(userId: string, imageUrl: string, caption: string) {
         try {
             console.log(userId, imageUrl, caption); console.log('the function invoked from postServices...');
-            const result=await this.PostRepository.savePost(userId,imageUrl,caption);
+            const result = await this.PostRepository.savePost(userId, imageUrl, caption);
+            return result;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getPosts() {
+        try {
+            const result = await this.PostRepository.getPosts();
             return result;
         } catch (error) {
             console.log(error as Error);

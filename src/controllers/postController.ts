@@ -15,6 +15,15 @@ class PostController {
             res.json({ success: false, message: 'Failed to upload the post!' });
         }
     }
+    async getPosts(req: Request, res: Response) {
+        try {
+            const result = await this.postServices.getPosts();
+            res.json({ success: true, data: result, message: 'Data is Fetched successfully.' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Somthing trouble when fetching the data.' });
+        }
+    }
 }
 
 export default PostController;
