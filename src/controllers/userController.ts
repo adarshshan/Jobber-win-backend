@@ -176,7 +176,7 @@ class userController {
     }
     async setProfilePic(req: Request, res: Response) {
         try {
-            const { pic, id } = req.body; console.log('reached here '); console.log(pic, id);
+            const { pic, id } = req.body;
             const result = await this.userServices.setProfilePic(pic, id);
             res.json(result);
         } catch (error) {

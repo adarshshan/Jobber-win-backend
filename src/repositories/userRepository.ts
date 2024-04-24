@@ -41,9 +41,7 @@ class UserRepository {
     }
     async setProfilePic(pic: string, id: string) {
         try {
-            console.log('Yess Its at the end...'); console.log(`data at ${pic + id}`)
             const updated = await userModel.findByIdAndUpdate(id, { profile_picture: pic });
-            console.log(updated); console.log('yes this is the updated result;')
             return updated;
         } catch (error) {
             console.log(error as Error);
@@ -51,7 +49,6 @@ class UserRepository {
     }
     async deleteProfilePic(userId: string) {
         try {
-            console.log(userId); console.log('data from delete pic repository');
             const updatedUser = await userModel.updateOne({ _id: userId }, { $set: { profile_picture: "" } });
             return updatedUser;
         } catch (error) {
@@ -68,7 +65,6 @@ class UserRepository {
     }
     async getAllSkill(userId: string) {
         try {
-            console.log(userId + 'from the end of the line...');
             const data = await userModel.findOne({ _id: userId }, { _id: 0, skills: 1 });
             const skills = data?.skills;
             return skills;
@@ -78,7 +74,6 @@ class UserRepository {
     }
     async removeSkill(id: string, skill: string) {
         try {
-            console.log(skill + '  from the end...');
             const updated = await userModel.updateOne({ _id: id }, { $pull: { skills: skill } });
             return updated;
         } catch (error) {
@@ -87,7 +82,7 @@ class UserRepository {
     }
     async editUserDetails(name: string, phoneNumber: number, gender: string, location: string, headLine: string, qualification: string, userId: string) {
         try {
-            console.log(name, phoneNumber, gender, location, headLine, qualification, userId); console.log('data from the end of the line...');
+            console.log(name, phoneNumber, gender, location, headLine, qualification, userId);
             const user = await userModel.findById(userId);
             if (user) {
                 user.name = name || user.name;
@@ -97,7 +92,7 @@ class UserRepository {
                 user.headLine = headLine || user.headLine;
                 user.qualification = qualification || user.qualification;
             }
-            const updatedUser = await user?.save(); console.log(updatedUser); console.log('user saved');
+            const updatedUser = await user?.save();
             return updatedUser
         } catch (error) {
             console.log(error as Error);

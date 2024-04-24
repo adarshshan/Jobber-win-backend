@@ -26,8 +26,7 @@ class AdminRepository {
                 {
                     $or: [
                         { name: { $regex: regex } },
-                        { email: { $regex: regex } },
-                        { phoneNumber: { $regex: regex } }
+                        { email: { $regex: regex } }
                     ]
                 })
                 .skip((page - 1) * limit)
@@ -47,8 +46,7 @@ class AdminRepository {
                 {
                     $or: [
                         { name: { $regex: regex } },
-                        { email: { $regex: regex } },
-                        { phoneNumber: { $regex: regex } }
+                        { email: { $regex: regex } }
                     ]
                 }).countDocuments();
         } catch (error) {
