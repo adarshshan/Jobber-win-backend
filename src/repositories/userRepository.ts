@@ -49,6 +49,15 @@ class UserRepository {
             console.log(error as Error);
         }
     }
+    async deleteProfilePic(userId: string) {
+        try {
+            console.log(userId); console.log('data from delete pic repository');
+            const updatedUser = await userModel.updateOne({ _id: userId }, { $set: { profile_picture: "" } });
+            return updatedUser;
+        } catch (error) {
+            console.log(error);
+        }
+    }
     async addSkill(id: string, skill: string) {
         try {
             const updated = await userModel.findOneAndUpdate({ _id: id }, { $addToSet: { skills: skill } });
@@ -72,6 +81,24 @@ class UserRepository {
             console.log(skill + '  from the end...');
             const updated = await userModel.updateOne({ _id: id }, { $pull: { skills: skill } });
             return updated;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async editUserDetails(name: string, phoneNumber: number, gender: string, location: string, headLine: string, qualification: string, userId: string) {
+        try {
+            console.log(name, phoneNumber, gender, location, headLine, qualification, userId); console.log('data from the end of the line...');
+            const user = await userModel.findById(userId);
+            if (user) {
+                user.name = name || user.name;
+                user.phoneNumber = phoneNumber || user.phoneNumber;
+                user.gender = gender || user.gender;
+                user.location = location || user.location;
+                user.headLine = headLine || user.headLine;
+                user.qualification = qualification || user.qualification;
+            }
+            const updatedUser = await user?.save(); console.log(updatedUser); console.log('user saved');
+            return updatedUser
         } catch (error) {
             console.log(error as Error);
         }

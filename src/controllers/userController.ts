@@ -152,7 +152,16 @@ class userController {
     }
 
     async editUserDetails(req: Request, res: Response) {
-        console.log('edit user detailss.....')
+        try {
+            const userId = req.params.userId;
+            const { name, phoneNumber, gender, location, headLine, qualification } = req.body;
+            const result = await this.userServices.editUserDetails(name, phoneNumber, gender, location, headLine, qualification, userId);
+            if (result) res.json({ success: true, data: result, message: 'details successfully updated.' });
+            else res.json({ success: false, message: 'Failed to update the details' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Failed to update' });
+        }
     }
     async changeAboutInfo(req: Request, res: Response) {
         try {
@@ -172,6 +181,17 @@ class userController {
             res.json(result);
         } catch (error) {
             console.log(error as Error);
+        }
+    }
+    async deleteProfilePic(req: Request, res: Response) {
+        try {
+            const userId = req.params.userId;
+            const result = this.userServices.deleteProfilePic(userId);
+            if (result) res.json({ success: true, data: result, message: 'profile pic removed' });
+            else res.json({ success: false, message: "couldn't remove your profile pic" })
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'somthing went wrong while removing the profile pic' });
         }
     }
     async addSkill(req: Request, res: Response) {

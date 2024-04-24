@@ -117,6 +117,13 @@ class userService {
             console.log(error);
         }
     }
+    async deleteProfilePic(userId: string) {
+        try {
+            return await this.userRepository.deleteProfilePic(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async getUserByEmail(email: string): Promise<UserInterface | null> {
         console.log(email + 'from service');
         return this.userRepository.emailExistCheck(email);
@@ -152,10 +159,17 @@ class userService {
             console.log(error as Error);
         }
     }
-    async removeSkill(id:string,skill: string) {
+    async removeSkill(id: string, skill: string) {
         try {
             console.log(skill);
-            return await this.userRepository.removeSkill(id,skill);
+            return await this.userRepository.removeSkill(id, skill);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async editUserDetails(name: string, phoneNumber: number, gender: string, location: string, headLine: string, qualification: string, userId: string) {
+        try {
+            return await this.userRepository.editUserDetails(name, phoneNumber, gender, location, headLine, qualification, userId);
         } catch (error) {
             console.log(error as Error);
         }

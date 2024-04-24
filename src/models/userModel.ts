@@ -6,10 +6,12 @@ export interface UserInterface extends Document {
     name: string;
     password: string;
     email: string;
-    aboutInfo:string;
-    phoneNumber: string;
+    aboutInfo: string;
+    phoneNumber: number;
     isBlocked: boolean;
-    gender?: "male" | "female" | "custom";
+    headLine: string;
+    qualification: string;
+    gender: string;
     role: 'recruiter' | 'user';
     profile_picture: string;
     cover_image: string;
@@ -39,13 +41,19 @@ const userSchema: Schema<UserInterface> = new Schema({
     password: {
         type: String,
     },
+    headLine: {
+        type: String,
+    },
     email: {
         type: String,
         required: true,
         unique: true
     },
-    phoneNumber: {
+    qualification: {
         type: String,
+    },
+    phoneNumber: {
+        type: Number,
     },
     isBlocked: {
         type: Boolean,

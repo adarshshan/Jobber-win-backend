@@ -26,9 +26,10 @@ userRouter.post('/veryfy-otp', async (req: Request, res: Response) => await cont
 userRouter.get('/logout', async (req: Request, res: Response) => await controller.logout(req, res));
 userRouter.get('/profile', authenticate, async (req: Request, res: Response) => await controller.getProfile(req, res));
 
-userRouter.put('/edit-user', async (req: Request, res: Response) => await controller.editUserDetails(req, res));
+userRouter.put('/edit-user/:userId', async (req: Request, res: Response) => await controller.editUserDetails(req, res));
 userRouter.put('/edit-about/:id', async (req: Request, res: Response) => await controller.changeAboutInfo(req, res));
 userRouter.put('/set-profile', async (req: Request, res: Response) => await controller.setProfilePic(req, res));
+userRouter.delete('/delete-profile/:userId', async (req: Request, res: Response) => await controller.deleteProfilePic(req, res));
 userRouter.patch('/add-skill/:id', async (req: Request, res: Response) => await controller.addSkill(req, res));
 userRouter.get('/get-skills/:id', async (req: Request, res: Response) => await controller.getAllSkill(req, res));
 userRouter.delete('/remove-skill/:skill/:id', async (req: Request, res: Response) => await controller.removeSkill(req, res));
