@@ -8,6 +8,9 @@ import { CreateJWT } from "../utils/generateToken";
 import PostRepository from "../repositories/postRepository";
 import PostServices from "../service/postService";
 import PostController from "../controllers/postController";
+import NetworkController from "../controllers/networkController";
+import NetworkService from "../service/networkService";
+import NetworkRepository from "../repositories/networkRepository";
 
 
 
@@ -37,7 +40,7 @@ userRouter.patch('/set-profile', async (req: Request, res: Response) => await co
 
 
 
-
+//postController
 const postRepository = new PostRepository();
 const postService = new PostServices(postRepository);
 const postController = new PostController(postService);
@@ -46,6 +49,17 @@ const postController = new PostController(postService);
 userRouter.post('/new-post', async (req: Request, res: Response) => await postController.savePost(req, res))
 userRouter.get('/getposts/:userId', async (req: Request, res: Response) => await postController.getPosts(req, res))
 userRouter.get('/get-posts-home', async (req: Request, res: Response) => await postController.getPostForHome(req, res))
+
+
+//netWorkcontroller
+const networkRepository = new NetworkRepository();
+const networkService = new NetworkService(networkRepository);
+const networkController = new NetworkController(networkService);
+
+userRouter.get('/get-alluser', authenticate, async (req: Request, res: Response) => await networkController.getAllUsers(req, res));
+userRouter.get('/get-user-profile/:userId', authenticate, async (req: Request, res: Response) => await networkController.getUserProfile(req, res));
+userRouter.get('/get-user-posts/:userId', async (req: Request, res: Response) => await networkController.getUserPostsById(req, res));
+
 
 
 export default userRouter;
