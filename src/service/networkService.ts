@@ -26,6 +26,34 @@ class NetworkService {
             console.log(error as Error);
         }
     }
+    async sendRequest(receiverId: string, senderId: string) {
+        try {
+            return await this.networkRepository.sendRequest(receiverId, senderId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllRequests(userId: string) {
+        try {
+            return await this.networkRepository.getAllRequests(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async addToFriend(userId: string,friendId:string) {
+        try {
+            return await this.networkRepository.addToFriend(userId,friendId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllFriends(userId:string){
+        try {
+            return await this.networkRepository.getAllFriends(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default NetworkService;

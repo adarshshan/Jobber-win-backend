@@ -59,6 +59,10 @@ const networkController = new NetworkController(networkService);
 userRouter.get('/get-alluser', authenticate, async (req: Request, res: Response) => await networkController.getAllUsers(req, res));
 userRouter.get('/get-user-profile/:userId', authenticate, async (req: Request, res: Response) => await networkController.getUserProfile(req, res));
 userRouter.get('/get-user-posts/:userId', async (req: Request, res: Response) => await networkController.getUserPostsById(req, res));
+userRouter.post('/sendrequest', authenticate, async (req: Request, res: Response) => await networkController.sendRequest(req, res));
+userRouter.get('/getallrequests', authenticate, async (req: Request, res: Response) => await networkController.getAllRequests(req, res));
+userRouter.put('/add-tofriend/:friendId', authenticate, async (req: Request, res: Response) => await networkController.addToFriend(req, res));
+userRouter.get('/get-friends', authenticate, async (req: Request, res: Response) => await networkController.getAllFriends(req, res));
 
 
 

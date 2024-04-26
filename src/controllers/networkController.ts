@@ -39,6 +39,57 @@ class NetworkController {
             res.json({ success: false, message: 'Internal server Error' });
         }
     }
+    async sendRequest(req: Request, res: Response) {
+        try {
+            const { receiverId } = req.body;
+            const senderId = req.userId;
+            if (senderId) {
+                const result = await this.networkService.sendRequest(receiverId, senderId);
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllRequests(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.networkService.getAllRequests(userId);
+                if (result) res.json({ success: true, data: result, message: 'request data fetched successfully.' });
+                else res.json({ success: false, message: 'Somthing went wrong while fetching data.' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal Error' });
+        }
+    }
+    async addToFriend(req: Request, res: Response) {
+        try {
+            const { friendId } = req.params;
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.networkService.addToFriend(userId, friendId);
+                if (result) res.json({ success: true, data: result, message: 'user added to the friend list.' });
+                else res.json({ success: false, message: 'Somthing went wrong while adding user to the friend list.' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal Error occured' });
+        }
+    }
+    async getAllFriends(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.networkService.getAllFriends(userId);
+                if (result) res.json({ success: true, data: result, message: 'Friend list fetched.' });
+                else res.json({ success: false, message: 'Failed To fetch the friend list!' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'internal Error' });
+        }
+    }
 }
 
 export default NetworkController;
