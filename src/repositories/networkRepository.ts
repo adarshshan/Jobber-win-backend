@@ -137,8 +137,44 @@ class NetworkRepository {
     }
     async getAllFriends(userId: string) {
         try {
+            const id = new mongoose.Types.ObjectId(userId);
+            const data = await connectionModel.aggregate([
+                { $match: { userId: id } },
+                { $lookup: { from: 'users', localField: 'friends', foreignField: '_id', as: 'data' } }]);
+            if (data) return data[0].data;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async unFriend(id: string, userId: string) {
+        try {
+            const updatedConnection = await connectionModel.updateOne({ userId }, { $pull: { friends: id } });
+            return updatedConnection;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async removeRequest(id: string, userId: string) {
+        try {
+            const updated = await connectionModel.updateOne({ userId }, { $pull: { requestsReceived: id } });
+            return updated;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllsendRequests(userId: string) {
+        try {
             const connection = await connectionModel.findOne({ userId });
-            if (connection) return connection.friends;
+            return connection?.requestsSend;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async withdrawSentRequest(userId: string, id: string) {
+        try {
+            console.log(`this is the end of the line ${userId} and the id is ${id}`);
+            const updated = await connectionModel.updateOne({ userId }, { $pull: { requestsSend: id } });
+            return updated;
         } catch (error) {
             console.log(error as Error);
         }

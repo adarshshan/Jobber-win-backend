@@ -40,16 +40,44 @@ class NetworkService {
             console.log(error as Error);
         }
     }
-    async addToFriend(userId: string,friendId:string) {
+    async addToFriend(userId: string, friendId: string) {
         try {
-            return await this.networkRepository.addToFriend(userId,friendId);
+            return await this.networkRepository.addToFriend(userId, friendId);
         } catch (error) {
             console.log(error as Error);
         }
     }
-    async getAllFriends(userId:string){
+    async getAllFriends(userId: string) {
         try {
             return await this.networkRepository.getAllFriends(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async unFriend(id: string, userId: string) {
+        try {
+            return await this.networkRepository.unFriend(id, userId);
+        } catch (error) {
+            console.log(error as Error)
+        }
+    }
+    async removeRequest(id: string, userId: string) {
+        try {
+            return await this.networkRepository.removeRequest(id, userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllsendRequests(userId: string) {
+        try {
+            return await this.networkRepository.getAllsendRequests(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async withdrawSentRequest(userId: string, id: string) {
+        try {
+            return await this.networkRepository.withdrawSentRequest(userId, id);
         } catch (error) {
             console.log(error as Error);
         }
