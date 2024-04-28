@@ -1,3 +1,4 @@
+import { JobInterface } from "../controllers/recruiterController";
 import RecruiterRepository from "../repositories/recruiterRepository";
 
 
@@ -11,9 +12,9 @@ class RecruiterService {
             console.log(error as Error);
         }
     }
-    async postNewJob() {
+    async postNewJob(data:JobInterface,userId:string) {
         try {
-            return await this.recruiterRepository.postNewJob();
+            return await this.recruiterRepository.postNewJob(data,userId);
         } catch (error) {
             console.log(error as Error);
         }

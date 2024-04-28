@@ -1,3 +1,5 @@
+import { JobInterface } from "../controllers/recruiterController";
+import jobModel from "../models/jobModel";
 
 
 class RecruiterRepository {
@@ -9,9 +11,13 @@ class RecruiterRepository {
             console.log(error as Error);
         }
     }
-    async postNewJob() {
+    async postNewJob(data: JobInterface, userId: string) {
         try {
-            console.log('reached at the end of the line at postNewJob function');
+            const newJob = new jobModel({
+                ...data,
+                recruiterId: userId
+            })
+            return await newJob.save();
         } catch (error) {
             console.log(error as Error);
         }

@@ -18,7 +18,7 @@ export const createServer = () => {
 
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);
-        app.use('/api/recuriter', recruiterRouter);
+        app.use('/api/recruiter', recruiterRouter);
 
         return app
 

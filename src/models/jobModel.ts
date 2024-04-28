@@ -4,19 +4,31 @@ import mongoose, { Schema, Document, ObjectId } from "mongoose";
 export interface jobInterface extends Document {
     _id: ObjectId;
     title: string;
+    recruiterId: ObjectId;
+    company_name: string;
     job_img: string;
     industry: string;
     description: string;
     skills: string[];
     total_vaccancy?: number;
     isActive: boolean;
-    type: 'part-time' | 'full-time' | 'remote';
+    experience: number;
+    job_type: 'part-time' | 'full-time' | 'remote';
     salary: { from: number; upto: number };
     qualifications?: string[]
 }
 
 const adminSchema: Schema = new Schema({
     title: {
+        type: String,
+        required: true
+    },
+    recruiterId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        required: [true, 'User id is Required!'],
+    },
+    company_name: {
         type: String,
         required: true
     },
@@ -33,6 +45,7 @@ const adminSchema: Schema = new Schema({
     total_vaccancy: {
         type: Number
     },
+    experience: { type: Number },
     location: { type: String },
     isActive: {
         type: Boolean
