@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import userRouter from "../src/routes/userRoute";
 import adminRouter from "../src/routes/adminRoute";
+import recruiterRouter from "../src/routes/recruiterRoute";
 
 
 export const createServer = () => {
@@ -17,6 +18,7 @@ export const createServer = () => {
 
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);
+        app.use('/api/recuriter', recruiterRouter);
 
         return app
 

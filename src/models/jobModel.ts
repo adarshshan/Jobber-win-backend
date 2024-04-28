@@ -4,19 +4,14 @@ import mongoose, { Schema, Document, ObjectId } from "mongoose";
 export interface jobInterface extends Document {
     _id: ObjectId;
     title: string;
-    job_img?: string;
-    industry?: string;
+    job_img: string;
+    industry: string;
     description: string;
     skills: string[];
     total_vaccancy?: number;
     isActive: boolean;
-    type?: 'part-time' | 'full-time' | 'remote';
-    salary: number,
-    benefits?: {
-        title?: string;
-        logo?: string;
-        description?: string;
-    }[];
+    type: 'part-time' | 'full-time' | 'remote';
+    salary: { from: number; upto: number };
     qualifications?: string[]
 }
 
@@ -38,19 +33,15 @@ const adminSchema: Schema = new Schema({
     total_vaccancy: {
         type: Number
     },
+    location: { type: String },
     isActive: {
         type: Boolean
     },
     job_type: { type: String },
-    salary: { type: Number },
-    benefits: [{
-        title: { type: String },
-        logo: { type: String },
-        description: { type: String },
-    }],
-    qualifications: [{
-        type: String
-    }]
+    salary: {
+        from: { type: Number },
+        upto: { type: Number }
+    }
 })
 
 const jobModel = mongoose.model<jobInterface>('job', adminSchema);

@@ -45,9 +45,12 @@ class NetworkController {
             const senderId = req.userId;
             if (senderId) {
                 const result = await this.networkService.sendRequest(receiverId, senderId);
+                if (result) res.json({ success: true, data: result.sender, message: 'request has been sent.' });
+                else res.json({ success: false, message: 'somthing went wrong while sending the send request.' });
             }
         } catch (error) {
             console.log(error as Error);
+            res.json({ success: false, message: 'Internal server error!' });
         }
     }
     async getAllRequests(req: Request, res: Response) {
