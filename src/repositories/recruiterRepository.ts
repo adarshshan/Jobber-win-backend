@@ -14,6 +14,7 @@ class RecruiterRepository {
     }
     async postNewJob(data: JobInterface, userId: string) {
         try {
+            console.log(data);
             const newJob = new jobModel({
                 ...data,
                 recruiterId: userId

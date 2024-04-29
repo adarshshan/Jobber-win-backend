@@ -14,7 +14,8 @@ export interface jobInterface extends Document {
     isActive: boolean;
     experience: number;
     job_type: 'part-time' | 'full-time' | 'remote';
-    salary: { from: number; upto: number };
+    max_salary: number;
+    min_salary: number;
     qualifications?: string[]
 }
 
@@ -51,10 +52,10 @@ const adminSchema: Schema = new Schema({
         type: Boolean
     },
     job_type: { type: String },
-    salary: {
-        from: { type: Number },
-        upto: { type: Number }
-    }
+    max_salary: { type: Number },
+    min_salary: { type: Number },
+}, {
+    timestamps: true,
 })
 
 const jobModel = mongoose.model<jobInterface>('job', adminSchema);

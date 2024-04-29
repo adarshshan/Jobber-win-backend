@@ -11,6 +11,9 @@ import PostController from "../controllers/postController";
 import NetworkController from "../controllers/networkController";
 import NetworkService from "../service/networkService";
 import NetworkRepository from "../repositories/networkRepository";
+import JobRepository from "../repositories/jobRepository";
+import JobService from "../service/jobService";
+import JobController from "../controllers/jobController";
 
 
 
@@ -67,6 +70,16 @@ userRouter.put('/add-tofriend/:friendId', authenticate, async (req: Request, res
 userRouter.put('/remove-request/:id', authenticate, async (req: Request, res: Response) => await networkController.removeRequest(req, res));
 userRouter.get('/get-friends', authenticate, async (req: Request, res: Response) => await networkController.getAllFriends(req, res));
 userRouter.delete('/unfriend/:id', authenticate, async (req: Request, res: Response) => await networkController.unFriend(req, res));
+
+
+//JobController
+const jobRepository = new JobRepository();
+const jobService = new JobService(jobRepository);
+const jobController = new JobController(jobService);
+
+
+userRouter.get('/get-all-jobs', async (req: Request, res: Response) => await jobController.getAllJobs(req, res));
+userRouter.get('/get-single-jobs/:jobId', async (req: Request, res: Response) => await jobController.getSingleJobDetails(req, res));
 
 
 

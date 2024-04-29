@@ -27,6 +27,8 @@ const connectionsSchema: Schema<ConnectionInterface> = new Schema({
         ref: 'user',
         default: []
     }],
+}, {
+    timestamps: true,
 });
 
 export default mongoose.model<ConnectionInterface>('connection', connectionsSchema);
