@@ -5,6 +5,7 @@ export interface JobInterface {
     title: string;
     company_name: string;
     industry: string;
+    job_img:string;
     description: string;
     total_vaccancy: number;
     location: string;
@@ -19,9 +20,15 @@ class RecruiterController {
 
     async getAllJobs(req: Request, res: Response) {
         try {
-            const result = await this.recruiterService.getAllJobs();
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.recruiterService.getAllJobs(userId);
+                if (result) res.json({ success: true, data: result, message: 'All jobs fetched successfully' });
+                else res.json({ success: false, message: 'Somthing went wrong while fetching the jobs!' });
+            } else res.json({ success: false, message: 'Authentication Error occurred' });
         } catch (error) {
             console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
         }
     }
     async postNewJob(req: Request, res: Response) {
@@ -29,7 +36,7 @@ class RecruiterController {
             const userId = req.userId;
             const { data } = req.body;
             if (userId) {
-                const result = await this.recruiterService.postNewJob(data,userId);
+                const result = await this.recruiterService.postNewJob(data, userId);
                 if (result) res.json({ success: true, data: result, message: 'Job posted successfully' });
                 else res.json({ success: false, message: 'Somthing went wrong while posting the job!' });
             } else res.json({ success: false, message: 'Authentication Error!' });

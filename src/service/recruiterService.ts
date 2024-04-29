@@ -5,9 +5,9 @@ import RecruiterRepository from "../repositories/recruiterRepository";
 class RecruiterService {
     constructor(private recruiterRepository: RecruiterRepository) { }
 
-    async getAllJobs() {
+    async getAllJobs(userId:string) {
         try {
-            return await this.recruiterRepository.getAllJobs();
+            return await this.recruiterRepository.getAllJobs(userId);
         } catch (error) {
             console.log(error as Error);
         }

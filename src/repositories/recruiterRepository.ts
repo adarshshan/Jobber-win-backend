@@ -4,9 +4,10 @@ import jobModel from "../models/jobModel";
 
 class RecruiterRepository {
 
-    async getAllJobs() {
+    async getAllJobs(recruiterId: string) {
         try {
-            console.log('reached at the end of the line at getAllJobs function...');
+            const jobs = await jobModel.find({ recruiterId });
+            return jobs;
         } catch (error) {
             console.log(error as Error);
         }
