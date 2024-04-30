@@ -13,8 +13,8 @@ interface UserInterface {
     isBlocked?: boolean;
     following?: ObjectId[];
     followers?: ObjectId[];
-    applied_jobs?: AppliedJob[];
-    saved_jobs?: SavedJob[];
+    appliedJobs?: AppliedJob[];
+    savedJobs?: SavedJob[];
 }
 
 export default UserInterface;

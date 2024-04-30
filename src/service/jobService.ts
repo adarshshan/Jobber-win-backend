@@ -29,6 +29,14 @@ class JobService {
             console.log(error as Error);
         }
     }
+    async getSavedAndApplied(userId: string) {
+        try {
+            const user = await this.userRepository.getUserWithJobDetails(userId);
+            return user;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default JobService;

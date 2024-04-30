@@ -1,5 +1,6 @@
 import UserInterface from '../interfaces/entityInterface/Iuser';
 import userModel from '../models/userModel';
+import mongoose, { ObjectId } from 'mongoose';
 
 
 class UserRepository {
@@ -29,6 +30,43 @@ class UserRepository {
         } catch (error) {
             console.log(error as Error);
             return null;
+        }
+    }
+    async getUserWithJobDetails(userId: string) {
+        try {
+            const ObjectId = mongoose.Types.ObjectId;
+            const UserId = new ObjectId(userId)
+
+            const user = await userModel.aggregate([
+                { $match: { _id: UserId } },
+                { $unwind: "$appliedJobs" },
+                {
+                    $lookup: {
+                        from: "jobs",
+                        localField: "appliedJobs.jobId",
+                        foreignField: "_id",
+                        as: "appliedJobs.jobDetails"
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$_id",
+                        name: { $first: "$name" },
+                        email: { $first: "$email" },
+                        role: { $first: "$role" },
+                        profile_picture: { $first: "$profile_picture" },
+                        cover_image: { $first: "$cover_image" },
+                        skills: { $first: "$skills" },
+                        aboutInfo: { $first: "$aboutInfo" },
+                        appliedJobs: { $push: "$appliedJobs" }
+                    }
+                }
+            ])
+            console.log(user[0].appliedJobs);
+            return user[0].appliedJobs;
+
+        } catch (error) {
+            console.log(error as Error);
         }
     }
     async changeAboutInfo(id: string, text: string): Promise<string | undefined> {

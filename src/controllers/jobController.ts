@@ -46,6 +46,19 @@ class JobController {
             res.json({ success: false, message: 'Internal server error!' });
         }
     }
+    async getSavedAndApplied(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.jobService.getSavedAndApplied(userId);
+                if (result) res.json({ success: true, data: result, message: 'Successful' });
+                else res.json({ success: false, message: 'Something went wrong while fetching saved and applied jobs!' });
+            } else res.json({ success: false, message: 'userId is not available!' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
 }
 
 export default JobController;
