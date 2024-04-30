@@ -98,6 +98,47 @@ class UserRepository {
             console.log(error as Error);
         }
     }
+
+    async saveJob(userId: string, jobId: string) {
+        try {
+            const user = await userModel.findByIdAndUpdate(userId,
+                { $push: { savedJobs: { jobId: jobId } } },
+                { new: true }
+            )
+            return user
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
+    async unsaveJob(userId: string, jobId: string) {
+        try {
+            const user = await userModel.findByIdAndUpdate(userId,
+                { $pull: { savedJobs: { jobId: jobId } } },
+                { new: true }
+            )
+            if (user) console.log('the job removed form the saved job list');
+            return user
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
+    async appliedJob(userId: string, jobId: string) {
+        try {
+            const user = await userModel.findByIdAndUpdate(userId,
+                { $push: { appliedJobs: { jobId: jobId } } },
+                { new: true }
+            );
+            if (user) console.log('jobid added to the users applied jobs');
+            return user
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
 }
 
 export default UserRepository;

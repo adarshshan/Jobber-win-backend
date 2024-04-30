@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import jobModel from "../models/jobModel";
+import { JobBodyInterface } from "../controllers/jobController";
+import jobApplicationModel from "../models/jobApplicationModel";
 
 
 class JobRepository {
@@ -24,6 +26,19 @@ class JobRepository {
             ])
             console.log(job[0]);
             return job[0];
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async applyJOb(jobId: string, userId: string, formData: JobBodyInterface) {
+        try {
+            const jobApplication = new jobApplicationModel({
+                ...formData,
+                userId,
+                jobId
+            })
+            await jobApplication.save();
+            return jobApplication;
         } catch (error) {
             console.log(error as Error);
         }

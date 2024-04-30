@@ -2,9 +2,8 @@ import mongoose, { ObjectId, Schema } from "mongoose";
 
 export interface JobApplicationInterface extends Document {
     _id: ObjectId,
-    jobseekerId: ObjectId,
+    userId: ObjectId,
     jobId: ObjectId,
-    createdAt: string,
     resume: string,
     status: string,
     qualification: string,
@@ -12,7 +11,7 @@ export interface JobApplicationInterface extends Document {
 }
 
 const jobApplicationSchema: Schema = new Schema({
-    userid: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     },

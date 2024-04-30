@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import JobService from "../service/jobService";
 
+export interface JobBodyInterface {
+    resume: string;
+    qualification: string;
+    experience: number;
+}
 
 class JobController {
     constructor(private jobService: JobService) { }
@@ -24,6 +29,21 @@ class JobController {
         } catch (error) {
             console.log(error as Error);
             res.json({ success: false, message: 'Internal server error occured!' });
+        }
+    }
+    async applyJOb(req: Request, res: Response) {
+        try {
+            const { jobId } = req.params;
+            const userId = req.userId;
+            const formData: JobBodyInterface = req.body;
+            if (userId && jobId) {
+                const result = await this.jobService.applyJOb(jobId, userId, formData);
+                if (result) res.json({ success: true, data: result, message: 'Job application has send' });
+                else res.json({ success: false, message: 'Somthing went wrong while applying the job!' });
+            } else res.json({ success: false, message: 'userId or jobId is not available!' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server error!' });
         }
     }
 }
