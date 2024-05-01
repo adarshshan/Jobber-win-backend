@@ -29,9 +29,9 @@ class JobService {
             console.log(error as Error);
         }
     }
-    async getSavedAndApplied(userId: string) {
+    async getApplied(userId: string) {
         try {
-            const user = await this.userRepository.getUserWithJobDetails(userId);
+            const user = await this.userRepository.getApplied(userId);
             return user;
         } catch (error) {
             console.log(error as Error);

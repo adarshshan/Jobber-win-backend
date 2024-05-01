@@ -81,7 +81,7 @@ const jobController = new JobController(jobService);
 userRouter.get('/get-all-jobs', async (req: Request, res: Response) => await jobController.getAllJobs(req, res));
 userRouter.get('/get-single-jobs/:jobId', async (req: Request, res: Response) => await jobController.getSingleJobDetails(req, res));
 userRouter.post('/apply-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.applyJOb(req, res));
-userRouter.get('/get-saved-applied-jobs', authenticate, async (req: Request, res: Response) => await jobController.getSavedAndApplied(req, res))
+userRouter.get('/get-saved-applied-jobs', authenticate, async (req: Request, res: Response) => await jobController.getApplied(req, res))
 
 
 

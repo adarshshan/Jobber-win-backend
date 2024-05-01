@@ -32,7 +32,7 @@ class UserRepository {
             return null;
         }
     }
-    async getUserWithJobDetails(userId: string) {
+    async getApplied(userId: string) {
         try {
             const ObjectId = mongoose.Types.ObjectId;
             const UserId = new ObjectId(userId)
@@ -48,6 +48,12 @@ class UserRepository {
                         as: "appliedJobs.jobDetails"
                     }
                 },
+                {
+                    $addFields: {
+                        "appliedJobs.jobDetails": { $arrayElemAt: ["$appliedJobs.jobDetails", 0] }
+                    }
+                },
+                { $sort: { "appliedJobs.appliedAt": -1 } },
                 {
                     $group: {
                         _id: "$_id",
