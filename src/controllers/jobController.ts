@@ -12,9 +12,12 @@ class JobController {
 
     async getAllJobs(req: Request, res: Response) {
         try {
-            const result = await this.jobService.getAllJobs();
-            if (result) res.json({ success: true, data: result, message: 'Successfully fetched all job details' });
-            else res.json({ success: false, message: "somthing went wrong while fetching the job details!" });
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.jobService.getAllJobs(userId);
+                if (result) res.json({ success: true, data: result, message: 'Successfully fetched all job details' });
+                else res.json({ success: false, message: "somthing went wrong while fetching the job details!" });
+            }
         } catch (error) {
             console.log(error as Error);
             res.json({ success: false, message: 'Internal server error occured!' });
@@ -52,7 +55,7 @@ class JobController {
             if (userId) {
                 const result = await this.jobService.getApplied(userId);
                 if (result) res.json({ success: true, data: result, message: 'Successful' });
-                else res.json({ success: false, message: 'Something went wrong while fetching saved and applied jobs!' });
+                else res.json({ success: false, message: 'Sorry there is not any applied jobs!' });
             } else res.json({ success: false, message: 'userId is not available!' });
         } catch (error) {
             console.log(error as Error);

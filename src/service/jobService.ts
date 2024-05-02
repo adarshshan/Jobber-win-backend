@@ -6,9 +6,9 @@ import UserRepository from "../repositories/userRepository";
 class JobService {
     constructor(private jobRepository: JobRepository, private userRepository: UserRepository) { }
 
-    async getAllJobs() {
+    async getAllJobs(userId:string) {
         try {
-            return await this.jobRepository.getAllJobs();
+            return await this.jobRepository.getAllJobs(userId);
         } catch (error) {
             console.log(error as Error);
         }

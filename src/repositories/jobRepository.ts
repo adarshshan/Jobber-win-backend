@@ -2,17 +2,62 @@ import mongoose from "mongoose";
 import jobModel from "../models/jobModel";
 import { JobBodyInterface } from "../controllers/jobController";
 import jobApplicationModel from "../models/jobApplicationModel";
+import userModel from "../models/userModel";
 
 
 class JobRepository {
 
-    async getAllJobs() {
+    async getAllJobs(userId: string) {
         try {
-            const jobs = await jobModel.aggregate([
+            const alljobs = await jobModel.aggregate([
                 { $lookup: { from: 'users', localField: 'recruiterId', foreignField: '_id', as: 'recruiter_details' } },
                 { $addFields: { recruiter_details: { $first: '$recruiter_details' } } }
             ]);
-            return jobs;
+
+            var userSkills: string[] | any = await userModel.findOne({ _id: userId }, { skills: 1 });
+            if (userSkills) userSkills = userSkills.skills;
+
+            const jobs = await jobModel.aggregate([
+                {
+                  $addFields: {
+                    matchedSkills: {
+                      $size: {
+                        $setIntersection: [ "$skills", userSkills ]
+                      }
+                    }
+                  }
+                },
+                {
+                  $match: {
+                    matchedSkills: { $gte: 1 }
+                  }
+                }
+              ]);
+            return {jobs,alljobs}
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllJobsByskills() {
+        try {
+            const jobs = await jobModel.aggregate([
+                {
+                    $match: {
+                        skills: { $in: ['JavaScript', 'React', 'Node.js', 'sql', 'TypeScript', 'express', 'Mongodb'] }
+                    }
+                },
+                {
+                    $addFields: {
+                        matchedSkills: { $setIntersection: ["$skills", ["Mongodb", "sql", "express", "Node.js"]] }
+                    }
+                },
+                {
+                    $match: {
+                        $expr: { $gte: [{ $size: "$matchedSkills" }, 3] }
+                    }
+                }
+            ]);
+
         } catch (error) {
             console.log(error as Error);
         }

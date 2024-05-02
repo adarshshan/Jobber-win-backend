@@ -68,7 +68,6 @@ class UserRepository {
                     }
                 }
             ])
-            console.log(user[0].appliedJobs);
             return user[0].appliedJobs;
 
         } catch (error) {
