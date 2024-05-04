@@ -170,6 +170,27 @@ class NetworkRepository {
             console.log(error as Error);
         }
     }
+    async getAllsendReqDetails(userId: string) {
+        try {
+            console.log(userId); console.log('userId is reached...');
+            const id = new mongoose.Types.ObjectId(userId);
+            const requestSendDetails = await userModel.aggregate([
+                {
+                    $match: { _id:id } 
+                },
+                {
+                    $lookup: {
+                        from: 'users', 
+                        localField: 'requestsSend',
+                        foreignField: '_id',
+                        as: 'requestSendDetails'
+                    }
+                }
+            ]);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async withdrawSentRequest(userId: string, id: string) {
         try {
             console.log(`this is the end of the line ${userId} and the id is ${id}`);
