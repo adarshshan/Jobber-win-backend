@@ -56,7 +56,7 @@ userRouter.get('/get-posts-home', async (req: Request, res: Response) => await p
 
 //netWorkcontroller
 const networkRepository = new NetworkRepository();
-const networkService = new NetworkService(networkRepository);
+const networkService = new NetworkService(networkRepository,userRepository);
 const networkController = new NetworkController(networkService);
 
 userRouter.get('/get-alluser', authenticate, async (req: Request, res: Response) => await networkController.getAllUsers(req, res));

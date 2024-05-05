@@ -9,15 +9,6 @@ const ObjectId = mongoose.Types.ObjectId;
 
 class NetworkRepository {
 
-    async getAllUsers(userId: string) {
-        try {
-            const userObjectId = new ObjectId(userId);
-            const allUsers = await userModel.aggregate([{ $match: { _id: { $ne: userObjectId } } }]);
-            return allUsers;
-        } catch (error) {
-            console.log(error as Error);
-        }
-    }
     async getUserProfile(userId: string) {
         try {
             const user = await userModel.findOne({ _id: userId });

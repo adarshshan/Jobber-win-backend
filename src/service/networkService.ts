@@ -1,13 +1,14 @@
 import NetworkRepository from "../repositories/networkRepository";
+import UserRepository from "../repositories/userRepository";
 
 
 
 class NetworkService {
-    constructor(private networkRepository: NetworkRepository) { }
+    constructor(private networkRepository: NetworkRepository, private userRepository: UserRepository) { }
 
-    async getAllUsers(userId: string) {
+    async getAllUsers(search:string|undefined,userId: string) {
         try {
-            return await this.networkRepository.getAllUsers(userId);
+            return await this.userRepository.getAllUsers(search,userId);
         } catch (error) {
             console.log(error as Error);
         }

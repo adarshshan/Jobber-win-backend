@@ -24,6 +24,21 @@ class UserRepository {
             return null;
         }
     }
+    async getAllUsers(search: string | undefined, userId: string) {
+        try {
+            const keyword = search ? {
+                $or: [
+                    { name: { $regex: search, $options: 'i' } },
+                    { email: { $regex: search, $options: 'i' } }
+                ]
+            } : {}
+            const allUsers = await userModel.find(keyword).find({ _id: { $ne: userId } });
+            console.log(allUsers); console.log('this is the final reult');
+            return allUsers;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async getUserById(id: string): Promise<UserInterface | null> {
         try {
             return await userModel.findById(id);

@@ -13,8 +13,9 @@ class JobController {
     async getAllJobs(req: Request, res: Response) {
         try {
             const userId = req.userId;
+            const search: any = req.query.search;
             if (userId) {
-                const result = await this.jobService.getAllJobs(userId);
+                const result = await this.jobService.getAllJobs(search, userId);
                 if (result) res.json({ success: true, data: result, message: 'Successfully fetched all job details' });
                 else res.json({ success: false, message: "somthing went wrong while fetching the job details!" });
             }

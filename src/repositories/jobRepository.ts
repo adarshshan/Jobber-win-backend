@@ -7,33 +7,43 @@ import userModel from "../models/userModel";
 
 class JobRepository {
 
-    async getAllJobs(userId: string) {
+    async getAllJobs(search: string | undefined, userId: string) {
         try {
-            const alljobs = await jobModel.aggregate([
-                { $lookup: { from: 'users', localField: 'recruiterId', foreignField: '_id', as: 'recruiter_details' } },
-                { $addFields: { recruiter_details: { $first: '$recruiter_details' } } }
-            ]);
+            const keyword = search ? {
+                $or: [
+                    { title: { $regex: search, $options: 'i' } },
+                    { company_name: { $regex: search, $options: 'i' } },
+                    { industry: { $regex: search, $options: 'i' } },
+                    { location: { $regex: search, $options: 'i' } },
+                    { job_type: { $regex: search, $options: 'i' } }
+                ]
+            } : {}
+            const alljobs=await jobModel.find(keyword);
+            // const alljobs = await jobModel.aggregate([
+            //     { $lookup: { from: 'users', localField: 'recruiterId', foreignField: '_id', as: 'recruiter_details' } },
+            //     { $addFields: { recruiter_details: { $first: '$recruiter_details' } } }
+            // ]);
 
             var userSkills: string[] | any = await userModel.findOne({ _id: userId }, { skills: 1 });
             if (userSkills) userSkills = userSkills.skills;
 
             const jobs = await jobModel.aggregate([
                 {
-                  $addFields: {
-                    matchedSkills: {
-                      $size: {
-                        $setIntersection: [ "$skills", userSkills ]
-                      }
+                    $addFields: {
+                        matchedSkills: {
+                            $size: {
+                                $setIntersection: ["$skills", userSkills]
+                            }
+                        }
                     }
-                  }
                 },
                 {
-                  $match: {
-                    matchedSkills: { $gte: 1 }
-                  }
+                    $match: {
+                        matchedSkills: { $gte: 1 }
+                    }
                 }
-              ]);
-            return {jobs,alljobs}
+            ]);
+            return { jobs, alljobs }
         } catch (error) {
             console.log(error as Error);
         }
