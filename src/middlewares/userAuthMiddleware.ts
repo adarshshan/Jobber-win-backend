@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { CreateJWT } from '../utils/generateToken';
 import UserRepository from '../repositories/userRepository';
 import { STATUS_CODES } from '../constants/httpStatusCodes';
+import UserInterface from '../interfaces/entityInterface/Iuser';
 
 const { UNAUTHORIZED } = STATUS_CODES
 
@@ -13,7 +14,8 @@ dotenv.config()
 declare global {
     namespace Express {
         interface Request {
-            userId?: string
+            userId?: string,
+            user?: UserInterface|null ,
         }
     }
 }
@@ -31,6 +33,7 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
                 return res.status(UNAUTHORIZED).json({ success: false, message: "User is blocked by admin!" })
             } else {
                 req.userId = decoded.toString();
+                req.user=user;
                 next();
             }
         } else {
