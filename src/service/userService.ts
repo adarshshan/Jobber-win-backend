@@ -125,7 +125,6 @@ class userService {
         }
     }
     async getUserByEmail(email: string): Promise<UserInterface | null> {
-        console.log(email + 'from service');
         return this.userRepository.emailExistCheck(email);
     }
     generateToken(payload: string | undefined): string | undefined {
@@ -170,6 +169,13 @@ class userService {
     async editUserDetails(name: string, phoneNumber: number, gender: string, location: string, headLine: string, qualification: string, userId: string) {
         try {
             return await this.userRepository.editUserDetails(name, phoneNumber, gender, location, headLine, qualification, userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async updateNewPassword(password: string, userId: string) {
+        try {
+            return await this.userRepository.updateNewPassword(password, userId);
         } catch (error) {
             console.log(error as Error);
         }

@@ -109,6 +109,51 @@ class userController {
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
         }
     }
+    async ForgotresentOtp(req: Request, res: Response) {
+        try {
+            const { email } = req.body;
+            if (!email) return res.status(BAD_REQUEST).json({ success: false, message: 'please enter the email' });
+            const user = await this.userServices.getUserByEmail(email);
+            if (!user) return res.status(BAD_REQUEST).json({ success: false, message: 'user with email is not exist!' });
+
+            const otp = await generateAndSendOTP(email);
+            req.app.locals.resendOtp = otp;
+
+            const expirationMinutes = 5;
+            setTimeout(() => {
+                delete req.app.locals.resendOtp;
+            }, expirationMinutes * 60 * 1000);
+
+            res.status(OK).json({ success: true, data: user, message: 'OTP sent for verification...' });
+        } catch (error) {
+            console.log(error as Error);
+            res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error occured!' });
+        }
+    }
+    async VerifyForgotOtp(req: Request, res: Response) {
+        try {
+            const otp = req.body.otp;
+            if (!otp) return res.json({ success: false, message: 'Please enter the otp!' });
+            if (!req.app.locals.resendOtp) return res.json({ success: false, message: 'Otp is expired!' });
+            if (otp === req.app.locals.resendOtp) res.json({ success: true, message: 'both otp are same.' });
+            else res.json({ success: false, message: 'Entered otp is not correct!' })
+        } catch (error) {
+            console.log(error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
+    async updateNewPassword(req: Request, res: Response) {
+        try {
+            const { password, userId } = req.body;
+            const result = await this.userServices.updateNewPassword(password, userId);
+            console.log(result);
+            if (result) res.json({ success: true, data: result, message: 'successful' });
+            else res.json({ success: false, message: 'somthing went wrong!' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
     async veryfyOtp(req: Request, res: Response): Promise<void> {
         try {
             const { otp } = req.body;

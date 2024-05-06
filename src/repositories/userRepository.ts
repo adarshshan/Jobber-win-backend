@@ -6,7 +6,6 @@ import mongoose, { ObjectId } from 'mongoose';
 class UserRepository {
     async emailExistCheck(email: string): Promise<UserInterface | null> {
         try {
-            console.log(email); console.log('your email');
             const userFound = await userModel.findOne({ email: email });
             return userFound as UserInterface;
         } catch (error) {
@@ -152,6 +151,16 @@ class UserRepository {
             }
             const updatedUser = await user?.save();
             return updatedUser
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async updateNewPassword(password: string, userId: string) {
+        try {
+            const user = await userModel.findById(userId);
+            if (user) user.password = password;
+            const updatedUser = await user?.save();
+            return updatedUser;
         } catch (error) {
             console.log(error as Error);
         }

@@ -28,6 +28,9 @@ const controller = new userController(userServices);
 userRouter.post('/login', async (req: Request, res: Response) => await controller.userLogin(req, res));
 userRouter.post('/google-login', async (req: Request, res: Response, next: NextFunction) => await controller.googleLogin(req, res, next));
 userRouter.post('/registration', async (req: Request, res: Response) => await controller.userSingnup(req, res));
+userRouter.post('/forgot-password', async (req: Request, res: Response) => await controller.ForgotresentOtp(req, res));
+userRouter.post('/verify-forgot-otp', async (req: Request, res: Response) => await controller.VerifyForgotOtp(req, res));
+userRouter.put('/update-newpassword', async (req: Request, res: Response) => await controller.updateNewPassword(req, res));
 userRouter.post('/veryfy-otp', async (req: Request, res: Response) => await controller.veryfyOtp(req, res));
 userRouter.get('/logout', async (req: Request, res: Response) => await controller.logout(req, res));
 userRouter.get('/profile', authenticate, async (req: Request, res: Response) => await controller.getProfile(req, res));
@@ -56,7 +59,7 @@ userRouter.get('/get-posts-home', async (req: Request, res: Response) => await p
 
 //netWorkcontroller
 const networkRepository = new NetworkRepository();
-const networkService = new NetworkService(networkRepository,userRepository);
+const networkService = new NetworkService(networkRepository, userRepository);
 const networkController = new NetworkController(networkService);
 
 userRouter.get('/get-alluser', authenticate, async (req: Request, res: Response) => await networkController.getAllUsers(req, res));
