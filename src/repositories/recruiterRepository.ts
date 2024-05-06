@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import { JobInterface } from "../controllers/recruiterController";
+import jobApplicationModel from "../models/jobApplicationModel";
 import jobModel from "../models/jobModel";
 
 
@@ -34,6 +36,26 @@ class RecruiterRepository {
     async editJobs() {
         try {
             console.log('reached at the end of the line at editJobs function');
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllApplications(userId: string) {
+        try {
+            const ObjectId = mongoose.Types.ObjectId;
+            const Id = new ObjectId(userId)
+            const applications: any = await jobApplicationModel.find()
+                .populate("userId", "-password")
+                .populate({
+                    path: 'jobId',
+                    populate: {
+                        path: 'recruiterId'
+                    }
+                })
+            const result: any = applications.filter((item: any) => {
+                return item.jobId.recruiterId._id == userId
+            })
+            return result;
         } catch (error) {
             console.log(error as Error);
         }

@@ -26,7 +26,7 @@ const adminSchema: Schema = new Schema({
     },
     recruiterId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: [true, 'User id is Required!'],
     },
     company_name: {

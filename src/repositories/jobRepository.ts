@@ -9,6 +9,7 @@ class JobRepository {
 
     async getAllJobs(search: string | undefined, userId: string) {
         try {
+            console.log('the search query is '+search);
             const keyword = search ? {
                 $or: [
                     { title: { $regex: search, $options: 'i' } },

@@ -109,9 +109,27 @@ class userController {
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
         }
     }
+    async resendOtp(req: Request, res: Response): Promise<void> {
+        try {
+            const email = req.app.locals.userEmail;
+            const otp = await generateAndSendOTP(email);
+            req.app.locals.userOtp = otp;
+            req.app.locals.resendOtp = otp;
+
+            const expirationMinutes = 5;
+            setTimeout(() => {
+                delete req.app.locals.userOtp;
+                delete req.app.locals.resendOtp;
+            }, expirationMinutes * 60 * 1000);
+
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async ForgotresentOtp(req: Request, res: Response) {
         try {
             const { email } = req.body;
+            req.app.locals.userEmail = email;
             if (!email) return res.status(BAD_REQUEST).json({ success: false, message: 'please enter the email' });
             const user = await this.userServices.getUserByEmail(email);
             if (!user) return res.status(BAD_REQUEST).json({ success: false, message: 'user with email is not exist!' });

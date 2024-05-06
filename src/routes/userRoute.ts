@@ -28,6 +28,7 @@ const controller = new userController(userServices);
 userRouter.post('/login', async (req: Request, res: Response) => await controller.userLogin(req, res));
 userRouter.post('/google-login', async (req: Request, res: Response, next: NextFunction) => await controller.googleLogin(req, res, next));
 userRouter.post('/registration', async (req: Request, res: Response) => await controller.userSingnup(req, res));
+userRouter.get('/resend-otp', async (req: Request, res: Response) => await controller.resendOtp(req, res));
 userRouter.post('/forgot-password', async (req: Request, res: Response) => await controller.ForgotresentOtp(req, res));
 userRouter.post('/verify-forgot-otp', async (req: Request, res: Response) => await controller.VerifyForgotOtp(req, res));
 userRouter.put('/update-newpassword', async (req: Request, res: Response) => await controller.updateNewPassword(req, res));

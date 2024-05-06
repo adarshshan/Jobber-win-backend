@@ -13,14 +13,14 @@ export interface JobApplicationInterface extends Document {
 const jobApplicationSchema: Schema = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
+        ref: 'User'
     },
     resume: {
         type: String,
     },
     jobId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Job'
+        ref: 'job'
     },
     status: {
         type: String,

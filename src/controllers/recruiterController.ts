@@ -5,7 +5,7 @@ export interface JobInterface {
     title: string;
     company_name: string;
     industry: string;
-    job_img:string;
+    job_img: string;
     description: string;
     total_vaccancy: number;
     location: string;
@@ -57,6 +57,19 @@ class RecruiterController {
             const result = await this.recruiterService.editJobs();
         } catch (error) {
             console.log(error as Error);
+        }
+    }
+    async getAllApplications(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.recruiterService.getAllApplications(userId);
+                if (result) res.json({ success: true, data: result, message: 'success' });
+                else res.json({ success: false, message: 'Something went wrong while fetching the applications' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal SErver error occured!' });
         }
     }
 }
