@@ -139,7 +139,6 @@ class UserRepository {
     }
     async editUserDetails(name: string, phoneNumber: number, gender: string, location: string, headLine: string, qualification: string, userId: string) {
         try {
-            console.log(name, phoneNumber, gender, location, headLine, qualification, userId);
             const user = await userModel.findById(userId);
             if (user) {
                 user.name = name || user.name;

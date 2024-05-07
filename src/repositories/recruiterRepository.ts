@@ -60,6 +60,17 @@ class RecruiterRepository {
             console.log(error as Error);
         }
     }
+    async changeStatus(status: string, applicationId: string) {
+        try {
+            console.log('this is teh received Id' + applicationId);
+            const application = await jobApplicationModel.findById(applicationId);
+            if (application) application.status = status;
+            const updatedApplication = await application?.save();
+            return updatedApplication;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default RecruiterRepository;

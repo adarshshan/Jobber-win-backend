@@ -15,6 +15,7 @@ recruiterRouter.post('/post-new-job', authenticate, async (req: Request, res: Re
 recruiterRouter.delete('/delete-job', async (req: Request, res: Response) => recruiterController.deleteJob(req, res));
 recruiterRouter.put('/edit-jobs', async (req: Request, res: Response) => recruiterController.editJobs(req, res));
 recruiterRouter.get('/get-all-applications', authenticate, async (req: Request, res: Response) => recruiterController.getAllApplications(req, res));
+recruiterRouter.put('/change-application-states/:status/:applicationId', authenticate, async (req: Request, res: Response) => recruiterController.changeStatus(req, res));
 
 
 export default recruiterRouter;

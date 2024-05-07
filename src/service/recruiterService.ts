@@ -40,6 +40,13 @@ class RecruiterService {
             console.log(error as Error);
         }
     }
+    async changeStatus(status: string,applicationId:string) {
+        try {
+            return await this.recruiterRepository.changeStatus(status,applicationId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default RecruiterService;

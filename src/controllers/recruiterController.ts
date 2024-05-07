@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import RecruiterService from "../service/recruiterService";
+import { json } from "stream/consumers";
 
 export interface JobInterface {
     title: string;
@@ -70,6 +71,17 @@ class RecruiterController {
         } catch (error) {
             console.log(error as Error);
             res.json({ success: false, message: 'Internal SErver error occured!' });
+        }
+    }
+    async changeStatus(req: Request, res: Response) {
+        try {
+            const { status, applicationId } = req.params;
+            const result = await this.recruiterService.changeStatus(status, applicationId);
+            if (result) res.json({ success: true, data: result, message: 'success' });
+            else res.json({ success: false, message: 'Something went wrong while approve/remove' })
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Inernal Server Error occured!' });
         }
     }
 }
