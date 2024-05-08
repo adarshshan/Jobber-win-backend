@@ -34,6 +34,17 @@ class PostController {
             res.json({ success: false, message: 'failed to fetch the data' });
         }
     }
+    async likePost(req: Request, res: Response) {
+        try {
+            const { postId } = req.params;
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.postServices.likePost(postId, userId);
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default PostController;

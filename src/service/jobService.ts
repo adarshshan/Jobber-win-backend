@@ -1,14 +1,15 @@
 import { JobBodyInterface } from "../controllers/jobController";
+import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import JobRepository from "../repositories/jobRepository";
 import UserRepository from "../repositories/userRepository";
 
 
 class JobService {
-    constructor(private jobRepository: JobRepository, private userRepository: UserRepository) { }
+    constructor(private jobRepository: JobRepository, private userRepository: UserRepository, private jobApplicationRepository: JobApplicationRepository) { }
 
-    async getAllJobs(search:string|undefined,userId:string) {
+    async getAllJobs(search: string | undefined, userId: string) {
         try {
-            return await this.jobRepository.getAllJobs(search,userId);
+            return await this.jobRepository.getAllJobs(search, userId);
         } catch (error) {
             console.log(error as Error);
         }
@@ -33,6 +34,13 @@ class JobService {
         try {
             const user = await this.userRepository.getApplied(userId);
             return user;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllApplications(userId: string) {
+        try {
+            return this.jobApplicationRepository.getAllApplications(userId, true);
         } catch (error) {
             console.log(error as Error);
         }

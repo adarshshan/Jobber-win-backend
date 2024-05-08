@@ -13,7 +13,7 @@ export interface PostInterface extends Document {
 const postSchema: Schema<PostInterface> = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
         required: [true, 'User id is Required!'],
         index: true
     },

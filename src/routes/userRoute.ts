@@ -14,6 +14,7 @@ import NetworkRepository from "../repositories/networkRepository";
 import JobRepository from "../repositories/jobRepository";
 import JobService from "../service/jobService";
 import JobController from "../controllers/jobController";
+import JobApplicationRepository from "../repositories/jobApplicationRepository";
 
 
 
@@ -56,6 +57,7 @@ const postController = new PostController(postService);
 userRouter.post('/new-post', async (req: Request, res: Response) => await postController.savePost(req, res))
 userRouter.get('/getposts/:userId', async (req: Request, res: Response) => await postController.getPosts(req, res))
 userRouter.get('/get-posts-home', async (req: Request, res: Response) => await postController.getPostForHome(req, res))
+userRouter.put('/like-post/:postId', authenticate, async (req: Request, res: Response) => await postController.likePost(req, res))
 
 
 //netWorkcontroller
@@ -77,15 +79,17 @@ userRouter.delete('/unfriend/:id', authenticate, async (req: Request, res: Respo
 
 
 //JobController
+const jobApplicationRepository = new JobApplicationRepository();
 const jobRepository = new JobRepository();
-const jobService = new JobService(jobRepository, userRepository);
+const jobService = new JobService(jobRepository, userRepository, jobApplicationRepository);
 const jobController = new JobController(jobService);
 
 
 userRouter.get('/get-all-jobs', authenticate, async (req: Request, res: Response) => await jobController.getAllJobs(req, res));
 userRouter.get('/get-single-jobs/:jobId', async (req: Request, res: Response) => await jobController.getSingleJobDetails(req, res));
 userRouter.post('/apply-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.applyJOb(req, res));
-userRouter.get('/get-saved-applied-jobs', authenticate, async (req: Request, res: Response) => await jobController.getApplied(req, res))
+userRouter.get('/get-saved-applied-jobs', authenticate, async (req: Request, res: Response) => await jobController.getApplied(req, res));
+userRouter.get('/get-all-application', authenticate, async (req: Request, res: Response) => await jobController.getAllApplications(req, res));
 
 
 

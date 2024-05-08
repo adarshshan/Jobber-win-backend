@@ -28,6 +28,13 @@ class PostServices {
             console.log(error as Error);
         }
     }
+    async likePost(postId: string, userId: string) {
+        try {
+            return await this.PostRepository.likePost(postId, userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default PostServices;

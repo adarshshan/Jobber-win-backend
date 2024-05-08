@@ -14,7 +14,7 @@ class JobController {
         try {
             const userId = req.userId;
             const search: any = req.query.search;
-            console.log(search);console.log('serarch from controller');
+            console.log(search); console.log('serarch from controller');
             if (userId) {
                 const result = await this.jobService.getAllJobs(search, userId);
                 if (result) res.json({ success: true, data: result, message: 'Successfully fetched all job details' });
@@ -62,6 +62,19 @@ class JobController {
         } catch (error) {
             console.log(error as Error);
             res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
+    async getAllApplications(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.jobService.getAllApplications(userId);
+                if (result) res.json({ success: true, data: result, message: 'success' });
+                else res.json({ success: false, message: 'Something went wrong while fetching the details!' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error!' });
         }
     }
 }

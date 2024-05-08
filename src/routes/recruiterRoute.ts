@@ -3,11 +3,13 @@ import authenticate from '../middlewares/userAuthMiddleware';
 import RecruiterRepository from "../repositories/recruiterRepository";
 import RecruiterService from "../service/recruiterService";
 import RecruiterController from "../controllers/recruiterController";
+import JobApplicationRepository from "../repositories/jobApplicationRepository";
 
 const recruiterRouter: Router = express.Router();
 
+const jobApplicationRepository = new JobApplicationRepository();
 const recruiterRepository = new RecruiterRepository();
-const recruiterService = new RecruiterService(recruiterRepository);
+const recruiterService = new RecruiterService(recruiterRepository,jobApplicationRepository);
 const recruiterController = new RecruiterController(recruiterService);
 
 recruiterRouter.get('/get-alljobs', authenticate, async (req: Request, res: Response) => recruiterController.getAllJobs(req, res));

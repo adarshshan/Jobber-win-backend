@@ -1,9 +1,10 @@
 import { JobInterface } from "../controllers/recruiterController";
+import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import RecruiterRepository from "../repositories/recruiterRepository";
 
 
 class RecruiterService {
-    constructor(private recruiterRepository: RecruiterRepository) { }
+    constructor(private recruiterRepository: RecruiterRepository, private jobApplicationRepository: JobApplicationRepository) { }
 
     async getAllJobs(userId: string) {
         try {
@@ -35,14 +36,14 @@ class RecruiterService {
     }
     async getAllApplications(userId: string) {
         try {
-            return await this.recruiterRepository.getAllApplications(userId);
+            return await this.jobApplicationRepository.getAllApplications(userId);
         } catch (error) {
             console.log(error as Error);
         }
     }
-    async changeStatus(status: string,applicationId:string) {
+    async changeStatus(status: string, applicationId: string) {
         try {
-            return await this.recruiterRepository.changeStatus(status,applicationId);
+            return await this.recruiterRepository.changeStatus(status, applicationId);
         } catch (error) {
             console.log(error as Error);
         }

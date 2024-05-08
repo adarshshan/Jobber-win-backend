@@ -1,6 +1,8 @@
 import mongoose, { ObjectId } from 'mongoose';
 import IPostInterface from '../interfaces/entityInterface/Ipost';
 import PostModel from '../models/postModel';
+import LikeModel from '../models/likeModel';
+
 
 
 class PostRepository {
@@ -53,6 +55,14 @@ class PostRepository {
             return data;
         } catch (error) {
             console.log(error as Error);
+        }
+    }
+    async likePost(postId: string, userId: string) {
+        try {
+            const post = await LikeModel.findById(postId);
+            console.log(post);
+        } catch (error) {
+            console.log(error as Error)
         }
     }
 }

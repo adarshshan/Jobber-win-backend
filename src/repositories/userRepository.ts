@@ -82,8 +82,8 @@ class UserRepository {
                     }
                 }
             ])
-            return user[0].appliedJobs;
-
+            if (user[0]?.appliedJobs === undefined) return [];
+            else return user[0]?.appliedJobs;
         } catch (error) {
             console.log(error as Error);
         }

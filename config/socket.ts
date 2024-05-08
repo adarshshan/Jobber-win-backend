@@ -1,3 +1,5 @@
+import { Socket } from "socket.io";
+
 const { Server } = require("socket.io");
 
 function socketServer(server: any) {
@@ -8,9 +10,8 @@ function socketServer(server: any) {
         }
     });
 
-    io.on('connection', (socket: any) => {
+    io.on('connection', (socket: Socket) => {
 
-        console.log('New user connected');
 
         socket.on('sendMessage', (message: any) => {
             io.emit('message', message);
