@@ -40,10 +40,26 @@ class PostController {
             const userId = req.userId;
             if (userId) {
                 const result = await this.postServices.likePost(postId, userId);
+                if (result) res.json(result);
+                else res.json({ success: false, message: 'Something went wrong! please try again.' });
             }
         } catch (error) {
-            console.log('errror spotted here...');
             console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
+    async unLikePost(req: Request, res: Response) {
+        try {
+            const { postId } = req.params;
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.postServices.unLikePost(postId, userId);
+                if (result) res.json(result);
+                else res.json({ success: false, message: 'Something went wrong! please try again.' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Inernal server Error occured!' });
         }
     }
     async getLikes(req: Request, res: Response) {

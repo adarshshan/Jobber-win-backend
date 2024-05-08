@@ -58,6 +58,7 @@ class PostRepository {
             if (!liked) {
                 const newLike = new LikeModel({ postId: postId, likedUsers: [{ userId: userId }] });
                 await newLike.save();
+                return { success: true, data: newLike, message: 'successfully liked the post' };
             } else {
                 const userIdExists = liked.likedUsers.some(user => user.userId === userId);
 
@@ -70,11 +71,31 @@ class PostRepository {
                     if (likee) {
                         likee.likeCount = likee.likedUsers.length;
                         await likee.save();
+                        return { success: true, data: likee, message: 'user liked successfully!' };
                     }
-                } else console.log('userid is already exists');
+                } else {
+                    return { success: false, message: 'user liked already!' };
+                }
             }
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async unLikePost(postId: string, userId: string) {
+        try {
+            const likee = await LikeModel.findOneAndUpdate(
+                { postId: postId },
+                { $pull: { likedUsers: { userId: userId } } },
+                { new: true }
+            );
+            if (likee) {
+                likee.likeCount = likee.likedUsers.length;
+                await likee.save();
+                return { success: true, data: likee, message: 'unlike success!' };
+            } else return { success: false, message: 'somthing went wrong!' }
+        } catch (error) {
+            console.log(error as Error);
         }
     }
 

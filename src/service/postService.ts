@@ -34,6 +34,13 @@ class PostServices {
             console.log(error as Error);
         }
     }
+    async unLikePost(postId: string, userId: string) {
+        try {
+            return await this.PostRepository.unLikePost(postId, userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async getLikes(postId: string) {
         try {
             return await this.PostRepository.getLikes(postId);
