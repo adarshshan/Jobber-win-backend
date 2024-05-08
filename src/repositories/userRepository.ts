@@ -32,7 +32,6 @@ class UserRepository {
                 ]
             } : {}
             const allUsers = await userModel.find(keyword).find({ _id: { $ne: userId } });
-            console.log(allUsers); console.log('this is the final reult');
             return allUsers;
         } catch (error) {
             console.log(error as Error);

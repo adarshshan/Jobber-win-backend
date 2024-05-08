@@ -6,7 +6,6 @@ class PostServices {
 
     async savePost(userId: string, imageUrl: string, caption: string) {
         try {
-            console.log(userId, imageUrl, caption); console.log('the function invoked from postServices...');
             const result = await this.PostRepository.savePost(userId, imageUrl, caption);
             return result;
         } catch (error) {
@@ -31,6 +30,13 @@ class PostServices {
     async likePost(postId: string, userId: string) {
         try {
             return await this.PostRepository.likePost(postId, userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getLikes(postId: string) {
+        try {
+            return await this.PostRepository.getLikes(postId);
         } catch (error) {
             console.log(error as Error);
         }

@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import ChatService from "../service/chatService";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
-import chatModel from "../models/chatModel";
-import userModel from "../models/userModel";
 
 
 class ChatController {
@@ -13,11 +11,9 @@ class ChatController {
             const { userId } = req.body
             const current_userId = req.userId;
             if (!userId) {
-                console.log('userid param is not send with the request...');
                 return res.sendStatus(400);
             }
             if (!current_userId) {
-                console.log('the user is not authenticated...');
                 return res.sendStatus(400);
             }
             const chat = await this.chatService.accessChat(userId, current_userId);

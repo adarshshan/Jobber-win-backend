@@ -9,7 +9,6 @@ class JobRepository {
 
     async getAllJobs(search: string | undefined, userId: string) {
         try {
-            console.log('the search query is '+search);
             const keyword = search ? {
                 $or: [
                     { title: { $regex: search, $options: 'i' } },
@@ -20,10 +19,6 @@ class JobRepository {
                 ]
             } : {}
             const alljobs=await jobModel.find(keyword);
-            // const alljobs = await jobModel.aggregate([
-            //     { $lookup: { from: 'users', localField: 'recruiterId', foreignField: '_id', as: 'recruiter_details' } },
-            //     { $addFields: { recruiter_details: { $first: '$recruiter_details' } } }
-            // ]);
 
             var userSkills: string[] | any = await userModel.findOne({ _id: userId }, { skills: 1 });
             if (userSkills) userSkills = userSkills.skills;
@@ -80,7 +75,7 @@ class JobRepository {
                 { $lookup: { from: 'users', localField: 'recruiterId', foreignField: '_id', as: 'recruiter_details' } },
                 { $addFields: { recruiter_details: { $first: '$recruiter_details' } } }
             ])
-            console.log(job[0]);
+            // console.log(job[0]);
             return job[0];
         } catch (error) {
             console.log(error as Error);

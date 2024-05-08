@@ -1,16 +1,14 @@
-import mongoose, { ObjectId } from 'mongoose';
+import mongoose, { ObjectId, mongo } from 'mongoose';
 import IPostInterface from '../interfaces/entityInterface/Ipost';
 import PostModel from '../models/postModel';
 import LikeModel from '../models/likeModel';
+import { pid } from 'process';
 
 
 
 class PostRepository {
     async savePost(userId: string, imageUrl: string, caption: string): Promise<IPostInterface | null> {
         try {
-            console.log(userId, imageUrl, caption);
-            console.log('The function is called from the PostRepository...');
-            console.log(imageUrl);
 
             const newPost = new PostModel({
                 userId,
@@ -19,7 +17,6 @@ class PostRepository {
             });
 
             await newPost.save();
-            console.log('Data saved in repository', newPost);
 
             const postObject: IPostInterface = newPost.toObject(); // Convert Mongoose document to plain JavaScript object
             return postObject;
@@ -30,9 +27,7 @@ class PostRepository {
     }
     async getPosts(userId: string) {
         try {
-            console.log('Yess, reached at the end and your id is ')
             const data = await PostModel.find({ userId }).sort({ createdAt: -1 });
-            console.log(data); console.log('this is your all data..');
             return data;
         } catch (error) {
             console.log(error as Error);
@@ -51,7 +46,6 @@ class PostRepository {
                     }
                 }
             ]).sort({ createdAt: -1 });
-            console.log(data);
             return data;
         } catch (error) {
             console.log(error as Error);
@@ -59,10 +53,38 @@ class PostRepository {
     }
     async likePost(postId: string, userId: string) {
         try {
-            const post = await LikeModel.findById(postId);
-            console.log(post);
+            const liked = await LikeModel.findOne({ postId: postId });
+
+            if (!liked) {
+                const newLike = new LikeModel({ postId: postId, likedUsers: [{ userId: userId }] });
+                await newLike.save();
+            } else {
+                const userIdExists = liked.likedUsers.some(user => user.userId === userId);
+
+                if (!userIdExists) {
+                    const likee = await LikeModel.findOneAndUpdate(
+                        { postId: postId },
+                        { $addToSet: { likedUsers: { userId: userId } } },
+                        { new: true }
+                    );
+                    if (likee) {
+                        likee.likeCount = likee.likedUsers.length;
+                        await likee.save();
+                    }
+                } else console.log('userid is already exists');
+            }
         } catch (error) {
-            console.log(error as Error)
+            console.log(error);
+        }
+    }
+
+    async getLikes(postId: string) {
+        try {
+            const likeDetails = await LikeModel.findOne({ postId: postId });
+            return likeDetails;
+        } catch (error) {
+            console.log(error as Error);
+            console.log('The error is here...');
         }
     }
 }

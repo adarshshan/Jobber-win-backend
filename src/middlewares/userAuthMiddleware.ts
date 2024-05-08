@@ -15,16 +15,15 @@ declare global {
     namespace Express {
         interface Request {
             userId?: string,
-            user?: UserInterface|null ,
+            user?: UserInterface | null,
         }
     }
 }
 
 const userAuth = async (req: Request, res: Response, next: NextFunction) => {
     let token = req.cookies.access_token;
-    if (!token) {
-        return res.status(401).json({ success: false, message: "Unauthorized - No token provided" })
-    }
+    if (!token) return res.status(401).json({ success: false, message: "Unauthorized - No token provided" })
+
     try {
         const decoded = jwt.verifyToken(token);
         if (decoded) {
@@ -33,7 +32,7 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
                 return res.status(UNAUTHORIZED).json({ success: false, message: "User is blocked by admin!" })
             } else {
                 req.userId = decoded.toString();
-                req.user=user;
+                req.user = user;
                 next();
             }
         } else {

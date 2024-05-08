@@ -42,7 +42,19 @@ class PostController {
                 const result = await this.postServices.likePost(postId, userId);
             }
         } catch (error) {
+            console.log('errror spotted here...');
             console.log(error as Error);
+        }
+    }
+    async getLikes(req: Request, res: Response) {
+        try {
+            const { postId } = req.params;
+            const result = await this.postServices.getLikes(postId);
+            if (result) res.json({ success: true, data: result, message: 'success' });
+            else res.json({ success: false, message: 'no likes found!' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'internal server error!' });
         }
     }
 }

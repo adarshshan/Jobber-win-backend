@@ -61,9 +61,6 @@ class NetworkRepository {
             await receiver.save();
             await sender.save();
 
-            console.log(receiver, 'this is the receiver details');
-            console.log(sender, 'this is the sender details');
-
             return { success: true, receiver, sender };
         } catch (error) {
             console.log(error as Error);
@@ -163,7 +160,6 @@ class NetworkRepository {
     }
     async getAllsendReqDetails(userId: string) {
         try {
-            console.log(userId); console.log('userId is reached...');
             const id = new mongoose.Types.ObjectId(userId);
             const requestSendDetails = await userModel.aggregate([
                 {
@@ -184,7 +180,6 @@ class NetworkRepository {
     }
     async withdrawSentRequest(userId: string, id: string) {
         try {
-            console.log(`this is the end of the line ${userId} and the id is ${id}`);
             const updated = await connectionModel.updateOne({ userId }, { $pull: { requestsSend: id } });
             return updated;
         } catch (error) {

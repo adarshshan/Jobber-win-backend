@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import NetworkService from "../service/networkService";
-import { PostInterface } from "../models/postModel";
 
 
 class NetworkController {
@@ -8,7 +7,6 @@ class NetworkController {
 
     async getAllUsers(req: Request, res: Response) {
         try {
-            console.log(req.userId);
             const search:any = req.query.search;
             if (req.userId) {
                 const result = await this.networkService.getAllUsers(search, req.userId);

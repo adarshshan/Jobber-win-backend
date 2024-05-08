@@ -16,7 +16,6 @@ class RecruiterRepository {
     }
     async postNewJob(data: JobInterface, userId: string) {
         try {
-            console.log(data);
             const newJob = new jobModel({
                 ...data,
                 recruiterId: userId
@@ -40,29 +39,8 @@ class RecruiterRepository {
             console.log(error as Error);
         }
     }
-    // async getAllApplications(userId: string) {
-    //     try {
-    //         const ObjectId = mongoose.Types.ObjectId;
-    //         const Id = new ObjectId(userId)
-    //         const applications: any = await jobApplicationModel.find()
-    //             .populate("userId", "-password")
-    //             .populate({
-    //                 path: 'jobId',
-    //                 populate: {
-    //                     path: 'recruiterId'
-    //                 }
-    //             })
-    //         const result: any = applications.filter((item: any) => {
-    //             return item.jobId.recruiterId._id == userId
-    //         })
-    //         return result;
-    //     } catch (error) {
-    //         console.log(error as Error);
-    //     }
-    // }
     async changeStatus(status: string, applicationId: string) {
         try {
-            console.log('this is teh received Id' + applicationId);
             const application = await jobApplicationModel.findById(applicationId);
             if (application) application.status = status;
             const updatedApplication = await application?.save();

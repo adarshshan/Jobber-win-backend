@@ -1,25 +1,28 @@
 import mongoose, { Model, Schema, Types } from "mongoose";
 
+interface IlikedUsers {
+    userId: string;
+}
 interface LikeDocument extends Document {
-    postId: Types.ObjectId;
-    likedUsers: Types.ObjectId[];
+    postId: string;
+    likedUsers: IlikedUsers[];
     likeCount: number;
     createdAt: Date;
     updatedAt: Date;
 }
+
 const likeSchema: Schema<LikeDocument> = new Schema({
     postId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post',
+        type: String,
+        ref: 'post',
         required: [true, "Post ID is required"],
-        index: true,
-        unique: true
     },
     likedUsers: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: [true, "User ID is required"],
-        unique: true
+        userId: {
+            type: String,
+            ref: 'User',
+            required: [true, "User ID is required"],
+        }
     }],
     likeCount: {
         type: Number,
@@ -30,9 +33,18 @@ const likeSchema: Schema<LikeDocument> = new Schema({
 });
 
 likeSchema.pre('save', async function (next) {
-    this.likeCount = this.likedUsers.length;
-    next();
+    try {
+        this.likeCount = this.likedUsers.length;
+        next();
+    } catch (error) {
+        console.log(error as Error);
+        next(error as Error);
+        console.log('here is the error')
+    }
 })
+
+
+
 
 const LikeModel: Model<LikeDocument> = mongoose.model<LikeDocument>('like', likeSchema)
 export default LikeModel;
