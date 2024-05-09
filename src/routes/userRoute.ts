@@ -93,6 +93,8 @@ userRouter.post('/apply-job/:jobId', authenticate, async (req: Request, res: Res
 userRouter.get('/get-saved-applied-jobs', authenticate, async (req: Request, res: Response) => await jobController.getApplied(req, res));
 userRouter.get('/get-all-application', authenticate, async (req: Request, res: Response) => await jobController.getAllApplications(req, res));
 userRouter.put('/save-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.saveJobs(req, res));
+userRouter.delete('/save-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.unSaveJobs(req, res));
+userRouter.get('/savedjobs', authenticate, async (req: Request, res: Response) => await jobController.getAllSavedJobs(req, res));
 
 
 

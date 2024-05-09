@@ -90,6 +90,33 @@ class JobController {
             console.log(error as Error);
         }
     }
+    async unSaveJobs(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            const { jobId } = req.params;
+            if (userId) {
+                const result = await this.jobService.unSaveJobs(userId, jobId);
+                if (result) res.json({ success: true, data: result, message: 'job removed from the list.' });
+                else res.json({ success: false, message: 'something went wrong while removing the saved job!' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'internal Server error occured!' });
+        }
+    }
+    async getAllSavedJobs(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.jobService.getAllSavedJobs(userId);
+                if (result) res.json({ success: true, data: result, message: 'Data fetched successfully' })
+                else res.json({ success: false, message: 'something went wrong!' })
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'internal server error' });
+        }
+    }
 }
 
 export default JobController;

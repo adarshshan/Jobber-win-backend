@@ -177,7 +177,6 @@ class UserRepository {
                         { $addToSet: { savedJobs: { jobId: jobId } } },
                         { new: true }
                     )
-                    console.log(user);
                     return { success: true, data: user, message: 'successfully saved the job' } as const;
                 } else return { success: false, message: 'already saved the job' } as const;
             } else return { success: false, message: `unauthorized user, couldn't load the saved list` };
@@ -193,11 +192,20 @@ class UserRepository {
                 { $pull: { savedJobs: { jobId: jobId } } },
                 { new: true }
             )
-            if (user) console.log('the job removed form the saved job list');
             return user
         } catch (error) {
             console.error(error)
             return null
+        }
+    }
+    async getAllSavedJobs(userId: string) {
+        try {
+            const allData = await userModel.findById(userId)
+                .populate('savedJobs.jobId');
+            const savedJobs = allData?.savedJobs?.map((item) => item.jobId);
+            return savedJobs;
+        } catch (error) {
+            console.log(error as Error);
         }
     }
 
