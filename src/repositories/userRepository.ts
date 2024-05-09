@@ -166,13 +166,23 @@ class UserRepository {
 
     async saveJob(userId: string, jobId: string) {
         try {
-            const user = await userModel.findByIdAndUpdate(userId,
-                { $push: { savedJobs: { jobId: jobId } } },
-                { new: true }
-            )
-            return user
+            const User = await userModel.findById(userId);
+            if (User) {
+                let savedJobs;
+                if (User.savedJobs?.length) {
+                    savedJobs = User?.savedJobs.some(user => user.jobId === jobId);
+                }
+                if (!savedJobs) {
+                    const user = await userModel.findByIdAndUpdate(userId,
+                        { $addToSet: { savedJobs: { jobId: jobId } } },
+                        { new: true }
+                    )
+                    console.log(user);
+                    return { success: true, data: user, message: 'successfully saved the job' } as const;
+                } else return { success: false, message: 'already saved the job' } as const;
+            } else return { success: false, message: `unauthorized user, couldn't load the saved list` };
         } catch (error) {
-            console.error(error)
+            console.error(error as Error);
             return null
         }
     }

@@ -45,6 +45,13 @@ class JobService {
             console.log(error as Error);
         }
     }
+    async saveJobs(userId: string, jobId: string) {
+        try {
+            return await this.userRepository.saveJob(userId, jobId)
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default JobService;
