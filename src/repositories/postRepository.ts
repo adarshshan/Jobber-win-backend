@@ -101,11 +101,10 @@ class PostRepository {
 
     async getLikes(postId: string) {
         try {
-            const likeDetails = await LikeModel.findOne({ postId: postId });
+            const likeDetails = await LikeModel.findOne({ postId: postId }).populate('likedUsers.userId');
             return likeDetails;
         } catch (error) {
             console.log(error as Error);
-            console.log('The error is here...');
         }
     }
 }

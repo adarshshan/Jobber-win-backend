@@ -14,7 +14,7 @@ class JobController {
         try {
             const userId = req.userId;
             const search: any = req.query.search;
-            console.log(search); console.log('serarch from controller');
+            console.log(search);
             if (userId) {
                 const result = await this.jobService.getAllJobs(search, userId);
                 if (result) res.json({ success: true, data: result, message: 'Successfully fetched all job details' });
