@@ -246,6 +246,20 @@ class userController {
             console.log(error as Error);
         }
     }
+    async reportUser(req: Request, res: Response) {
+        try {
+            const { reason } = req.body;
+            const { postId } = req.params;
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.userServices.reportUser(postId, reason, userId);
+                return res.json(result);
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured...' });
+        }
+    }
     async deleteProfilePic(req: Request, res: Response) {
         try {
             const userId = req.params.userId;

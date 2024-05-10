@@ -15,6 +15,7 @@ import JobRepository from "../repositories/jobRepository";
 import JobService from "../service/jobService";
 import JobController from "../controllers/jobController";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
+import ReportRepository from "../repositories/reportRepository";
 
 
 
@@ -22,8 +23,9 @@ const userRouter: Router = express.Router();
 
 const encrypt = new Encrypt();
 const createjwt = new CreateJWT();
+const reportRepository = new ReportRepository()
 const userRepository = new UserRepository()
-const userServices = new userService(userRepository, encrypt, createjwt);
+const userServices = new userService(userRepository, encrypt, createjwt, reportRepository);
 const controller = new userController(userServices);
 
 userRouter.post('/login', async (req: Request, res: Response) => await controller.userLogin(req, res));
@@ -38,13 +40,14 @@ userRouter.get('/logout', async (req: Request, res: Response) => await controlle
 userRouter.get('/profile', authenticate, async (req: Request, res: Response) => await controller.getProfile(req, res));
 
 userRouter.put('/edit-user/:userId', async (req: Request, res: Response) => await controller.editUserDetails(req, res));
-userRouter.put('/edit-about/:id', async (req: Request, res: Response) => await controller.changeAboutInfo(req, res));
-userRouter.put('/set-profile', async (req: Request, res: Response) => await controller.setProfilePic(req, res));
+userRouter.put('/edit-about/:id', authenticate, async (req: Request, res: Response) => await controller.changeAboutInfo(req, res));
+userRouter.put('/set-profile', authenticate, async (req: Request, res: Response) => await controller.setProfilePic(req, res));
 userRouter.delete('/delete-profile/:userId', async (req: Request, res: Response) => await controller.deleteProfilePic(req, res));
 userRouter.patch('/add-skill/:id', async (req: Request, res: Response) => await controller.addSkill(req, res));
 userRouter.get('/get-skills/:id', async (req: Request, res: Response) => await controller.getAllSkill(req, res));
 userRouter.delete('/remove-skill/:skill/:id', async (req: Request, res: Response) => await controller.removeSkill(req, res));
 userRouter.patch('/set-profile', async (req: Request, res: Response) => await controller.setProfilePic(req, res));
+userRouter.post('/report-user/:postId', authenticate, async (req: Request, res: Response) => await controller.reportUser(req, res));
 
 
 

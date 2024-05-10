@@ -4,6 +4,7 @@ import UserRepository from "../repositories/userRepository";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { CreateJWT } from "../utils/generateToken";
 import Encrypt from "../utils/comparePassword";
+import ReportRepository from "../repositories/reportRepository";
 
 const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 
@@ -12,7 +13,8 @@ const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 class userService {
     constructor(private userRepository: UserRepository,
         private encrypt: Encrypt,
-        private createjwt: CreateJWT) { }
+        private createjwt: CreateJWT,
+        private reportRepository: ReportRepository) { }
 
     async userLogin(email: string, password: string): Promise<UserAuthResponse | undefined> {
         try {
@@ -108,6 +110,13 @@ class userService {
             return result;
         } catch (error) {
             console.log(error);
+        }
+    }
+    async reportUser(postId: string, reason: string, userId: string) {
+        try {
+            return await this.reportRepository.reportUser(postId, reason, userId);
+        } catch (error) {
+            console.log(error as Error)
         }
     }
     async deleteProfilePic(userId: string) {
