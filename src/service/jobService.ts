@@ -1,11 +1,17 @@
 import { JobBodyInterface } from "../controllers/jobController";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import JobRepository from "../repositories/jobRepository";
+import { JobReportRepository } from "../repositories/reportRepository";
 import UserRepository from "../repositories/userRepository";
 
 
 class JobService {
-    constructor(private jobRepository: JobRepository, private userRepository: UserRepository, private jobApplicationRepository: JobApplicationRepository) { }
+    constructor(
+        private jobRepository: JobRepository,
+        private userRepository: UserRepository,
+        private jobApplicationRepository: JobApplicationRepository,
+        private jobReportRepository: JobReportRepository
+    ) { }
 
     async getAllJobs(search: string | undefined, userId: string) {
         try {
@@ -62,6 +68,13 @@ class JobService {
     async getAllSavedJobs(userId: string) {
         try {
             return await this.userRepository.getAllSavedJobs(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async reportJob(reason: string, jobId: string, userId: string) {
+        try {
+            return await this.jobReportRepository.reportJob(reason, jobId, userId);
         } catch (error) {
             console.log(error as Error);
         }

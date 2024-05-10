@@ -15,7 +15,7 @@ import JobRepository from "../repositories/jobRepository";
 import JobService from "../service/jobService";
 import JobController from "../controllers/jobController";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
-import ReportRepository from "../repositories/reportRepository";
+import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 
 
 
@@ -85,8 +85,9 @@ userRouter.delete('/unfriend/:id', authenticate, async (req: Request, res: Respo
 
 //JobController
 const jobApplicationRepository = new JobApplicationRepository();
+const jobReportRepository=new JobReportRepository();
 const jobRepository = new JobRepository();
-const jobService = new JobService(jobRepository, userRepository, jobApplicationRepository);
+const jobService = new JobService(jobRepository, userRepository, jobApplicationRepository,jobReportRepository);
 const jobController = new JobController(jobService);
 
 
@@ -98,7 +99,7 @@ userRouter.get('/get-all-application', authenticate, async (req: Request, res: R
 userRouter.put('/save-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.saveJobs(req, res));
 userRouter.delete('/save-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.unSaveJobs(req, res));
 userRouter.get('/savedjobs', authenticate, async (req: Request, res: Response) => await jobController.getAllSavedJobs(req, res));
-
+userRouter.post('/report-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.reportJob(req, res));
 
 
 export default userRouter;

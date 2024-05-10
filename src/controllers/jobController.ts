@@ -117,6 +117,20 @@ class JobController {
             res.json({ success: false, message: 'internal server error' });
         }
     }
+    async reportJob(req: Request, res: Response) {
+        try {
+            const { reason } = req.body;
+            const { jobId } = req.params;
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.jobService.reportJob(reason, jobId, userId);
+                res.json(result);
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'internal server Error' });
+        }
+    }
 }
 
 export default JobController;
