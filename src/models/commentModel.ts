@@ -1,32 +1,30 @@
-import { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const mongoose = require("mongoose");
 interface CommentInterface extends Document {
     postId: Schema.Types.ObjectId;
     comments: Array<{
         text: string;
-        userId: Schema.Types.ObjectId;
+        userId: string;
         createdAt: Date;
-        replies: Array<{
-            text: string;
-            userId: Schema.Types.ObjectId;
-            createdAt: Date;
-        }>;
+        replies?: Array<{
+            text?: string | undefined;
+            userId?: string | undefined;
+            createdAt?: Date | undefined;
+        }> | undefined;
     }>;
-    commentCount: number;
-    latestComments: Array<{
-        text: string;
-        userId: Schema.Types.ObjectId;
-        createdAt?: Date;
-    }>;
+    commentCount?: number | undefined;
+    latestComments?: Array<{
+        text: string | undefined;
+        userId: string | undefined;
+        createdAt?: Date | undefined;
+    }> | undefined;
 }
 
 const commentSchema: Schema<CommentInterface> = new Schema({
     postId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'post',
-        required: [true, "Post ID is required"],
-        index: true
+        required: [true, "Post ID is required"]
     },
     comments: [{
         text: {
@@ -35,12 +33,12 @@ const commentSchema: Schema<CommentInterface> = new Schema({
             trim: true
         },
         userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'user'
+            type: String,
+            ref: 'User'
         },
         createdAt: {
             type: Date,
-            default: Date.now
+            default: Date.now()
         },
         replies: [{
             text: {
@@ -48,8 +46,8 @@ const commentSchema: Schema<CommentInterface> = new Schema({
                 trim: true
             },
             userId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'user'
+                type: String,
+                ref: 'User'
             },
             createdAt: {
                 type: Date,
@@ -57,12 +55,10 @@ const commentSchema: Schema<CommentInterface> = new Schema({
             }
         }]
     }],
-
     commentCount: {
         type: Number,
         default: 0
     },
-
     latestComments: [{
         text: {
             type: String,
@@ -70,7 +66,7 @@ const commentSchema: Schema<CommentInterface> = new Schema({
         },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'user'
+            ref: 'User'
         },
         createdAt: {
             type: Date
@@ -81,15 +77,13 @@ const commentSchema: Schema<CommentInterface> = new Schema({
 });
 
 commentSchema.pre('save', function (next) {
-    let commentCount = 0;
-    this.comments.forEach(comment => {
-        commentCount++;
-        commentCount += comment.replies.length;
-    });
-    this.commentCount = commentCount;
+    this.commentCount = this.comments.length;
     this.comments.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     this.latestComments = this.comments.slice(0, 2);
     next();
 });
 
-module.exports = mongoose.model('Comment', commentSchema);
+
+const commentModel = mongoose.model<CommentInterface>('comment', commentSchema)
+
+export default commentModel;

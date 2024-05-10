@@ -16,6 +16,7 @@ import JobService from "../service/jobService";
 import JobController from "../controllers/jobController";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
+import CommentRepository from "../repositories/CommentRepository";
 
 
 
@@ -53,7 +54,8 @@ userRouter.post('/report-user/:postId', authenticate, async (req: Request, res: 
 
 //postController
 const postRepository = new PostRepository();
-const postService = new PostServices(postRepository);
+const commentRepository = new CommentRepository();
+const postService = new PostServices(postRepository,commentRepository);
 const postController = new PostController(postService);
 
 
@@ -63,6 +65,7 @@ userRouter.get('/get-posts-home', async (req: Request, res: Response) => await p
 userRouter.put('/like-post/:postId', authenticate, async (req: Request, res: Response) => await postController.likePost(req, res))
 userRouter.delete('/like-post/:postId', authenticate, async (req: Request, res: Response) => await postController.unLikePost(req, res))
 userRouter.get('/like-post/:postId', authenticate, async (req: Request, res: Response) => await postController.getLikes(req, res))
+userRouter.post('/comment/:postId', authenticate, async (req: Request, res: Response) => await postController.sendComment(req, res))
 
 
 //netWorkcontroller
@@ -85,9 +88,9 @@ userRouter.delete('/unfriend/:id', authenticate, async (req: Request, res: Respo
 
 //JobController
 const jobApplicationRepository = new JobApplicationRepository();
-const jobReportRepository=new JobReportRepository();
+const jobReportRepository = new JobReportRepository();
 const jobRepository = new JobRepository();
-const jobService = new JobService(jobRepository, userRepository, jobApplicationRepository,jobReportRepository);
+const jobService = new JobService(jobRepository, userRepository, jobApplicationRepository, jobReportRepository);
 const jobController = new JobController(jobService);
 
 

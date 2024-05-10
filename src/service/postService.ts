@@ -1,8 +1,9 @@
 import { ObjectId } from 'mongoose';
 import PostRepository from './../repositories/postRepository';
+import CommentRepository from '../repositories/CommentRepository';
 
 class PostServices {
-    constructor(private PostRepository: PostRepository) { }
+    constructor(private PostRepository: PostRepository, private commentRepository: CommentRepository) { }
 
     async savePost(userId: string, imageUrl: string, caption: string) {
         try {
@@ -44,6 +45,13 @@ class PostServices {
     async getLikes(postId: string) {
         try {
             return await this.PostRepository.getLikes(postId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async sendComment(postId: string, userId: string, comment: string) {
+        try {
+            return await this.commentRepository.sendComment(postId, userId, comment)
         } catch (error) {
             console.log(error as Error);
         }

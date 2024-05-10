@@ -73,6 +73,19 @@ class PostController {
             res.json({ success: false, message: 'internal server error!' });
         }
     }
+    async sendComment(req: Request, res: Response) {
+        try {
+            const { postId } = req.params;
+            const userId = req.userId;
+            const { comment } = req.body;
+            if (userId) {
+                const result = await this.postServices.sendComment(postId, userId, comment);
+                console.log(result);
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default PostController;
