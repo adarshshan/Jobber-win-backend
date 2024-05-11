@@ -56,6 +56,20 @@ class PostServices {
             console.log(error as Error);
         }
     }
+    async getComment(postId: string) {
+        try {
+            return await this.commentRepository.getComment(postId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async replyComment(reply: string, commentId: string, userId: string) {
+        try {
+            return await this.commentRepository.replyComment(reply, commentId, userId)
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default PostServices;

@@ -55,7 +55,7 @@ userRouter.post('/report-user/:postId', authenticate, async (req: Request, res: 
 //postController
 const postRepository = new PostRepository();
 const commentRepository = new CommentRepository();
-const postService = new PostServices(postRepository,commentRepository);
+const postService = new PostServices(postRepository, commentRepository);
 const postController = new PostController(postService);
 
 
@@ -66,6 +66,8 @@ userRouter.put('/like-post/:postId', authenticate, async (req: Request, res: Res
 userRouter.delete('/like-post/:postId', authenticate, async (req: Request, res: Response) => await postController.unLikePost(req, res))
 userRouter.get('/like-post/:postId', authenticate, async (req: Request, res: Response) => await postController.getLikes(req, res))
 userRouter.post('/comment/:postId', authenticate, async (req: Request, res: Response) => await postController.sendComment(req, res))
+userRouter.get('/comment/:postId', authenticate, async (req: Request, res: Response) => await postController.getComment(req, res))
+userRouter.put('/reply-comment/:commentId', authenticate, async (req: Request, res: Response) => await postController.replyComment(req, res))
 
 
 //netWorkcontroller

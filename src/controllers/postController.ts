@@ -80,10 +80,37 @@ class PostController {
             const { comment } = req.body;
             if (userId) {
                 const result = await this.postServices.sendComment(postId, userId, comment);
-                console.log(result);
+                if (result) res.json({ success: true, data: result, message: 'Message sent successfully' });
+                else res.json({ success: false, message: 'Something went wrong.' });
             }
         } catch (error) {
             console.log(error as Error);
+            res.json({ success: false, message: 'Inernal server Error' });
+        }
+    }
+    async getComment(req: Request, res: Response) {
+        try {
+            const { postId } = req.params;
+            const result = await this.postServices.getComment(postId);
+            return res.json(result);
+        } catch (error) {
+            console.log(error as Error);
+            return res.json({ success: false, message: 'Internal server Error' });
+        }
+    }
+    async replyComment(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            const { reply } = req.body;
+            const { commentId } = req.params;
+            if (userId) {
+                const result = await this.postServices.replyComment(reply, commentId, userId);
+                if (result) res.json(result);
+                else res.json({ success: false, message: 'something went wrong.' })
+            }
+        } catch (error) {
+            console.log(error as Error)
+            res.json({ success: false, message: 'Internal server Error' })
         }
     }
 }

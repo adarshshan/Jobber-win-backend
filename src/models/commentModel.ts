@@ -1,23 +1,25 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { v4 as uuidV4 } from 'uuid'
 
 interface CommentInterface extends Document {
     postId: Schema.Types.ObjectId;
     comments: Array<{
+        _id: string;
         text: string;
         userId: string;
         createdAt: Date;
-        replies?: Array<{
-            text?: string | undefined;
-            userId?: string | undefined;
-            createdAt?: Date | undefined;
-        }> | undefined;
+        replies: Array<{
+            text?: string;
+            userId?: string;
+            createdAt?: Date;
+        }>
     }>;
     commentCount?: number | undefined;
     latestComments?: Array<{
         text: string | undefined;
         userId: string | undefined;
         createdAt?: Date | undefined;
-    }> | undefined;
+    }>;
 }
 
 const commentSchema: Schema<CommentInterface> = new Schema({
@@ -27,6 +29,10 @@ const commentSchema: Schema<CommentInterface> = new Schema({
         required: [true, "Post ID is required"]
     },
     comments: [{
+        _id: {
+            type: String,
+            default: uuidV4()
+        },
         text: {
             type: String,
             required: [true, "Comment text is required"],
