@@ -10,14 +10,13 @@ class ChatController {
         try {
             const { userId } = req.body
             const current_userId = req.userId;
-            if (!userId) {
-                return res.sendStatus(400);
-            }
-            if (!current_userId) {
-                return res.sendStatus(400);
-            }
+
+            if (!userId) return res.json({ success: false, message: 'userId is undefined' })
+            if (!current_userId) return res.json({ success: false, message: 'user is not logined' })
+
             const chat = await this.chatService.accessChat(userId, current_userId);
             console.log(chat);
+
             if (chat.length > 0) {
                 res.send(chat[0]);
             } else {
@@ -27,7 +26,7 @@ class ChatController {
                     users: [current_userId, userId]
                 }
                 const FullChat = await this.chatService.saveChat(chatData);
-                res.status(STATUS_CODES.OK).json(FullChat);
+                res.json({ success: true, data: FullChat, message: 'Success' });
             }
         } catch (error) {
             console.log(error as Error);
@@ -35,49 +34,66 @@ class ChatController {
     }
     async fetchChats(req: Request, res: Response) {
         try {
-            const userId = req.userId;
+            const userId = req.userId; console.log('Calleddddd.....');
             if (userId) {
                 const chat = await this.chatService.getChat(userId);
-                res.status(STATUS_CODES.OK).json(chat);
+                if (chat) res.json({ success: true, data: chat, message: 'successful' });
+                else res.json({ success: false, message: 'Somthing went wrong!' })
             }
         } catch (error) {
             console.log(error as Error);
+            res.json({ success: false, message: 'INternal server Error' });
         }
     }
     async createGroupchat(req: Request, res: Response) {
         try {
             let { name, users } = req.body;
-            if (!name || !users) return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Please enter the fields' });
+            if (!name || !users) return res.json({ success: false, message: 'Please enter the fields' });
 
             let user = JSON.parse(users);
-            if (user.length < 2) return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'More than 2 users are required to form a group chat' });
+            if (user.length < 2) return res.json({ success: false, message: 'More than 2 users are required to form a group chat' });
             user.push(req.user);
 
-            const newGroupchat = this.chatService.createGroupChat(name, user, req.user);
-            if (newGroupchat) res.status(STATUS_CODES.OK).json(newGroupchat);
+            const newGroupchat = await this.chatService.createGroupChat(name, user, req.user);
+            if (newGroupchat) res.json({ success: true, data: newGroupchat, message: 'successful' });
+            else res.json({ success: false, message: 'Something went  wrong' });
         } catch (error) {
             console.log(error as Error)
+            res.json({ success: false, message: 'Internal server error' });
         }
     }
     async renameGroup(req: Request, res: Response) {
         try {
             const { chatId, chatName } = req.body;
             const result = this.chatService.renameGroup(chatId, chatName);
-            if (!result) res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Chat not found!' })
-            else res.status(STATUS_CODES.OK).json(result);
+            if (!result) res.json({ success: false, message: 'Chat not found!' })
+            else res.json({ success: true, data: result, message: 'successful' });
         } catch (error) {
             console.log(error as Error);
+            res.json({ success: false, message: 'Internal server error' });
         }
     }
     async addToGroup(req: Request, res: Response) {
         try {
             const { chatId, userId } = req.body;
-            if (!chatId || !userId) return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'please enter the input fields!' });
+            if (!chatId || !userId) return res.json({ success: false, message: 'please enter the input fields!' });
             const result = await this.chatService.addToGroup(chatId, userId);
-            if (result) res.status(STATUS_CODES.OK).json(result);
-            else res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Something went wrong while adding a new user.' });
+            if (result) res.json({ success: true, data: result, message: 'successful' });
+            else res.json({ success: false, message: 'Something went wrong while adding a new user.' });
         } catch (error) {
             console.log(error as Error);
+            res.json({ success: false, message: 'internal server Error' });
+        }
+    }
+    async removeFromGroup(req: Request, res: Response) {
+        try {
+            const { chatId, userId } = req.body;
+            const result = await this.chatService.removeFromGroup(chatId, userId);
+            if (result) res.json({ success: true, data: result, message: 'Successful' });
+            else res.json({ success: false, message: 'Something went wrong..' });
+        } catch (error) {
+            console.log(error as Error)
+            res.json({ success: false, message: 'internal server error' });
         }
     }
 

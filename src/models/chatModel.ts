@@ -2,15 +2,17 @@ import mongoose, { Model, ObjectId, Schema } from "mongoose";
 
 interface ChatInterface {
     chatName: string;
+    isGroupChat: boolean;
     users: ObjectId[];
     latestMessage: ObjectId;
     groupAdmin: ObjectId;
 }
 const chatSchema: Schema<ChatInterface> = new Schema({
     chatName: { type: String, trim: true },
+    isGroupChat: { type: Boolean, default: false },
     users: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
     }],
     latestMessage: {
         type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +20,7 @@ const chatSchema: Schema<ChatInterface> = new Schema({
     },
     groupAdmin: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
+        ref: 'User',
     }
 }, {
     timestamps: true

@@ -14,15 +14,13 @@ const userRepository = new UserRepository();
 const chatService = new ChatService(chatRepository, userRepository);
 const controller = new ChatController(chatService);
 
-// chatRouter.post('/', async (req: Request, res: Response) => controller.sendMessage(req, res))
-// chatRouter.get('/', authenticate, async (req: Request, res: Response) => controller.getAllUsers(req, res));
-// chatRouter.post('/:chatId', async (req: Request, res: Response) => controller.allMessages(req, res))
 
 chatRouter.post('/', authenticate, async (req: Request, res: Response) => controller.accessChat(req, res));
 chatRouter.get('/', authenticate, async (req: Request, res: Response) => controller.fetchChats(req, res));
 chatRouter.post('/group', authenticate, async (req: Request, res: Response) => controller.createGroupchat(req, res));
 chatRouter.put('/rename', authenticate, async (req: Request, res: Response) => controller.renameGroup(req, res));
 chatRouter.put('/groupadd', authenticate, async (req: Request, res: Response) => controller.addToGroup(req, res));
+chatRouter.put('/groupremove', authenticate, async (req: Request, res: Response) => controller.removeFromGroup(req, res));
 
 
 export default chatRouter;

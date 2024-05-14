@@ -7,11 +7,10 @@ interface MessageInterface {
 const messageSchema: Schema<MessageInterface> = new Schema({
     sender: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        ref: "User"
     },
     content: {
         type: String, trim: true
-
     },
     chat: {
         type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +18,7 @@ const messageSchema: Schema<MessageInterface> = new Schema({
     },
     readBy: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        ref: "User"
     }],
 },
     { timestamps: true }

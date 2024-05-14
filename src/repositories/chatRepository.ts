@@ -94,6 +94,24 @@ class ChatRepository {
             console.log(error as Error);
         }
     }
+    async removeFromGroup(chatId: string, userId: string) {
+        try {
+            const removed = await chatModel.findByIdAndUpdate(
+                chatId,
+                {
+                    $pull: { users: userId },
+                },
+                {
+                    new: true,
+                }
+            )
+                .populate("users", "-password")
+                .populate("groupAdmin", "-password");
+            return removed;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default ChatRepository;

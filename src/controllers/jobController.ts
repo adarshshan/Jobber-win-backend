@@ -14,7 +14,6 @@ class JobController {
         try {
             const userId = req.userId;
             const search: any = req.query.search;
-            console.log(search);
             if (userId) {
                 const result = await this.jobService.getAllJobs(search, userId);
                 if (result) res.json({ success: true, data: result, message: 'Successfully fetched all job details' });
@@ -83,7 +82,6 @@ class JobController {
             const { jobId } = req.params;
             if (userId) {
                 const result = await this.jobService.saveJobs(userId, jobId);
-                console.log(result); console.log('this is the result is ');
                 return res.json(result);
             }
         } catch (error) {

@@ -6,6 +6,7 @@ import userRouter from "../src/routes/userRoute";
 import adminRouter from "../src/routes/adminRoute";
 import recruiterRouter from "../src/routes/recruiterRoute";
 import chatRouter from "../src/routes/chatRoute";
+import messageRouter from '../src/routes/messageRoute';
 
 
 export const createServer = () => {
@@ -21,6 +22,7 @@ export const createServer = () => {
         app.use('/api/admin', adminRouter);
         app.use('/api/recruiter', recruiterRouter);
         app.use('/api/chat', chatRouter);
+        app.use('/api/messages', messageRouter);
 
         return app;
 
