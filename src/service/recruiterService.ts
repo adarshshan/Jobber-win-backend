@@ -20,16 +20,16 @@ class RecruiterService {
             console.log(error as Error);
         }
     }
-    async deleteJob() {
+    async editJobs(data: JobInterface, jobId: string) {
         try {
-            const result = await this.recruiterRepository.deleteJob();
+            return await this.recruiterRepository.editJobs(data, jobId);
         } catch (error) {
             console.log(error as Error);
         }
     }
-    async editJobs() {
+    async deleteJob() {
         try {
-            return await this.recruiterRepository.editJobs();
+            const result = await this.recruiterRepository.deleteJob();
         } catch (error) {
             console.log(error as Error);
         }

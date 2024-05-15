@@ -25,18 +25,29 @@ class RecruiterRepository {
             console.log(error as Error);
         }
     }
+    async editJobs(data: JobInterface, jobId: string) {
+        try {
+            const job = await jobModel.findById(jobId);
+            if (job) {
+                job.title = data.title || job.title;
+                job.company_name = data.company_name || job.company_name;
+                job.industry = data.industry || job.industry;
+                job.job_img = data.job_img || job.job_img;
+                job.description = data.description || job.description;
+                job.total_vaccancy = data.total_vaccancy || job.total_vaccancy;
+                job.job_type = data.job_type || job.job_type;
+            }
+            const updatedJob = await job?.save();
+            return updatedJob;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async deleteJob() {
         try {
             console.log('reached at the end of the line at deleteJob function');
         } catch (error) {
             console.log(error as Error)
-        }
-    }
-    async editJobs() {
-        try {
-            console.log('reached at the end of the line at editJobs function');
-        } catch (error) {
-            console.log(error as Error);
         }
     }
     async changeStatus(status: string, applicationId: string) {

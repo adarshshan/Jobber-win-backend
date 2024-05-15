@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import ChatService from "../service/chatService";
-import { STATUS_CODES } from "../constants/httpStatusCodes";
 
 
 class ChatController {
@@ -34,7 +33,7 @@ class ChatController {
     }
     async fetchChats(req: Request, res: Response) {
         try {
-            const userId = req.userId; console.log('Calleddddd.....');
+            const userId = req.userId; 
             if (userId) {
                 const chat = await this.chatService.getChat(userId);
                 if (chat) res.json({ success: true, data: chat, message: 'successful' });
@@ -94,22 +93,6 @@ class ChatController {
         } catch (error) {
             console.log(error as Error)
             res.json({ success: false, message: 'internal server error' });
-        }
-    }
-
-    async sendMessage(req: Request, res: Response) {
-        try {
-
-        } catch (error) {
-            console.log(error as Error);
-        }
-    }
-    async allMessages(req: Request, res: Response) {
-        try {
-            const chatId = req.params.chatId;
-            console.log(`this chat id is ${chatId}`)
-        } catch (error) {
-            console.log(error as Error);
         }
     }
     async getAllUsers(req: Request, res: Response) {

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import RecruiterService from "../service/recruiterService";
-import { json } from "stream/consumers";
 
 export interface JobInterface {
     title: string;
@@ -10,7 +9,7 @@ export interface JobInterface {
     description: string;
     total_vaccancy: number;
     location: string;
-    job_type: string;
+    job_type: 'part-time' | 'full-time' | 'remote';
     experience: number;
     min_salary: number;
     max_salary: number;
@@ -46,18 +45,18 @@ class RecruiterController {
             res.json({ success: false, message: 'Internal Server error occured' });
         }
     }
-    async deleteJob(req: Request, res: Response) {
-        try {
-
-        } catch (error) {
-            console.log(error as Error);
-        }
-    }
     async editJobs(req: Request, res: Response) {
         try {
-            const result = await this.recruiterService.editJobs();
+            const userId = req.userId;
+            const { data,jobId } = req.body;
+            if (userId) {
+                const result = await this.recruiterService.editJobs(data, jobId);
+                if (result) res.json({ success: true, data: result, message: 'job details updated' });
+                else res.json({ success: false, message: 'Something went wrong' });
+            }
         } catch (error) {
             console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error!' });
         }
     }
     async getAllApplications(req: Request, res: Response) {
