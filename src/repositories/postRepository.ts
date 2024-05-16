@@ -107,6 +107,31 @@ class PostRepository {
             console.log(error as Error);
         }
     }
+    async deletePost(postId: string) {
+        try {
+            console.log(`this is the postId ${postId}`);
+            const post = await PostModel.findById(postId);
+            if (post) {
+                post.isDeleted = true;
+                await post.save();
+                return post;
+            }
+        } catch (error) {
+            console.log(error as Error)
+        }
+    }
+    async updateCaption(caption: string, postId: string) {
+        try {
+            const post = await PostModel.findById(postId);
+            if (post) {
+                post.caption = caption;
+                await post.save();
+                return post;
+            }
+        } catch (error) {
+            console.log(error as Error)
+        }
+    }
 }
 
 export default PostRepository;

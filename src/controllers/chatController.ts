@@ -17,7 +17,9 @@ class ChatController {
             console.log(chat);
 
             if (chat.length > 0) {
-                res.send(chat[0]);
+                console.log('Its founding here........');
+                console.log(chat[0]);
+                res.send({ success: true, data: chat[0], message: 'Success' });
             } else {
                 var chatData = {
                     chatName: "sender",
@@ -33,7 +35,7 @@ class ChatController {
     }
     async fetchChats(req: Request, res: Response) {
         try {
-            const userId = req.userId; 
+            const userId = req.userId;
             if (userId) {
                 const chat = await this.chatService.getChat(userId);
                 if (chat) res.json({ success: true, data: chat, message: 'successful' });

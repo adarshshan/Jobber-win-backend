@@ -68,6 +68,8 @@ userRouter.get('/like-post/:postId', authenticate, async (req: Request, res: Res
 userRouter.post('/comment/:postId', authenticate, async (req: Request, res: Response) => await postController.sendComment(req, res))
 userRouter.get('/comment/:postId', authenticate, async (req: Request, res: Response) => await postController.getComment(req, res))
 userRouter.put('/reply-comment/:commentId', authenticate, async (req: Request, res: Response) => await postController.replyComment(req, res))
+userRouter.delete('/delete-post/:postId', authenticate, async (req: Request, res: Response) => await postController.deletePost(req, res))
+userRouter.put('/postcaption-edit/:postId', authenticate, async (req: Request, res: Response) => await postController.updateCaption(req, res))
 
 
 //netWorkcontroller

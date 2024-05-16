@@ -113,6 +113,29 @@ class PostController {
             res.json({ success: false, message: 'Internal server Error' })
         }
     }
+    async deletePost(req: Request, res: Response) {
+        try {
+            const { postId } = req.params;
+            const result = await this.postServices.deletePost(postId);
+            if (result) res.json({ success: true, message: 'Post deleted successfully.' });
+            else res.json({ success: false, message: 'Something went wrong please try again.' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: "Internal server Error occured." });
+        }
+    }
+    async updateCaption(req: Request, res: Response) {
+        try {
+            const caption = req.body.caption;
+            const postId = req.params.postId;
+            const result = await this.postServices.updateCaption(caption, postId);
+            if (result) res.json({ success: true, message: 'caption successfully updated' });
+            else res.json({ success: false, message: 'Something went wrong while updating the post captioin' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'internal server Error occured' });
+        }
+    }
 }
 
 export default PostController;

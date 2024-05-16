@@ -70,6 +70,20 @@ class PostServices {
             console.log(error as Error);
         }
     }
+    async deletePost(postId: string) {
+        try {
+            return await this.PostRepository.deletePost(postId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async updateCaption(caption: string, postId: string) {
+        try {
+            return await this.PostRepository.updateCaption(caption, postId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default PostServices;
