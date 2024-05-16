@@ -1,3 +1,4 @@
+import jobModel from "../models/jobModel";
 import jobReportModel from "../models/jobReportModel";
 import postReportModel from "../models/postReportModel";
 
@@ -47,6 +48,7 @@ class JobReportRepository {
             console.log(error as Error);
         }
     }
+    
 }
 
 export { JobReportRepository }

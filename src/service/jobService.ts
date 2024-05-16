@@ -79,6 +79,20 @@ class JobService {
             console.log(error as Error);
         }
     }
+    async getJobsByDate(num: string) {
+        try {
+            return await this.jobRepository.getJobsByDate(num);
+        } catch (error) {
+            console.log(error as Error)
+        }
+    }
+    async getJobsByExperience(start: string, end: string) {
+        try {
+            return await this.jobRepository.getJobsByExperience(start, end);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default JobService;

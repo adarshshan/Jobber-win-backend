@@ -129,6 +129,30 @@ class JobController {
             res.json({ success: false, message: 'internal server Error' });
         }
     }
+    async getJobsByDate(req: Request, res: Response) {
+        try {
+            const { num } = req.params;
+            if (num) {
+                const result = await this.jobService.getJobsByDate(num);
+                if (result) res.json({ success: true, data: result, message: 'successful' });
+                else res.json({ success: false, message: 'Something went wrong!' })
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Inernal server Error!' });
+        }
+    }
+    async getJobsByExperience(req: Request, res: Response) {
+        try {
+            const { start, end } = req.params;
+            const result = await this.jobService.getJobsByExperience(start, end);
+            if (result) res.json({ success: true, data: result, message: 'successful' });
+            else res.json({ success: false, message: 'Something went wrong...' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error' });
+        }
+    }
 }
 
 export default JobController;

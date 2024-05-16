@@ -105,6 +105,8 @@ userRouter.put('/save-job/:jobId', authenticate, async (req: Request, res: Respo
 userRouter.delete('/save-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.unSaveJobs(req, res));
 userRouter.get('/savedjobs', authenticate, async (req: Request, res: Response) => await jobController.getAllSavedJobs(req, res));
 userRouter.post('/report-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.reportJob(req, res));
+userRouter.get('/getjobs/:num', authenticate, async (req: Request, res: Response) => await jobController.getJobsByDate(req, res));
+userRouter.get('/getjobs-by-experience/:start/:end', authenticate, async (req: Request, res: Response) => await jobController.getJobsByExperience(req, res));
 
 
 export default userRouter;
