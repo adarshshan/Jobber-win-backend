@@ -132,6 +132,7 @@ class PostRepository {
             console.log(error as Error)
         }
     }
+    
 }
 
 export default PostRepository;

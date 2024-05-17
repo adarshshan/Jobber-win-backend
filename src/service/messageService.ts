@@ -4,18 +4,25 @@ import MessageRepository from "../repositories/messageRepository";
 class MessageService {
     constructor(private messageRepository: MessageRepository) { }
 
-    async sendMessage( content:string, chatId :string,userId:string) {
+    async sendMessage(content: string, chatId: string, userId: string) {
         try {
-            return await this.messageRepository.sendMessage( content, chatId,userId )
+            return await this.messageRepository.sendMessage(content, chatId, userId)
         } catch (error) {
             console.log(error as Error);
         }
     }
-    async allMessages(chatId:string){
+    async allMessages(chatId: string) {
         try {
             return await this.messageRepository.allMessages(chatId)
         } catch (error) {
             console.log(error as Error);
+        }
+    }
+    async sharePostMessage(postId: string, chatId: string,userId:string) {
+        try {
+            return await this.messageRepository.sharePostMessage(postId, chatId,userId);
+        } catch (error) {
+            console.log(error as Error)
         }
     }
 }

@@ -2,6 +2,7 @@ import { ObjectId } from 'mongoose';
 import PostRepository from './../repositories/postRepository';
 import CommentRepository from '../repositories/CommentRepository';
 import ChatRepository from '../repositories/chatRepository';
+import MessageRepository from '../repositories/messageRepository';
 
 class PostServices {
     constructor(private PostRepository: PostRepository,
@@ -94,6 +95,7 @@ class PostServices {
             console.log(error as Error)
         }
     }
+    
 }
 
 export default PostServices;

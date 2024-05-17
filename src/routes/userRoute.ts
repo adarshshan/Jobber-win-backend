@@ -18,6 +18,7 @@ import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 import CommentRepository from "../repositories/CommentRepository";
 import ChatRepository from "../repositories/chatRepository";
+import MessageRepository from "../repositories/messageRepository";
 
 
 
@@ -56,8 +57,8 @@ userRouter.post('/report-user/:postId', authenticate, async (req: Request, res: 
 //postController
 const postRepository = new PostRepository();
 const commentRepository = new CommentRepository();
-const chatRepository=new ChatRepository()
-const postService = new PostServices(postRepository, commentRepository,chatRepository);
+const chatRepository = new ChatRepository()
+const postService = new PostServices(postRepository, commentRepository, chatRepository);
 const postController = new PostController(postService);
 
 

@@ -149,6 +149,7 @@ class PostController {
             res.json({ success: false, message: 'Internal server Error' });
         }
     }
+    
 }
 
 export default PostController;

@@ -9,6 +9,15 @@ const messageSchema: Schema<MessageInterface> = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    contentType: {
+        type: String,
+        enum: ['sharePost', 'image', 'text'],
+        default: 'text'
+    },
+    shared_post: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "post"
+    },
     content: {
         type: String, trim: true
     },

@@ -32,6 +32,20 @@ class MessageController {
             console.log(error as Error);
         }
     }
+    async sharePostMessage(req: Request, res: Response) {
+        try {
+            const { postId, chatId } = req.body;
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.messageService.sharePostMessage(postId, chatId, userId);
+                if (result) res.json({ success: true, data: result, message: 'post shared success' });
+                else res.json({ success: false, message: 'Something went wrong while sharing the post' })
+            }
+        } catch (error) {
+            console.log(error as Error)
+            res.json({ success: false, message: 'Internal server Error' });
+        }
+    }
 }
 
 export default MessageController;
