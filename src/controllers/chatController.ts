@@ -14,10 +14,9 @@ class ChatController {
             if (!current_userId) return res.json({ success: false, message: 'user is not logined' })
 
             const chat = await this.chatService.accessChat(userId, current_userId);
-            console.log(chat);
+            // console.log(chat);
 
             if (chat.length > 0) {
-                console.log('Its founding here........');
                 console.log(chat[0]);
                 res.send({ success: true, data: chat[0], message: 'Success' });
             } else {

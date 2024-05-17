@@ -136,6 +136,19 @@ class PostController {
             res.json({ success: false, message: 'internal server Error occured' });
         }
     }
+    async postShareSuggestedUsers(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.postServices.postShareSuggestedUsers(userId);
+                if (result) res.json({ success: true, data: result, message: 'Successful' });
+                else res.json({ success: false, message: 'Something went wrong ' });
+            }
+        } catch (error) {
+            console.log(error as Error)
+            res.json({ success: false, message: 'Internal server Error' });
+        }
+    }
 }
 
 export default PostController;

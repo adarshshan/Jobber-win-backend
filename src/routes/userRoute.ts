@@ -17,6 +17,7 @@ import JobController from "../controllers/jobController";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 import CommentRepository from "../repositories/CommentRepository";
+import ChatRepository from "../repositories/chatRepository";
 
 
 
@@ -55,7 +56,8 @@ userRouter.post('/report-user/:postId', authenticate, async (req: Request, res: 
 //postController
 const postRepository = new PostRepository();
 const commentRepository = new CommentRepository();
-const postService = new PostServices(postRepository, commentRepository);
+const chatRepository=new ChatRepository()
+const postService = new PostServices(postRepository, commentRepository,chatRepository);
 const postController = new PostController(postService);
 
 
@@ -70,6 +72,7 @@ userRouter.get('/comment/:postId', authenticate, async (req: Request, res: Respo
 userRouter.put('/reply-comment/:commentId', authenticate, async (req: Request, res: Response) => await postController.replyComment(req, res))
 userRouter.delete('/delete-post/:postId', authenticate, async (req: Request, res: Response) => await postController.deletePost(req, res))
 userRouter.put('/postcaption-edit/:postId', authenticate, async (req: Request, res: Response) => await postController.updateCaption(req, res))
+userRouter.get('/share-post-suggession', authenticate, async (req: Request, res: Response) => await postController.postShareSuggestedUsers(req, res))
 
 
 //netWorkcontroller

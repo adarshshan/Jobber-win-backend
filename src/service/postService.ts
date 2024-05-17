@@ -1,9 +1,12 @@
 import { ObjectId } from 'mongoose';
 import PostRepository from './../repositories/postRepository';
 import CommentRepository from '../repositories/CommentRepository';
+import ChatRepository from '../repositories/chatRepository';
 
 class PostServices {
-    constructor(private PostRepository: PostRepository, private commentRepository: CommentRepository) { }
+    constructor(private PostRepository: PostRepository,
+        private commentRepository: CommentRepository,
+        private chatRepository: ChatRepository) { }
 
     async savePost(userId: string, imageUrl: string, caption: string) {
         try {
@@ -82,6 +85,13 @@ class PostServices {
             return await this.PostRepository.updateCaption(caption, postId);
         } catch (error) {
             console.log(error as Error);
+        }
+    }
+    async postShareSuggestedUsers(userId: string) {
+        try {
+            return await this.chatRepository.postShareSuggestedUsers(userId);
+        } catch (error) {
+            console.log(error as Error)
         }
     }
 }

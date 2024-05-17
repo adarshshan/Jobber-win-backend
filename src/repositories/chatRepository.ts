@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import chatModel from "../models/chatModel";
 import userModel from "../models/userModel";
 
@@ -110,6 +111,37 @@ class ChatRepository {
             return removed;
         } catch (error) {
             console.log(error as Error);
+        }
+    }
+    async postShareSuggestedUsers(userId: string) {
+        try {
+            const ObjectId = mongoose.Types.ObjectId;
+            const UserId = new ObjectId(userId)
+
+            const users = await chatModel.aggregate([
+                { $match: { isGroupChat: false } },
+                { $match: { users: UserId } },
+                { $project: { otherUserID: { $setDifference: ["$users", [UserId]] } } },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "otherUserID",
+                        foreignField: "_id",
+                        as: "otherUserDetails"
+                    }
+                },
+                {
+                    $project: {
+                        "_id": { $arrayElemAt: ["$otherUserDetails._id", 0] },
+                        "name": { $arrayElemAt: ["$otherUserDetails.name", 0] },
+                        "profile_picture": { $arrayElemAt: ["$otherUserDetails.profile_picture", 0] },
+                        "headline": { $arrayElemAt: ["$otherUserDetails.headLine", 0] }
+                    }
+                }
+            ]);
+            return users;
+        } catch (error) {
+            console.log(error as Error)
         }
     }
 }
