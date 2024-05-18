@@ -95,7 +95,21 @@ class PostServices {
             console.log(error as Error)
         }
     }
-    
+    async getSinglePostDetails(postId: string) {
+        try {
+            return await this.PostRepository.getSinglePostDetails(postId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getCommentsByPostId(postId: string) {
+        try {
+            return await this.commentRepository.getComment(postId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+
 }
 
 export default PostServices;

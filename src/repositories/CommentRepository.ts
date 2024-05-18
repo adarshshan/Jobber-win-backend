@@ -56,6 +56,7 @@ class CommentRepository {
             return { success: false, message: 'Internal server error while fetching the data.' }
         }
     }
+
 }
 
 export default CommentRepository;

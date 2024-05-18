@@ -1,8 +1,7 @@
-import mongoose, { ObjectId, mongo } from 'mongoose';
 import IPostInterface from '../interfaces/entityInterface/Ipost';
 import PostModel from '../models/postModel';
 import LikeModel from '../models/likeModel';
-import { pid } from 'process';
+
 
 
 
@@ -132,7 +131,15 @@ class PostRepository {
             console.log(error as Error)
         }
     }
-    
+    async getSinglePostDetails(postId: string) {
+        try {
+            const post = await PostModel.findById(postId).populate('userId', 'name profile_picture headLine');
+            return post;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+
 }
 
 export default PostRepository;

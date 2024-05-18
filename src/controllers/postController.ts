@@ -149,7 +149,20 @@ class PostController {
             res.json({ success: false, message: 'Internal server Error' });
         }
     }
-    
+    async getSinglePostDetails(req: Request, res: Response) {
+        try {
+            const postId = req.params.postId;
+            const post = await this.postServices.getSinglePostDetails(postId);
+            const comment = await this.postServices.getCommentsByPostId(postId);
+            const like = await this.postServices.getLikes(postId);
+            if (post) res.json({ success: true, data: { post, comment, like }, message: 'Successful' });
+            else res.json({ success: false, message: 'Somethig went wront while fetching the postDetails' });
+        } catch (error) {
+            console.log(error as Error)
+            res.json({ success: false, message: 'Internal server Error' });
+        }
+    }
+
 }
 
 export default PostController;
