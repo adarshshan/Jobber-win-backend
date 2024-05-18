@@ -113,6 +113,18 @@ class JobRepository {
             console.log(error as Error);
         }
     }
+    async changeReportStatus(jobId: string) {
+        try {
+            const job = await jobModel.findById(jobId);
+            if (job) {
+                job.isReported = true;
+                await job.save();
+                return job;
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default JobRepository;

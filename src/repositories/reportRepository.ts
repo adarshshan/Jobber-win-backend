@@ -1,6 +1,7 @@
 import jobModel from "../models/jobModel";
 import jobReportModel from "../models/jobReportModel";
 import postReportModel from "../models/postReportModel";
+import userModel from "../models/userModel";
 
 
 class ReportRepository {
@@ -21,6 +22,20 @@ class ReportRepository {
             }
         } catch (error) {
             console.log(error as Error)
+        }
+    }
+    async getAllPostReports() {
+        try {
+            let reports: any = await postReportModel.find()
+                .populate('postId')
+                .populate('reportedBy', 'name email profile_picture');
+            reports = await userModel.populate(reports, {
+                path: 'postId.userId',
+                select: 'name profile_picture headLine email'
+            })
+            return reports;
+        } catch (error) {
+            console.log(error as Error);
         }
     }
 }
@@ -48,7 +63,21 @@ class JobReportRepository {
             console.log(error as Error);
         }
     }
-    
+    async getAllJobReports() {
+        try {
+            let reports = await jobReportModel.find()
+                .populate('jobId')
+                .populate('reportedBy', 'name email profile_picture')
+            reports = await jobReportModel.populate(reports, {
+                path: 'jobId.recruiterId',
+                select: 'name email headLine profile_picture'
+            })
+            return reports;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+
 }
 
 export { JobReportRepository }

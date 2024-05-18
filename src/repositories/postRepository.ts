@@ -139,6 +139,18 @@ class PostRepository {
             console.log(error as Error);
         }
     }
+    async changePostReportStatus(postId: string) {
+        try {
+            const post = await PostModel.findById(postId);
+            if (post) {
+                post.isReported = true;
+                await post.save();
+                return post;
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 
 }
 

@@ -9,7 +9,8 @@ export interface postReportInterface extends Document {
 const postReportSchema: Schema = new Schema({
     postId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'post'
     },
     reason: {
         type: String,

@@ -12,6 +12,7 @@ export interface jobInterface extends Document {
     skills: string[];
     total_vaccancy?: number;
     isActive: boolean;
+    isReported: boolean;
     experience: number;
     job_type: 'part-time' | 'full-time' | 'remote';
     max_salary: number;
@@ -38,6 +39,10 @@ const adminSchema: Schema = new Schema({
     },
     industry: {
         type: String,
+    },
+    isReported: {
+        type: Boolean,
+        default: false,
     },
     description: {
         type: String

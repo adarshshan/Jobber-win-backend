@@ -82,19 +82,6 @@ class adminController {
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server Error.' });
         }
     }
-
-    async getSubscriptionList(req: Request, res: Response) {
-
-    }
-    async deleteSubscription(req: Request, res: Response) {
-
-    }
-    async editSubscription(req: Request, res: Response) {
-
-    }
-    async createSubscription(req: Request, res: Response) {
-
-    }
     //users
     async getUserList(req: Request, res: Response) {
         try {
@@ -106,6 +93,48 @@ class adminController {
         } catch (error) {
             console.log(error as Error);
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' })
+        }
+    }
+    async getAllJobReports(req: Request, res: Response) {
+        try {
+            const result: any = await this.adminService.getAllJobReports();
+            if (result) res.json({ success: true, data: result, message: 'Successful.' });
+            else res.json({ success: false, message: 'Something went wrong while fetching the job report details, please try again!' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error Occured!' });
+        }
+    }
+    async changeReportStatus(req: Request, res: Response) {
+        try {
+            console.log(req.params.jobId);
+            const result = await this.adminService.changeReportStatus(req.params.jobId);
+            if (result) res.json({ success: true, message: 'successfully removed the reported job' });
+            else res.json({ success: false, message: 'Something went wrong while removing the reported job!' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
+    async changePostReportStatus(req: Request, res: Response) {
+        try {
+            const postId = req.params.postId;
+            const result = await this.adminService.changePostReportStatus(postId);
+            if (result) res.json({ success: true, message: 'Post removed successfully' });
+            else res.json({ success: false, message: 'Something went wrong while removing the post!' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
+    async getAllPostReports(req: Request, res: Response) {
+        try {
+            const result = await this.adminService.getAllPostReports();
+            if (result) res.json({ success: true, data: result, message: 'successful' });
+            else res.json({ success: false, message: 'Something went wrong while fetching the report details please try again.' })
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error' });
         }
     }
     async blockNunblockUser(req: Request, res: Response): Promise<void> {

@@ -7,13 +7,20 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import Encrypt from "../utils/comparePassword";
 import { CreateJWT } from "../utils/generateToken";
 import { IApiRes } from "../interfaces/common/Icommon";
+import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
+import JobRepository from "../repositories/jobRepository";
+import PostRepository from "../repositories/postRepository";
 
 
 
 class AdminService {
     constructor(private adminReopsitory: AdminRepository,
         private encrypt: Encrypt,
-        private createjwt: CreateJWT) { }
+        private createjwt: CreateJWT,
+        private jobReportRepository: JobReportRepository,
+        private reportRepository: ReportRepository,
+        private jobRepository: JobRepository,
+        private postRepository: PostRepository) { }
 
     async adminLogin(email: string, password: string): Promise<AdminAuthResponse | undefined> {
         const admin: Admin | null = await this.adminReopsitory.isAdminExist(email);
@@ -86,9 +93,37 @@ class AdminService {
             throw new Error('Error occured.');
         }
     }
-    async blockNunblockUser(userId: string):Promise<void> {
+    async blockNunblockUser(userId: string): Promise<void> {
         try {
             await this.adminReopsitory.blockNunblockUser(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllJobReports() {
+        try {
+            return await this.jobReportRepository.getAllJobReports();
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getAllPostReports() {
+        try {
+            return await this.reportRepository.getAllPostReports();
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async changeReportStatus(jobId: string) {
+        try {
+            return await this.jobRepository.changeReportStatus(jobId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async changePostReportStatus(postId: string) {
+        try {
+            return await this.postRepository.changePostReportStatus(postId);
         } catch (error) {
             console.log(error as Error);
         }

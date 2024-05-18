@@ -9,7 +9,8 @@ export interface jobReportInterface extends Document {
 const jobReportSchema: Schema = new Schema({
     jobId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref:'job'
     },
     reason: {
         type: String,

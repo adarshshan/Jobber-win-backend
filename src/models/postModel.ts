@@ -6,6 +6,7 @@ export interface PostInterface extends Document {
     caption?: string;
     imageUrl?: string;
     isDeleted: boolean;
+    isReported: boolean;
     isPrivate: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -23,6 +24,10 @@ const postSchema: Schema<PostInterface> = new Schema({
     },
     imageUrl: {
         type: String
+    },
+    isReported: {
+        type: Boolean,
+        default: false,
     },
     isDeleted: {
         type: Boolean,
