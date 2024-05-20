@@ -121,6 +121,20 @@ class AdminService {
             console.log(error as Error);
         }
     }
+    async deleteJobReport(reportId: string) {
+        try {
+            return await this.jobReportRepository.deleteJobReport(reportId);
+        } catch (error) {
+            console.log(error as Error)
+        }
+    }
+    async deletePostReport(reportId: string) {
+        try {
+            return await this.reportRepository.deletePostReport(reportId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async changePostReportStatus(postId: string) {
         try {
             return await this.postRepository.changePostReportStatus(postId);

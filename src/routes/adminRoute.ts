@@ -8,6 +8,9 @@ import adminAuth from '../middlewares/adminAuthMiddleware'
 import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 import JobRepository from "../repositories/jobRepository";
 import PostRepository from "../repositories/postRepository";
+import SubscriptionRepository from "../repositories/subscriptionRepository";
+import SubscriptionService from "../service/subscriptionService";
+import SubscriptionController from "../controllers/subscriptionController";
 
 const adminRouter = express.Router();
 
@@ -18,7 +21,7 @@ const jobRepository = new JobRepository();
 const postRepository = new PostRepository();
 const jobReportRepository = new JobReportRepository();
 const reportRepository = new ReportRepository()
-const adminService: AdminService = new AdminService(adminReopsitory, encrypt, createjwt, jobReportRepository, reportRepository, jobRepository,postRepository);
+const adminService: AdminService = new AdminService(adminReopsitory, encrypt, createjwt, jobReportRepository, reportRepository, jobRepository, postRepository);
 const controller = new adminController(adminService);
 
 //admin login
@@ -36,17 +39,24 @@ adminRouter.post('/users', async (req: Request, res: Response) => controller.sen
 adminRouter.get('/all-jobs', async (req: Request, res: Response) => controller.getUserList(req, res));
 adminRouter.get('/get-all-jobreports', async (req: Request, res: Response) => controller.getAllJobReports(req, res));
 adminRouter.put('/change-report-status/:jobId', async (req: Request, res: Response) => controller.changeReportStatus(req, res));
+adminRouter.put('/delete-job-report/:reportId', async (req: Request, res: Response) => controller.deleteJobReport(req, res));
 
 //posts
 adminRouter.get('/get-all-postreports', async (req: Request, res: Response) => controller.getAllPostReports(req, res));
 adminRouter.put('/change-status-post/:postId', async (req: Request, res: Response) => controller.changePostReportStatus(req, res));
-
+adminRouter.put('/delete-post-report/:reportId', async (req: Request, res: Response) => controller.deletePostReport(req, res));
 
 ///subscriptions
-// adminRouter.get('/subscription', async (req: Request, res: Response) => controller.getSubscriptionList(req, res));
-// adminRouter.post('/subscription', async (req: Request, res: Response) => controller.createSubscription(req, res));
-// adminRouter.put('/subscription', async (req: Request, res: Response) => controller.editSubscription(req, res));
-// adminRouter.delete('/subscription', async (req: Request, res: Response) => controller.deleteSubscription(req, res));
+const subscriptionRepository = new SubscriptionRepository();
+const subscriptionService = new SubscriptionService(subscriptionRepository);
+const subscriptionController = new SubscriptionController(subscriptionService);
+
+adminRouter.get('/subscription', async (req: Request, res: Response) => subscriptionController.getSubscriptionList(req, res));
+adminRouter.post('/subscription', async (req: Request, res: Response) => subscriptionController.createSubscription(req, res));
+adminRouter.put('/subscription/:id', async (req: Request, res: Response) => subscriptionController.editSubscription(req, res));
+adminRouter.delete('/subscription/:id', async (req: Request, res: Response) => subscriptionController.deleteSubscription(req, res));
+adminRouter.put('/subscription/activate/:id', async (req: Request, res: Response) => subscriptionController.activateSubscription(req, res));
+adminRouter.put('/subscription/deactivate/:id', async (req: Request, res: Response) => subscriptionController.deactivateSubscription(req, res));
 
 
 

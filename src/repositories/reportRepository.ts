@@ -26,7 +26,7 @@ class ReportRepository {
     }
     async getAllPostReports() {
         try {
-            let reports: any = await postReportModel.find()
+            let reports: any = await postReportModel.find({ status: 'open' })
                 .populate('postId')
                 .populate('reportedBy', 'name email profile_picture');
             reports = await userModel.populate(reports, {
@@ -34,6 +34,18 @@ class ReportRepository {
                 select: 'name profile_picture headLine email'
             })
             return reports;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async deletePostReport(reportId: string) {
+        try {
+            let report = await postReportModel.findById(reportId);
+            if (report) {
+                report.status = 'closed'
+                await report.save();
+                return report;
+            }
         } catch (error) {
             console.log(error as Error);
         }
@@ -65,7 +77,7 @@ class JobReportRepository {
     }
     async getAllJobReports() {
         try {
-            let reports = await jobReportModel.find()
+            let reports = await jobReportModel.find({ status: 'open' })
                 .populate('jobId')
                 .populate('reportedBy', 'name email profile_picture')
             reports = await jobReportModel.populate(reports, {
@@ -73,6 +85,18 @@ class JobReportRepository {
                 select: 'name email headLine profile_picture'
             })
             return reports;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async deleteJobReport(reportId: string) {
+        try {
+            let report = await jobReportModel.findById(reportId);
+            if (report) {
+                report.status = 'closed'
+                await report.save();
+                return report;
+            }
         } catch (error) {
             console.log(error as Error);
         }

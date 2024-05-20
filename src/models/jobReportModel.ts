@@ -10,7 +10,7 @@ const jobReportSchema: Schema = new Schema({
     jobId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref:'job'
+        ref: 'job'
     },
     reason: {
         type: String,
@@ -23,7 +23,7 @@ const jobReportSchema: Schema = new Schema({
     },
     status: {
         type: String,
-        enum: ['open', 'in_review', 'closed'],
+        enum: ['open', 'closed'],
         default: 'open'
     }
 }, {

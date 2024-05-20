@@ -116,6 +116,28 @@ class adminController {
             res.json({ success: false, message: 'Internal server Error occured!' });
         }
     }
+    async deleteJobReport(req: Request, res: Response) {
+        try {
+            const reportId = req.params.reportId;
+            const result = await this.adminService.deleteJobReport(reportId);
+            if (result) res.json({ success: true, message: 'Job report closed' });
+            else res.json({ success: false, message: 'Something went wrong while close the job report' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server error occured!' });
+        }
+    }
+    async deletePostReport(req: Request, res: Response) {
+        try {
+            const reportId = req.params.reportId;
+            const result = await this.adminService.deletePostReport(reportId);
+            if (result) res.json({ success: true, message: 'Post report closed ' });
+            else res.json({ success: false, message: 'Something went wrong while close the post report' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'internal server error occured!' });
+        }
+    }
     async changePostReportStatus(req: Request, res: Response) {
         try {
             const postId = req.params.postId;

@@ -23,7 +23,7 @@ const postReportSchema: Schema = new Schema({
     },
     status: {
         type: String,
-        enum: ['open', 'in_review', 'closed'],
+        enum: ['open', 'closed'],
         default: 'open'
     }
 }, {
