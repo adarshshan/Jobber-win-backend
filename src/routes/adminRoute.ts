@@ -11,6 +11,7 @@ import PostRepository from "../repositories/postRepository";
 import SubscriptionRepository from "../repositories/subscriptionRepository";
 import SubscriptionService from "../service/subscriptionService";
 import SubscriptionController from "../controllers/subscriptionController";
+import UserRepository from "../repositories/userRepository";
 
 const adminRouter = express.Router();
 
@@ -48,7 +49,8 @@ adminRouter.put('/delete-post-report/:reportId', async (req: Request, res: Respo
 
 ///subscriptions
 const subscriptionRepository = new SubscriptionRepository();
-const subscriptionService = new SubscriptionService(subscriptionRepository);
+const userRepository = new UserRepository()
+const subscriptionService = new SubscriptionService(subscriptionRepository, userRepository);
 const subscriptionController = new SubscriptionController(subscriptionService);
 
 adminRouter.get('/subscription', async (req: Request, res: Response) => subscriptionController.getSubscriptionList(req, res));

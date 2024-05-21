@@ -15,10 +15,10 @@ export interface UserInterface extends Document {
     role: 'recruiter' | 'user';
     profile_picture: string;
     cover_image: string;
-    resume?: string | undefined;
     location?: string | null;
     skills?: string[];
     savedJobs?: SavedJob[];
+    subscription: any;
     appliedJobs?: AppliedJob[];
     matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
@@ -76,11 +76,12 @@ const userSchema: Schema<UserInterface> = new Schema({
         type: String,
         default: "https://img.freepik.com/free-photo/grunge-black-concrete-textured-background_53876-124541.jpg"
     },
-    resume: {
-        type: String
-    },
     location: {
         type: String
+    },
+    subscription: {
+        sub_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'subscription' },
+        purchased_At: { type: Date, required: true }
     },
     savedJobs: [
         {

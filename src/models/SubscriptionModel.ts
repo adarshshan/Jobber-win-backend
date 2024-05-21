@@ -6,7 +6,7 @@ export interface SubscriptionPlanInterface extends Document {
     amount: number,
     planName: string,
     status: string,
-    description:string
+    description: string
 }
 
 const subscriptionSchema: Schema = new Schema({
@@ -31,6 +31,8 @@ const subscriptionSchema: Schema = new Schema({
         enum: ['active', 'inactive'],
         default: 'active'
     }
+}, {
+    timestamps: true
 })
 
 const SubscriptionModel = mongoose.model<SubscriptionPlanInterface>('subscription', subscriptionSchema)

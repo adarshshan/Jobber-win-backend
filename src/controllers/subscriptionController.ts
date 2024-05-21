@@ -71,6 +71,74 @@ class SubscriptionController {
             res.json({ success: false, message: 'Internal server ERror occured!' });
         }
     }
+
+    //recuriter side 
+
+    async getAllSubscriptions(req: Request, res: Response) {
+        try {
+            const result = await this.subscriptionService.getAllSubscriptions();
+            if (result) res.json({ success: true, data: result, message: 'Success' });
+            else res.json({ success: false, message: 'Something went wrong while fetching the subscriptioin details. please try again!' })
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'internal server error occured!' })
+        }
+    }
+    async subscriptionPayment(req: Request, res: Response) {
+        try {
+            const { item } = req.body;
+            const user = req.user;
+            req.app.locals.subItem = item;
+            req.app.locals.userId = req.userId;
+            const expirationMinutes = 5;
+            setTimeout(() => {
+                delete req.app.locals.subItem;
+            }, expirationMinutes * 60 * 60 * 1000);
+
+            if (user) {
+                const id = await this.subscriptionService.subscriptionPayment(item, user);
+                res.json({ id: id });
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async webHook(req: Request, res: Response) {
+        try {
+            const userId = req.app.locals.userId
+            const event = req.body;
+            const item = req.app.locals.subItem
+            switch (event.type) {
+                case 'charge.updated':
+                    console.log('charge.updated....');
+                    const paymentDetails = event.data.object;
+                    await this.subscriptionService.updateSubPlan(userId, item);
+                    break;
+                case 'checkout.session.completed':
+                    const paymentIntent = event.data.object;
+                    console.log('checkout.session.completed ...');
+                    break;
+                case 'payment_intent.succeeded':
+                    console.log('payment_intent.succeeded...');
+                    break;
+                case 'payment_intent.payment_failed':
+                    console.log('payment_intent.payment_failed');
+                    break;
+                case 'charge.succeeded':
+                    console.log('charge.succeeded...');
+                    break;
+                case 'payment_intent.requires_action':
+                    console.log('payment_intent.requires_action....')
+                    break;
+                default:
+                    console.log(`Unhandled event type ${event.type}`);
+                    break;
+            }
+            res.json({ success: true });
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default SubscriptionController;

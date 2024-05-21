@@ -116,4 +116,7 @@ userRouter.get('/getjobs/:num', authenticate, async (req: Request, res: Response
 userRouter.get('/getjobs-by-experience/:start/:end', authenticate, async (req: Request, res: Response) => await jobController.getJobsByExperience(req, res));
 
 
+
+
+
 export default userRouter;

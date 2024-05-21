@@ -58,6 +58,16 @@ class SubscriptionRepository {
             console.log(error as Error)
         }
     }
+
+    //...............Recruiter side .................\\
+    async getAllSubscriptions() {
+        try {
+            const data = await SubscriptionModel.find({ status: 'active' }).sort({ createdAt: -1 });
+            return data;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default SubscriptionRepository;

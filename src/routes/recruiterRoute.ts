@@ -4,6 +4,10 @@ import RecruiterRepository from "../repositories/recruiterRepository";
 import RecruiterService from "../service/recruiterService";
 import RecruiterController from "../controllers/recruiterController";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
+import SubscriptionRepository from "../repositories/subscriptionRepository";
+import SubscriptionService from "../service/subscriptionService";
+import SubscriptionController from "../controllers/subscriptionController";
+import UserRepository from "../repositories/userRepository";
 
 const recruiterRouter: Router = express.Router();
 
@@ -18,6 +22,24 @@ recruiterRouter.post('/post-new-job', authenticate, async (req: Request, res: Re
 recruiterRouter.put('/edit-jobs', authenticate, async (req: Request, res: Response) => recruiterController.editJobs(req, res));
 recruiterRouter.get('/get-all-applications', authenticate, async (req: Request, res: Response) => recruiterController.getAllApplications(req, res));
 recruiterRouter.put('/change-application-states/:status/:applicationId', authenticate, async (req: Request, res: Response) => recruiterController.changeStatus(req, res));
+
+
+
+
+// Subscription
+
+const subscriptionRepository = new SubscriptionRepository();
+const userRepository = new UserRepository();
+const subscriptionService = new SubscriptionService(subscriptionRepository, userRepository);
+const subscriptionController = new SubscriptionController(subscriptionService);
+
+
+recruiterRouter.get('/get-subscriptions', authenticate, async (req: Request, res: Response) => subscriptionController.getAllSubscriptions(req, res));
+recruiterRouter.post('/payment-subscription', authenticate, async (req: Request, res: Response) => subscriptionController.subscriptionPayment(req, res));
+recruiterRouter.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => subscriptionController.webHook(req, res));
+
+
+
 
 
 export default recruiterRouter;

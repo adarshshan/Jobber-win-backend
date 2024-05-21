@@ -1,4 +1,5 @@
 import UserInterface from '../interfaces/entityInterface/Iuser';
+import { SubInterface } from '../interfaces/serviceInterfaces/subscription';
 import userModel from '../models/userModel';
 import mongoose, { ObjectId } from 'mongoose';
 
@@ -220,6 +221,15 @@ class UserRepository {
         } catch (error) {
             console.error(error)
             return null
+        }
+    }
+    //.............subscription//................
+
+    async updateSubPlan(userId: string, item: SubInterface) {
+        try {
+            await userModel.findByIdAndUpdate(userId, { $set: { subscription: { sub_Id: item._id, purchased_At: Date.now() } } }, { new: true });
+        } catch (error) {
+            console.log(error as Error);
         }
     }
 }
