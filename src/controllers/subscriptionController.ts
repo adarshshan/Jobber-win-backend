@@ -139,6 +139,19 @@ class SubscriptionController {
             console.log(error as Error);
         }
     }
+    async getCurrentSubscription(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.subscriptionService.getCurrentSubscription(userId);
+                if (result) res.json(result);
+                else res.json({ success: false, message: 'somethingwent wrong while fetching the current subscription plan.' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server error' });
+        }
+    }
 }
 
 export default SubscriptionController;

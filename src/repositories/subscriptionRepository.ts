@@ -68,6 +68,14 @@ class SubscriptionRepository {
             console.log(error as Error);
         }
     }
+    async getSubscriptionById(id: string) {
+        try {
+            const sub = await SubscriptionModel.findById(id);
+            return sub;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default SubscriptionRepository;

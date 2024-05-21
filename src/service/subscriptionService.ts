@@ -91,14 +91,61 @@ class SubscriptionService {
     }
     async webHook(item: SubInterface, event: any, userId: string) {
         try {
-            
+
             return null;
         } catch (error) {
             console.log(error as Error);
         }
     }
-    async updateSubPlan(userId:string, item:SubInterface){
+    async updateSubPlan(userId: string, item: SubInterface) {
         await this.userRepository.updateSubPlan(userId, item);
+    }
+    async getCurrentSubscription(userId: string) {
+        try {
+            const user: any = await this.userRepository.getUserById(userId);
+            if (user) {
+                const subScr = await this.subscriptionRepository.getSubscriptionById(user.subscription.sub_Id);
+                if (subScr) {
+                    if (subScr.status !== 'active')
+                        return {
+                            success: true,
+                            planData: {
+                                planName: subScr.planName,
+                                description: subScr.description,
+                                duration: subScr.duration,
+                                amount: subScr.amount,
+                                status: 'inactive'
+                            },
+                            message: 'success'
+                        }
+                    const date = new Date(user.subscription.purchased_At)
+                    let expireDate = new Date(date);
+                    expireDate.setMonth(date.getMonth() + subScr.duration);
+
+                    return {
+                        success: true,
+                        planData: {
+                            planName: subScr.planName,
+                            description: subScr.description,
+                            duration: subScr.duration,
+                            amount: subScr.amount,
+                            status: 'active',
+                            expire_at: expireDate
+                        },
+                        message: 'success'
+                    }
+                } else return {
+                    success: false,
+                    message: 'plan is not exists!!!'
+                }
+
+            } return {
+                success: false,
+                message: 'user has not purchased subscription plan!'
+            }
+        } catch (error) {
+            console.log(error as Error);
+        }
     }
 }
 

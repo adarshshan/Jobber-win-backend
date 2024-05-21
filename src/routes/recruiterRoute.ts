@@ -37,6 +37,7 @@ const subscriptionController = new SubscriptionController(subscriptionService);
 recruiterRouter.get('/get-subscriptions', authenticate, async (req: Request, res: Response) => subscriptionController.getAllSubscriptions(req, res));
 recruiterRouter.post('/payment-subscription', authenticate, async (req: Request, res: Response) => subscriptionController.subscriptionPayment(req, res));
 recruiterRouter.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => subscriptionController.webHook(req, res));
+recruiterRouter.get('/current-subscriptions', authenticate, async (req: Request, res: Response) => subscriptionController.getCurrentSubscription(req, res));
 
 
 
