@@ -7,6 +7,24 @@ import userModel from "../models/userModel";
 
 class JobRepository {
 
+    async landingPageJobs(search: string|undefined) {
+        try {
+            const keyword = search ? {
+                $or: [
+                    { title: { $regex: search, $options: 'i' } },
+                    { company_name: { $regex: search, $options: 'i' } },
+                    { industry: { $regex: search, $options: 'i' } },
+                    { location: { $regex: search, $options: 'i' } },
+                    { job_type: { $regex: search, $options: 'i' } }
+                ]
+            } : {}
+            const alljobs = await jobModel.find(keyword).sort({ createdAt: -1 }).limit(6)
+            return alljobs;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+
     async getAllJobs(search: string | undefined, userId: string) {
         try {
             const keyword = search ? {

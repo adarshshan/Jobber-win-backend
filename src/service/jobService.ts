@@ -13,6 +13,13 @@ class JobService {
         private jobReportRepository: JobReportRepository
     ) { }
 
+    async landingPageJobs(search:string){
+        try {
+            return await this.jobRepository.landingPageJobs(search)
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
     async getAllJobs(search: string | undefined, userId: string) {
         try {
             return await this.jobRepository.getAllJobs(search, userId);

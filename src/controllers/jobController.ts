@@ -10,6 +10,18 @@ export interface JobBodyInterface {
 class JobController {
     constructor(private jobService: JobService) { }
 
+
+    async landingPageJobs(req: Request, res: Response) {
+        try {
+            let search:any = req.query.search;
+            const jobs = await this.jobService.landingPageJobs(search);
+            if (jobs) res.json({ success: true, data: jobs, message: 'messages fetched successfully' });
+            else res.json({ success: false, message: 'Something went wrong!' });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server error occured!' });
+        }
+    }
     async getAllJobs(req: Request, res: Response) {
         try {
             const userId = req.userId;

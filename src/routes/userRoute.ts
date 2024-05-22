@@ -103,6 +103,7 @@ const jobService = new JobService(jobRepository, userRepository, jobApplicationR
 const jobController = new JobController(jobService);
 
 
+userRouter.get('/get-jobs', async (req: Request, res: Response) => await jobController.landingPageJobs(req, res));
 userRouter.get('/get-all-jobs', authenticate, async (req: Request, res: Response) => await jobController.getAllJobs(req, res));
 userRouter.get('/get-single-jobs/:jobId', async (req: Request, res: Response) => await jobController.getSingleJobDetails(req, res));
 userRouter.post('/apply-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.applyJOb(req, res));
