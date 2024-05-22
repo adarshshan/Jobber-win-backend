@@ -46,6 +46,21 @@ class MessageController {
             res.json({ success: false, message: 'Internal server Error' });
         }
     }
+    async shareVideoLink(req: Request, res: Response) {
+        try {
+            console.log('hey reached here....');
+            const { chatId, shared_link } = req.body; console.log(chatId, shared_link);
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.messageService.shareVideoLink(chatId, shared_link, userId);
+                if (result) res.json({ success: true, data: result, message: 'Video link shared successfully' });
+                else res.json({ success: false, message: 'Something went wrong while sending the video link' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
 }
 
 export default MessageController;

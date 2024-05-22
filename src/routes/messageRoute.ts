@@ -14,5 +14,6 @@ const controller = new MessageController(messageService);
 messageRouter.post('/', authenticate, async (req: Request, res: Response) => controller.sendMessage(req, res))
 messageRouter.get('/:chatId', authenticate, async (req: Request, res: Response) => controller.allMessages(req, res));
 messageRouter.post('/sharepost', authenticate, async (req: Request, res: Response) => controller.sharePostMessage(req, res));
+messageRouter.post('/share-video-link', authenticate, async (req: Request, res: Response) => controller.shareVideoLink(req, res));
 
 export default messageRouter;

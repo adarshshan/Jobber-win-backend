@@ -30,8 +30,7 @@ function socketServer(server: any) {
 
 
         socket.on("new message", (newMessageReceived) => {
-            var chat = newMessageReceived.chat;
-
+            var chat = newMessageReceived.chat; 
             if (!chat.users) return console.log('chat.users not defined');
 
             chat.users.forEach((user: any) => {

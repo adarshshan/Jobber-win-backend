@@ -40,6 +40,7 @@ class MessageRepository {
                 .populate('sender', 'name pic email')
                 .populate('chat')
                 .populate('shared_post', 'imageUrl userId')
+            console.log(messages); console.log('this is the messages...');
             return messages
         } catch (error) {
             console.log(error as Error);
@@ -71,6 +72,36 @@ class MessageRepository {
             await chatModel.findByIdAndUpdate(chatId, {
                 $push: { latestMessages: message._id },
             });
+            return message;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async shareVideoLink(chatId: string, shared_link: string, userId: string) {
+        try {
+            const newMessage = {
+                sender: userId,
+                contentType: 'videoCall',
+                shared_link: shared_link,
+                chat: chatId
+            };
+            let message = await messageModel.create(newMessage);
+            if (!message._id) {
+                throw new Error("Message creation failed");
+            }
+            message = await message
+                .populate("sender", "name pic")
+            message = await message
+                .populate("chat")
+            message = await userModel.populate(message, {
+                path: "chat.users",
+                select: "name pic email",
+            });
+
+            await chatModel.findByIdAndUpdate(chatId, {
+                $push: { latestMessages: message._id },
+            });
+            console.log(message); console.log('this isthe  new message......');
             return message;
         } catch (error) {
             console.log(error as Error);

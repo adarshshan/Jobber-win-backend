@@ -11,12 +11,15 @@ const messageSchema: Schema<MessageInterface> = new Schema({
     },
     contentType: {
         type: String,
-        enum: ['sharePost', 'image', 'text'],
+        enum: ['sharePost', 'image', 'text', 'videoCall'],
         default: 'text'
     },
     shared_post: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "post"
+    },
+    shared_link: {
+        type: String
     },
     content: {
         type: String, trim: true

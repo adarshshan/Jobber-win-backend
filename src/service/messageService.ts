@@ -18,11 +18,18 @@ class MessageService {
             console.log(error as Error);
         }
     }
-    async sharePostMessage(postId: string, chatId: string,userId:string) {
+    async sharePostMessage(postId: string, chatId: string, userId: string) {
         try {
-            return await this.messageRepository.sharePostMessage(postId, chatId,userId);
+            return await this.messageRepository.sharePostMessage(postId, chatId, userId);
         } catch (error) {
             console.log(error as Error)
+        }
+    }
+    async shareVideoLink(chatId: string, shared_link: string, userId: string) {
+        try {
+            return await this.messageRepository.shareVideoLink(chatId, shared_link, userId);
+        } catch (error) {
+            console.log(error as Error);
         }
     }
 }
