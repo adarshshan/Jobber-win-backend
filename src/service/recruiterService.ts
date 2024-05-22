@@ -1,14 +1,46 @@
 import { JobInterface } from "../controllers/recruiterController";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import RecruiterRepository from "../repositories/recruiterRepository";
+import SubscriptionRepository from "../repositories/subscriptionRepository";
+import UserRepository from "../repositories/userRepository";
 
 
 class RecruiterService {
-    constructor(private recruiterRepository: RecruiterRepository, private jobApplicationRepository: JobApplicationRepository) { }
+    constructor(
+        private recruiterRepository: RecruiterRepository,
+        private jobApplicationRepository: JobApplicationRepository,
+        private userRepository: UserRepository,
+        private subscriptionRepository: SubscriptionRepository) { }
 
     async getAllJobs(userId: string) {
         try {
             return await this.recruiterRepository.getAllJobs(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async isSubscribed(userId: string) {
+        try {
+            const user = await this.userRepository.getUserById(userId);
+            if (user) {
+                let subId = user.subscription?.sub_Id;
+                let start = user.subscription?.purchased_At;
+                if (subId) {
+                    let subscr = await this.subscriptionRepository.getSubscriptionById(subId);
+                    let duration = subscr?.duration;
+                    let status = subscr?.status;
+                    if (status === 'inactive') return { success: false, message: 'This plan is deactivated. please purchase another one.' };
+                    if (start) {
+                        const date = new Date(start);
+                        let expireDate = new Date(date);
+                        if (duration) {
+                            expireDate.setMonth(date.getMonth() + duration);
+                            if (new Date(expireDate).getTime() < Date.now()) return { success: false, message: 'Your Subscription plan is Expired! Please purchase another plan.' };
+                        }
+                    }
+                } else return { success: false, message: 'you are not purchased any subscription plans. please purchase a plan and continue' };
+            } else return { success: false, message: 'user not found!' };
+            return { success: true, message: 'user has the valid subscription plan.' };
         } catch (error) {
             console.log(error as Error);
         }

@@ -1,5 +1,9 @@
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
+export interface Subscription {
+    sub_Id: string;
+    purchased_At: Date;
+}
 interface UserInterface {
     id?: string | undefined;
     name: string;
@@ -15,6 +19,7 @@ interface UserInterface {
     followers?: ObjectId[];
     appliedJobs?: AppliedJob[];
     savedJobs?: SavedJob[];
+    subscription?: Subscription;
 }
 
 export default UserInterface;

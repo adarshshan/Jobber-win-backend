@@ -58,7 +58,6 @@ class JobReportRepository {
 
     async reportJob(reason: string, jobId: string, userId: string) {
         try {
-            console.log(userId, jobId, reason);
             let jobReport = await jobReportModel.findOne({ $and: [{ reportedBy: userId }, { jobId: jobId }] });
             if (jobReport) {
                 return { success: false, message: 'you are already reported!' }

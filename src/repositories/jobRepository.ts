@@ -7,7 +7,7 @@ import userModel from "../models/userModel";
 
 class JobRepository {
 
-    async landingPageJobs(search: string|undefined) {
+    async landingPageJobs(search: string | undefined) {
         try {
             const keyword = search ? {
                 $or: [
@@ -36,7 +36,7 @@ class JobRepository {
                     { job_type: { $regex: search, $options: 'i' } }
                 ]
             } : {}
-            const alljobs = await jobModel.find(keyword);
+            const alljobs = await jobModel.find(keyword).sort({ createdAt: -1 })
 
             var userSkills: string[] | any = await userModel.findOne({ _id: userId }, { skills: 1 });
             if (userSkills) userSkills = userSkills.skills;
@@ -93,7 +93,6 @@ class JobRepository {
                 { $lookup: { from: 'users', localField: 'recruiterId', foreignField: '_id', as: 'recruiter_details' } },
                 { $addFields: { recruiter_details: { $first: '$recruiter_details' } } }
             ])
-            // console.log(job[0]);
             return job[0];
         } catch (error) {
             console.log(error as Error);

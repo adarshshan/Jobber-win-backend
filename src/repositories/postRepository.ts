@@ -17,7 +17,7 @@ class PostRepository {
 
             await newPost.save();
 
-            const postObject: IPostInterface = newPost.toObject(); // Convert Mongoose document to plain JavaScript object
+            const postObject: IPostInterface = newPost.toObject(); 
             return postObject;
         } catch (error) {
             console.log(error as Error);
@@ -108,7 +108,6 @@ class PostRepository {
     }
     async deletePost(postId: string) {
         try {
-            console.log(`this is the postId ${postId}`);
             const post = await PostModel.findById(postId);
             if (post) {
                 post.isDeleted = true;

@@ -13,7 +13,9 @@ const recruiterRouter: Router = express.Router();
 
 const jobApplicationRepository = new JobApplicationRepository();
 const recruiterRepository = new RecruiterRepository();
-const recruiterService = new RecruiterService(recruiterRepository, jobApplicationRepository);
+const subscriptionRepository = new SubscriptionRepository();
+const userRepository = new UserRepository();
+const recruiterService = new RecruiterService(recruiterRepository, jobApplicationRepository, userRepository,subscriptionRepository);
 const recruiterController = new RecruiterController(recruiterService);
 
 recruiterRouter.get('/get-alljobs', authenticate, async (req: Request, res: Response) => recruiterController.getAllJobs(req, res));
@@ -28,8 +30,6 @@ recruiterRouter.put('/change-application-states/:status/:applicationId', authent
 
 // Subscription
 
-const subscriptionRepository = new SubscriptionRepository();
-const userRepository = new UserRepository();
 const subscriptionService = new SubscriptionService(subscriptionRepository, userRepository);
 const subscriptionController = new SubscriptionController(subscriptionService);
 

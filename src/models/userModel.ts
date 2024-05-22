@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from 'bcrypt';
+import { Subscription } from "../interfaces/entityInterface/Iuser";
+
 
 export interface UserInterface extends Document {
     _id: mongoose.Types.ObjectId;
@@ -18,7 +20,7 @@ export interface UserInterface extends Document {
     location?: string | null;
     skills?: string[];
     savedJobs?: SavedJob[];
-    subscription: any;
+    subscription: Subscription;
     appliedJobs?: AppliedJob[];
     matchPassword: (enteredPassword: string) => Promise<boolean>;
 }

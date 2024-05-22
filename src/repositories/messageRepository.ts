@@ -13,7 +13,6 @@ class MessageRepository {
                 chat: chatId
             };
             let message = await messageModel.create(newMessage);
-            console.log(message);
             if (!message._id) {
                 throw new Error("Message creation failed");
             }
@@ -30,8 +29,6 @@ class MessageRepository {
             await chatModel.findByIdAndUpdate(chatId, {
                 $push: { latestMessages: message._id },
             });
-
-            // res.status(201).json({ message });
             return message;
         } catch (error) {
             console.log(error as Error);
@@ -57,7 +54,6 @@ class MessageRepository {
                 chat: chatId
             };
             let message = await messageModel.create(newMessage);
-            console.log(message);
             if (!message._id) {
                 throw new Error("Message creation failed");
             }
@@ -75,8 +71,6 @@ class MessageRepository {
             await chatModel.findByIdAndUpdate(chatId, {
                 $push: { latestMessages: message._id },
             });
-
-            // res.status(201).json({ message });
             return message;
         } catch (error) {
             console.log(error as Error);

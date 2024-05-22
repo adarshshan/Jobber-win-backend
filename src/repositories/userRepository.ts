@@ -1,7 +1,7 @@
 import UserInterface from '../interfaces/entityInterface/Iuser';
 import { SubInterface } from '../interfaces/serviceInterfaces/subscription';
 import userModel from '../models/userModel';
-import mongoose, { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 
 
 class UserRepository {
@@ -216,7 +216,6 @@ class UserRepository {
                 { $push: { appliedJobs: { jobId: jobId } } },
                 { new: true }
             );
-            if (user) console.log('jobid added to the users applied jobs');
             return user
         } catch (error) {
             console.error(error)

@@ -36,9 +36,13 @@ class RecruiterController {
             const userId = req.userId;
             const { data } = req.body;
             if (userId) {
-                const result = await this.recruiterService.postNewJob(data, userId);
-                if (result) res.json({ success: true, data: result, message: 'Job posted successfully' });
-                else res.json({ success: false, message: 'Somthing went wrong while posting the job!' });
+                const isSubscribed = await this.recruiterService.isSubscribed(userId);
+                console.log(isSubscribed); console.log('this is the isSubscribed anwer..');
+                if (isSubscribed?.success) {
+                    const result = await this.recruiterService.postNewJob(data, userId);
+                    if (result) res.json({ success: true, data: result, message: 'Job posted successfully' });
+                    else res.json({ success: false, message: 'Somthing went wrong while posting the job!' });
+                } else res.json(isSubscribed);
             } else res.json({ success: false, message: 'Authentication Error!' });
         } catch (error) {
             console.log(error as Error);
@@ -48,7 +52,7 @@ class RecruiterController {
     async editJobs(req: Request, res: Response) {
         try {
             const userId = req.userId;
-            const { data,jobId } = req.body;
+            const { data, jobId } = req.body;
             if (userId) {
                 const result = await this.recruiterService.editJobs(data, jobId);
                 if (result) res.json({ success: true, data: result, message: 'job details updated' });
