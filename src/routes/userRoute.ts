@@ -74,7 +74,7 @@ userRouter.put('/reply-comment/:commentId', authenticate, async (req: Request, r
 userRouter.delete('/delete-post/:postId', authenticate, async (req: Request, res: Response) => await postController.deletePost(req, res))
 userRouter.put('/postcaption-edit/:postId', authenticate, async (req: Request, res: Response) => await postController.updateCaption(req, res))
 userRouter.get('/share-post-suggession', authenticate, async (req: Request, res: Response) => await postController.postShareSuggestedUsers(req, res))
-userRouter.get('/get-post-details/:postId', authenticate, async (req: Request, res: Response) => await postController.getSinglePostDetails(req, res))
+userRouter.get('/get-post-details/:postId', async (req: Request, res: Response) => await postController.getSinglePostDetails(req, res))
 
 
 //netWorkcontroller

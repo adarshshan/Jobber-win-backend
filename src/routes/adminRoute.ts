@@ -12,6 +12,7 @@ import SubscriptionRepository from "../repositories/subscriptionRepository";
 import SubscriptionService from "../service/subscriptionService";
 import SubscriptionController from "../controllers/subscriptionController";
 import UserRepository from "../repositories/userRepository";
+import JobApplicationRepository from "../repositories/jobApplicationRepository";
 
 const adminRouter = express.Router();
 
@@ -22,7 +23,8 @@ const jobRepository = new JobRepository();
 const postRepository = new PostRepository();
 const jobReportRepository = new JobReportRepository();
 const reportRepository = new ReportRepository()
-const adminService: AdminService = new AdminService(adminReopsitory, encrypt, createjwt, jobReportRepository, reportRepository, jobRepository, postRepository);
+const jobApplicationRepository=new JobApplicationRepository();
+const adminService: AdminService = new AdminService(adminReopsitory, encrypt, createjwt, jobReportRepository, reportRepository, jobRepository, postRepository,jobApplicationRepository);
 const controller = new adminController(adminService);
 
 //admin login
@@ -30,6 +32,11 @@ adminRouter.post('/login', async (req: Request, res: Response) => controller.adm
 adminRouter.post('/registration', async (req: Request, res: Response) => controller.adminSignup(req, res));
 adminRouter.post('/verify-otp', async (req: Request, res: Response) => controller.veryfyOtp(req, res));
 adminRouter.get('/logout', async (req: Request, res: Response) => controller.adminLogout(req, res));
+
+// dashboard
+adminRouter.get('/dashboard/bar', async (req: Request, res: Response) => controller.barChart(req, res));
+adminRouter.get('/dashboard/line', async (req: Request, res: Response) => controller.lineChart(req, res));
+adminRouter.get('/dashboard/pie', async (req: Request, res: Response) => controller.pieChart(req, res));
 
 //users
 adminRouter.get('/users', adminAuth, async (req: Request, res: Response) => controller.getUserList(req, res));

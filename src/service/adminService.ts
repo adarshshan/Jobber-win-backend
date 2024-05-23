@@ -10,6 +10,7 @@ import { IApiRes } from "../interfaces/common/Icommon";
 import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 import JobRepository from "../repositories/jobRepository";
 import PostRepository from "../repositories/postRepository";
+import JobApplicationRepository from "../repositories/jobApplicationRepository";
 
 
 
@@ -20,7 +21,8 @@ class AdminService {
         private jobReportRepository: JobReportRepository,
         private reportRepository: ReportRepository,
         private jobRepository: JobRepository,
-        private postRepository: PostRepository) { }
+        private postRepository: PostRepository,
+        private jobApplicationRepository: JobApplicationRepository) { }
 
     async adminLogin(email: string, password: string): Promise<AdminAuthResponse | undefined> {
         const admin: Admin | null = await this.adminReopsitory.isAdminExist(email);
@@ -73,6 +75,31 @@ class AdminService {
         } catch (error) {
             console.log(error as Error);
             return { status: STATUS_CODES.INTERNAL_SERVER_ERROR, data: { success: false, message: 'Internal Error.' } };
+        }
+    }
+    async barChart() {
+        try {
+            const monthly = await this.jobApplicationRepository.getMonthlyApplicationCount();
+            const dayly = await this.jobApplicationRepository.getDailyApplicationCount();
+            const yearly = await this.jobApplicationRepository.getYearlyApplicationCount();
+            return { day: dayly, month: monthly, year: yearly };
+        } catch (error) {
+            console.log(error as Error);
+            throw new Error('Something went wrong');
+        }
+    }
+    async lineChart() {
+        try {
+
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async pieChart() {
+        try {
+
+        } catch (error) {
+            console.log(error as Error)
         }
     }
     async getUserList(page: number, limit: number, searchQuery: string | undefined): Promise<IApiRes<IUsersAndCount>> {

@@ -82,6 +82,39 @@ class adminController {
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server Error.' });
         }
     }
+
+    //................dashboard................//
+    async barChart(req: Request, res: Response) {
+        try {
+            const result = await this.adminService.barChart();
+            if (result) res.json({ success: true, data: result, message: 'Data fetched successfully' });
+            else res.json({ success: false, message: 'Something went wrong while fetching the barchart details' })
+        } catch (error) {
+            console.log(error as Error)
+            res.json({ success: false, message: 'internal server error occured' });
+        }
+    }
+    async lineChart(req: Request, res: Response) {
+        try {
+            const result = await this.adminService.lineChart();
+            // if (result) res.json({ success: true, data: result, message: 'Data fetched successfully' });
+            // else res.json({ success: false, message: "Something went wrong while fetching the lineChart data" });
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured' });
+        }
+    }
+    async pieChart(req: Request, res: Response) {
+        try {
+            const result = await this.adminService.pieChart();
+            // if (result) res.json({ success: true, data: result, message: 'Data fetched successfully' });
+            // else res.json({ success: false, message: 'Something went wrong while fetching the pieChart details!' });
+        } catch (error) {
+            console.log(error as Error)
+            res.json({ success: false, message: 'Internal server error occured!' });
+        }
+    }
+
     //users
     async getUserList(req: Request, res: Response) {
         try {
