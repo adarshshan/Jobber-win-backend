@@ -87,6 +87,19 @@ class RecruiterController {
             res.json({ success: false, message: 'Inernal Server Error occured!' });
         }
     }
+    async getGraphData(req: Request, res: Response) {
+        try {
+            const userId = req.userId;
+            if (userId) {
+                const result = await this.recruiterService.getGraphData(userId);
+                if (result) res.json({ success: true, data: result, message: 'Graph data Fetched successfully' });
+                else res.json({ success: false, message: 'Something went wrong!' });
+            }
+        } catch (error) {
+            console.log(error as Error);
+            res.json({ success: false, message: 'Internal server Error occured!' });
+        }
+    }
 }
 
 export default RecruiterController;

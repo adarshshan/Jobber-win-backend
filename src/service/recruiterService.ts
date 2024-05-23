@@ -80,6 +80,13 @@ class RecruiterService {
             console.log(error as Error);
         }
     }
+    async getGraphData(userId: string) {
+        try {
+            return await this.jobApplicationRepository.getGraphData(userId);
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default RecruiterService;

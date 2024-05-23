@@ -79,6 +79,46 @@ class JobApplicationRepository {
             console.log(error as Error);
         }
     }
+    async getGraphData(recruiterId: string) {
+        try {
+            const ObjectId = mongoose.Types.ObjectId;
+            const UserId = new ObjectId(recruiterId)
+            const res = await jobApplicationModel.aggregate([
+                {
+                    $lookup: {
+                        from: "jobs",
+                        localField: "jobId",
+                        foreignField: "_id",
+                        as: "jobDetails"
+                    }
+                },
+                {
+                    $unwind: "$jobDetails"
+                },
+                {
+                    $match: {
+                        "jobDetails.recruiterId": UserId
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            day: { $dayOfMonth: "$createdAt" },
+                            month: { $month: "$createdAt" },
+                            year: { $year: "$createdAt" }
+                        },
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 }
+                }
+            ])
+            return res;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default JobApplicationRepository;

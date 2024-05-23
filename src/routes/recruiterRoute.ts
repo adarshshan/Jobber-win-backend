@@ -24,6 +24,7 @@ recruiterRouter.post('/post-new-job', authenticate, async (req: Request, res: Re
 recruiterRouter.put('/edit-jobs', authenticate, async (req: Request, res: Response) => recruiterController.editJobs(req, res));
 recruiterRouter.get('/get-all-applications', authenticate, async (req: Request, res: Response) => recruiterController.getAllApplications(req, res));
 recruiterRouter.put('/change-application-states/:status/:applicationId', authenticate, async (req: Request, res: Response) => recruiterController.changeStatus(req, res));
+recruiterRouter.get('/change-application/graph', authenticate, async (req: Request, res: Response) => recruiterController.getGraphData(req, res));
 
 
 
