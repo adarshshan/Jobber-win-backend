@@ -124,9 +124,9 @@ class AdminService {
             throw new Error('Error occured.');
         }
     }
-    async blockNunblockUser(userId: string): Promise<void> {
+    async blockNunblockUser(userId: string){
         try {
-            await this.adminReopsitory.blockNunblockUser(userId);
+            return await this.adminReopsitory.blockNunblockUser(userId);
         } catch (error) {
             console.log(error as Error);
         }

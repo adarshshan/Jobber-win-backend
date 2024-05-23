@@ -17,7 +17,7 @@ class PostRepository {
 
             await newPost.save();
 
-            const postObject: IPostInterface = newPost.toObject(); 
+            const postObject: IPostInterface = newPost.toObject();
             return postObject;
         } catch (error) {
             console.log(error as Error);
@@ -35,6 +35,7 @@ class PostRepository {
     async getPostForHome() {
         try {
             const data = PostModel.aggregate([
+                { $match: { isReported: false } },
                 {
                     $lookup:
                     {

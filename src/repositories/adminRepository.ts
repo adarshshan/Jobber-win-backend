@@ -54,17 +54,20 @@ class AdminRepository {
             throw new Error('Error occured');
         }
     }
-    async blockNunblockUser(userId: string): Promise<void> {
+    async blockNunblockUser(userId: string) {
         try {
             const user = await userModel.findById(userId);
-            if (user !== null) {
-                user.isBlocked = !user.isBlocked;
+            if (user) {
+                user.isBlocked = !user?.isBlocked;
                 await user.save();
+                return user;
             } else {
                 throw new Error('Somthing went wrong!!!');
+                return null;
             }
         } catch (error) {
             console.log(error as Error);
+            return null;
         }
     }
     async getAdminById(id: string): Promise<AdminInterface | null> {

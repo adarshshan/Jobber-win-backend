@@ -83,7 +83,7 @@ const userSchema: Schema<UserInterface> = new Schema({
     },
     subscription: {
         sub_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'subscription' },
-        purchased_At: { type: Date, required: true }
+        purchased_At: { type: Date }
     },
     savedJobs: [
         {

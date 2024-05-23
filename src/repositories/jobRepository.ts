@@ -36,12 +36,14 @@ class JobRepository {
                     { job_type: { $regex: search, $options: 'i' } }
                 ]
             } : {}
-            const alljobs = await jobModel.find(keyword).sort({ createdAt: -1 })
+            // const alljobs = await jobModel.find(keyword).sort({ createdAt: -1 })
+            const alljobs = await jobModel.find({ $and: [{ isReported: false }, keyword] }).sort({ createdAt: -1 })
 
             var userSkills: string[] | any = await userModel.findOne({ _id: userId }, { skills: 1 });
             if (userSkills) userSkills = userSkills.skills;
 
             const jobs = await jobModel.aggregate([
+                { $match: { isReported: false } },
                 {
                     $addFields: {
                         matchedSkills: {

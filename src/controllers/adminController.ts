@@ -192,13 +192,11 @@ class adminController {
             res.json({ success: false, message: 'Internal server Error' });
         }
     }
-    async blockNunblockUser(req: Request, res: Response): Promise<void> {
+    async blockNunblockUser(req: Request, res: Response) {
         try {
-            await this.adminService.blockNunblockUser(req.params.userId as string);
-            res.status(OK).json({
-                success: true,
-                message: 'block or unblocked the user'
-            })
+            const result = await this.adminService.blockNunblockUser(req.params.userId as string);
+            if (result) res.json({ success: true, message: 'block or unblocked the user' })
+            else res.json({ success: false, message: 'Something Went wrong please try again' });
         } catch (error) {
             console.log(error as Error);
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
