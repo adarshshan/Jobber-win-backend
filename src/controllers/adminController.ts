@@ -97,8 +97,8 @@ class adminController {
     async lineChart(req: Request, res: Response) {
         try {
             const result = await this.adminService.lineChart();
-            // if (result) res.json({ success: true, data: result, message: 'Data fetched successfully' });
-            // else res.json({ success: false, message: "Something went wrong while fetching the lineChart data" });
+            if (result) res.json({ success: true, data: result, message: 'Data fetched successfully' });
+            else res.json({ success: false, message: "Something went wrong while fetching the lineChart data" });
         } catch (error) {
             console.log(error as Error);
             res.json({ success: false, message: 'Internal server Error occured' });

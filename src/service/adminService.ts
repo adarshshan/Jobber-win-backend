@@ -90,9 +90,13 @@ class AdminService {
     }
     async lineChart() {
         try {
-
+            const monthly = await this.jobRepository.getMonthlyJobPostCount()
+            const dayly = await this.jobRepository.getDailyJobPostCount()
+            const yearly = await this.jobRepository.getYearlyJobPostCount()
+            return { day: dayly, month: monthly, year: yearly };
         } catch (error) {
             console.log(error as Error);
+            throw new Error('Something went wrong');
         }
     }
     async pieChart() {

@@ -142,6 +142,66 @@ class JobRepository {
             console.log(error as Error);
         }
     }
+    async getMonthlyJobPostCount() {
+        try {
+            const monthlyCount = await jobModel.aggregate([
+                {
+                    $group: {
+                        _id: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { "_id.year": 1, "_id.month": 1 }
+                }
+            ])
+
+            console.log('Monthly Job Post Count:', monthlyCount);
+            return monthlyCount;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getDailyJobPostCount() {
+        try {
+            const dailyCount = await jobModel.aggregate([
+                {
+                    $group: {
+                        _id: { day: { $dayOfMonth: "$createdAt" }, month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 }
+                }
+            ])
+
+            console.log('Daily Job Post Count:', dailyCount);
+            return dailyCount;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
+    async getYearlyJobPostCount() {
+        try {
+            const yearlyCount = await jobModel.aggregate([
+                {
+                    $group: {
+                        _id: { year: { $year: "$createdAt" } },
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { "_id.year": 1 }
+                }
+            ])
+
+            console.log('Yearly Job Post Count:', yearlyCount);
+            return yearlyCount;
+        } catch (error) {
+            console.log(error as Error);
+        }
+    }
 }
 
 export default JobRepository;
