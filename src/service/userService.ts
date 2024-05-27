@@ -20,6 +20,7 @@ class userService {
         try {
             const user: UserInterface | null = await this.userRepository.emailExistCheck(email);
             const token = this.createjwt.generateToken(user?.id);
+            const refreshToken = this.createjwt.generateRefreshToken(user?.id);
             if (user && user.isBlocked) {
                 return {
                     status: UNAUTHORIZED,
@@ -27,7 +28,8 @@ class userService {
                         success: false,
                         message: 'You have been blocked by the admin !',
                         token: token,
-                        data: user
+                        data: user,
+                        refreshToken: refreshToken,
                     }
                 } as const;
             }
@@ -35,6 +37,7 @@ class userService {
                 const passwordMatch = await this.encrypt.compare(password, user.password as string);
                 if (passwordMatch) {
                     const token = this.createjwt.generateToken(user.id);
+                    const refreshToken = this.createjwt.generateRefreshToken(user.id);
                     return {
                         status: OK,
                         data: {
@@ -42,7 +45,8 @@ class userService {
                             message: 'Authentication Successful !',
                             data: user,
                             userId: user.id,
-                            token: token
+                            token: token,
+                            refreshToken: refreshToken
                         }
                     } as const;
                 } else {
@@ -56,6 +60,7 @@ class userService {
                 }
             }
         } catch (error) {
+            console.log(error as Error);
             return {
                 status: INTERNAL_SERVER_ERROR,
                 data: {
@@ -80,6 +85,7 @@ class userService {
             const user = await this.userRepository.saveUser(userData);
             if (user) {
                 const token = this.createjwt.generateToken(user?.id);
+                const refreshToken = this.createjwt.generateRefreshToken(user?.id);
                 return {
                     status: OK,
                     data: {
@@ -87,7 +93,8 @@ class userService {
                         message: 'Success',
                         userId: userData.id,
                         token: token,
-                        data: user
+                        data: user,
+                        refreshToken
                     }
                 }
             }
@@ -131,6 +138,9 @@ class userService {
     }
     generateToken(payload: string | undefined): string | undefined {
         if (payload) return this.createjwt.generateToken(payload);
+    }
+    generateRefreshToken(payload: string | undefined): string | undefined {
+        if (payload) return this.createjwt.generateRefreshToken(payload);
     }
     async hashPassword(password: string) {
         return await this.encrypt.hashPassword(password);

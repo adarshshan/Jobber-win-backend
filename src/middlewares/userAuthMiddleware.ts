@@ -22,27 +22,51 @@ declare global {
 
 const userAuth = async (req: Request, res: Response, next: NextFunction) => {
     let token = req.cookies.access_token;
-    if (!token) return res.status(401).json({ success: false, message: "Unauthorized - No token provided" })
+    let refresh_token = req.cookies.refresh_token;
+
+    if (!refresh_token) return res.json({ success: false, message: 'Token expired or not available' });
+
+    if (!token) {
+        console.log('noooooooo')
+        const newAccessToken = await refreshAccessToken(refresh_token);
+        const accessTokenMaxAge = 15 * 60 * 1000;
+        res.cookie('access_token', newAccessToken, { maxAge: accessTokenMaxAge });
+    }
 
     try {
         const decoded = jwt.verifyToken(token);
-        if (decoded) {
-            let user = await userRepository.getUserById(decoded.toString());
+        // console.log(decoded);
+        if (decoded?.success) {
+            let user = await userRepository.getUserById(decoded.decoded?.data?.toString());
             if (user?.isBlocked) {
-                return res.status(UNAUTHORIZED).json({ success: false, message: "User is blocked by admin!" })
+                return res.json({ success: false, message: "User is blocked by admin!" })
             } else {
-                req.userId = decoded.toString();
+                req.userId = decoded.decoded?.data?.toString();
                 req.user = user;
                 next();
             }
         } else {
-            return res.status(UNAUTHORIZED).json({ success: false, message: "Unauthorized - Invalid token" })
+            return res.json({ success: false, message: decoded?.message })
         }
 
-    } catch (err) {
-        console.log(err); console.log('error is in the catch block!');
-        return res.status(401).send({ success: false, message: "Unauthorized - Invalid token" })
+    } catch (err: any) {
+        console.log('the error is here.');
+        console.log(err);
+        return res.send({ success: false, message: "Authentication failed!" });
     }
 }
+const refreshAccessToken = async (refreshToken: string) => {
+    try {
+        if (!refreshToken) throw new Error('No refresh token found');
+
+        const decoded = jwt.verifyRefreshToken(refreshToken);
+
+        const newAccessToken = jwt.generateToken(decoded?.decoded.data);
+        return newAccessToken;
+    } catch (error) {
+        console.log(error as Error);
+        throw new Error('Invalid refresh token');
+    }
+};
 
 export default userAuth;

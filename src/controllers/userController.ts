@@ -15,21 +15,26 @@ class userController {
         try {
             const { email, password }: { email: string; password: string } = req.body;
             const loginStatus = await this.userServices.userLogin(email, password);
+            console.log(loginStatus);
             if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
                 if (!loginStatus.data.success) {
                     res.status(UNAUTHORIZED).json({ success: false, message: loginStatus.data.message });
                     return;
                 }
                 const time = this.milliseconds(23, 30, 0);
-                res.status(loginStatus.status).cookie('access_token', loginStatus.data.token, {
-                    expires: new Date(Date.now() + time),
-                    httpOnly: true
+                const access_token = loginStatus.data.token;
+                const refresh_token = loginStatus.data.refreshToken;
+                const accessTokenMaxAge = 5 * 60 * 1000;
+                const refreshTokenMaxAge = 48 * 60 * 60 * 1000;
+                res.status(loginStatus.status).cookie('access_token', access_token, {
+                    maxAge: accessTokenMaxAge,
+                }).cookie('refresh_token', refresh_token, {
+                    maxAge: refreshTokenMaxAge,
                 }).json(loginStatus);
             } else {
                 res.status(UNAUTHORIZED).json({ success: false, message: 'Authentication error' });
             }
         } catch (error) {
-            console.log(error as Error);
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' })
         }
     }
@@ -38,6 +43,8 @@ class userController {
 
     async googleLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
         const { name, email, googlePhotoUrl } = req.body;
+        const accessTokenMaxAge = 5 * 60 * 1000;
+        const refreshTokenMaxAge = 48 * 60 * 60 * 1000;
         try {
             const user = await this.userServices.getUserByEmail(email);
             if (user) {
@@ -46,18 +53,21 @@ class userController {
                     // throw new Error('user has been blocked by admin...');
                 } else {
                     const token = this.userServices.generateToken(user.id);
+                    const refreshToken = this.userServices.generateRefreshToken(user.id);
                     const data = {
                         success: true,
                         message: 'Success',
                         userId: user.id,
                         token: token,
+                        refreshToken,
                         data: user
                     }
 
-                    const time = this.milliseconds(23, 30, 0);
+                    // const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', token, {
-                        expires: new Date(Date.now() + time),
-                        httpOnly: true
+                        maxAge: accessTokenMaxAge
+                    }).cookie('refresh_token', refreshToken, {
+                        maxAge: refreshTokenMaxAge
                     }).json(data);
                 }
 
@@ -72,10 +82,11 @@ class userController {
                     profile_picture: googlePhotoUrl
                 })
                 if (newUser?.data.data) {
-                    const time = this.milliseconds(23, 30, 0);
+                    // const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', newUser.data.token, {
-                        expires: new Date(Date.now() + time),
-                        httpOnly: true
+                        maxAge: accessTokenMaxAge
+                    }).cookie('refresh_token', newUser.data.refreshToken, {
+                        maxAge: refreshTokenMaxAge,
                     }).json(newUser.data);
                 }
             }
@@ -177,20 +188,26 @@ class userController {
             const { otp } = req.body;
             const isNuewUser = req.app.locals.newUser;
             const savedUser = req.app.locals.userData;
+
+            const accessTokenMaxAge = 5 * 60 * 1000;
+            const refreshTokenMaxAge = 48 * 60 * 60 * 1000;
+
             if (otp === Number(req.app.locals.userOtp)) {
                 if (isNuewUser) {
                     const newUser = await this.userServices.saveUser(savedUser);
                     req.app.locals = {};
-                    const time = this.milliseconds(23, 30, 0);
+                    // const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', newUser?.data.token, {
-                        expires: new Date(Date.now() + time),
-                        httpOnly: true
+                        maxAge: accessTokenMaxAge
+                    }).cookie('refresh_token', isNuewUser.data.refresh_token, {
+                        maxAge: refreshTokenMaxAge
                     }).json(newUser);
                 } else {
                     const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', isNuewUser.data.token, {
-                        expires: new Date(Date.now() + time),
-                        httpOnly: true
+                        maxAge: accessTokenMaxAge
+                    }).cookie('refresh_token', isNuewUser.data.refresh_token, {
+                        maxAge: refreshTokenMaxAge
                     }).json({ success: true, message: 'old user verified' });
                 }
             } else {
@@ -311,8 +328,9 @@ class userController {
     async logout(req: Request, res: Response) {
         try {
             res.cookie('access_token', '', {
-                httpOnly: true,
-                expires: new Date(0)
+                maxAge: 0
+            }).cookie('refresh_token', '', {
+                maxAge: 0
             })
             res.status(200).json({ success: true, message: 'user logout - clearing cookie' })
         } catch (err) {

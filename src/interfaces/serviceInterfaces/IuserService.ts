@@ -21,5 +21,6 @@ export interface UserAuthResponse {
         data?: UserInterface,
         userId?: string;
         token?: string;
+        refreshToken?: string;
     };
 }
