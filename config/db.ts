@@ -1,10 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'; 
 import { config } from 'dotenv';
 
 config()
 
 const dbUri: string = process.env.DB_URI || '';
-const connectDB = ():void => {
+const connectDB = (): void => {
     try {
         mongoose.connect(dbUri).then(() => console.log(`mongodb is connected`));
     } catch (error) {

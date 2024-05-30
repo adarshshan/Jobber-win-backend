@@ -1,4 +1,4 @@
-import express, { Application } from "express";
+import express, { Application, Request, Response } from "express";
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import userRouter from "../src/routes/userRoute";
@@ -17,6 +17,7 @@ export const createServer = () => {
         app.use(cors({ origin: process.env.CORS_URL, credentials: true }))
         app.use(cookieParser())
 
+        app.get('/testing', (req: Request, res: Response) => res.send('Hello Wolrd '));
 
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);
