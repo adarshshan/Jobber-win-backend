@@ -21,6 +21,11 @@ export const createServer = () => {
             console.log('its working ... ');
             res.send('Hello Wolrd ');
         })
+        app.use(function (req, res, next) {
+            res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // Update this with your frontend URL
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            next();
+        });
 
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);
