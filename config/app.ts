@@ -17,7 +17,10 @@ export const createServer = () => {
         app.use(cors({ origin: process.env.CORS_URL, credentials: true }))
         app.use(cookieParser())
 
-        app.get('/testing', (req: Request, res: Response) => res.send('Hello Wolrd '));
+        app.get('/', (req: Request, res: Response) => {
+            console.log('its working ... ');
+            res.send('Hello Wolrd ');
+        })
 
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);
