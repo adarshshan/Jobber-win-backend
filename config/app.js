@@ -19,7 +19,10 @@ const createServer = () => {
         app.use(express_1.default.urlencoded({ extended: true }));
         app.use((0, cors_1.default)({ origin: process.env.CORS_URL, credentials: true }));
         app.use((0, cookie_parser_1.default)());
-        app.get('/testing', (req, res) => res.send('Hello Wolrd '));
+        app.get('/', (req, res) => {
+            console.log('its working ... ');
+            res.send('Hello Wolrd ');
+        });
         app.use('/api/user', userRoute_1.default);
         app.use('/api/admin', adminRoute_1.default);
         app.use('/api/recruiter', recruiterRoute_1.default);
