@@ -22,6 +22,8 @@ export const createServer = () => {
         app.use(cors(corsOptions));
         app.use(cookieParser())
 
+        app.options('*', cors(corsOptions));
+
         app.get('/', (req: Request, res: Response) => {
             console.log('its working ... ');
             res.send('Hello Wolrd ');
