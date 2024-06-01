@@ -8,7 +8,7 @@ import { config } from "dotenv";
 
 config();
 
-const PUBLISHABLE_KEY: string = process.env.PUBLISHABLE_KEY || '';
+const PUBLISHABLE_KEY: any = process.env.PUBLISHABLE_KEY
 console.log(PUBLISHABLE_KEY);
 const stripe = new Stripe(PUBLISHABLE_KEY);
 
