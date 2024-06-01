@@ -21,7 +21,7 @@ export const createServer = () => {
         };
         app.use(express.json())
         app.use(express.urlencoded({ extended: true }))
-        app.use(cors());
+        app.use(cors(corsOptions));
         app.use(cookieParser())
 
         app.options('*', cors(corsOptions));
