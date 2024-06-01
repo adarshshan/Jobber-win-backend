@@ -15,9 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const stripe_1 = __importDefault(require("stripe"));
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
-const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY;
-console.log(PUBLISHABLE_KEY);
-const stripe = new stripe_1.default(PUBLISHABLE_KEY);
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+const stripe = new stripe_1.default(STRIPE_SECRET_KEY);
 class SubscriptionService {
     constructor(subscriptionRepository, userRepository) {
         this.subscriptionRepository = subscriptionRepository;
