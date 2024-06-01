@@ -12,20 +12,20 @@ import messageRouter from '../src/routes/messageRoute';
 export const createServer = () => {
     try {
         const app: Application | undefined = express()
+        const corsOptions = {
+            origin: process.env.CORS_URL,
+            credentials: true,
+            optionsSuccessStatus: 200
+        };
         app.use(express.json())
         app.use(express.urlencoded({ extended: true }))
-        app.use(cors({ origin: process.env.CORS_URL, credentials: true }))
+        app.use(cors(corsOptions));
         app.use(cookieParser())
 
         app.get('/', (req: Request, res: Response) => {
             console.log('its working ... ');
             res.send('Hello Wolrd ');
         })
-        app.use(function (req, res, next) {
-            res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // Update this with your frontend URL
-            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-            next();
-        });
 
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);
