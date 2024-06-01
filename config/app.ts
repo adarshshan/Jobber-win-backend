@@ -13,8 +13,10 @@ export const createServer = () => {
     try {
         const app: Application | undefined = express()
         const corsOptions = {
-            origin: 'https://jobber-win-frontend-w2kd.vercel.app/',
+            origin: process.env.CORS_URL,
             credentials: true,
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+            allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',
             optionsSuccessStatus: 200
         };
         app.use(express.json())
