@@ -13,7 +13,7 @@ export const createServer = () => {
     try {
         const app: Application | undefined = express()
         const corsOptions = {
-            origin: process.env.CORS_URL,
+            origin: 'https://jobber-win-frontend-w2kd.vercel.app/',
             credentials: true,
             optionsSuccessStatus: 200
         };
