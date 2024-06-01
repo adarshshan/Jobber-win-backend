@@ -5,7 +5,7 @@ const { Server } = require("socket.io");
 function socketServer(server: any) {
     const io = new Server(server, {
         cors: {
-            origin: ['http://localhost:3000'],
+            origin: [process.env.CORS_URL],
             methods: ['GET', 'POST']
         }
     });
@@ -30,7 +30,7 @@ function socketServer(server: any) {
 
 
         socket.on("new message", (newMessageReceived) => {
-            var chat = newMessageReceived.chat; 
+            var chat = newMessageReceived.chat;
             if (!chat.users) return console.log('chat.users not defined');
 
             chat.users.forEach((user: any) => {

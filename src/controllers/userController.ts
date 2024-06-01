@@ -28,8 +28,12 @@ class userController {
                 const refreshTokenMaxAge = 48 * 60 * 60 * 1000;
                 res.status(loginStatus.status).cookie('access_token', access_token, {
                     maxAge: accessTokenMaxAge,
+                    sameSite: 'none',
+                    secure: true
                 }).cookie('refresh_token', refresh_token, {
                     maxAge: refreshTokenMaxAge,
+                    sameSite: 'none',
+                    secure: true
                 }).json(loginStatus);
             } else {
                 res.status(UNAUTHORIZED).json({ success: false, message: 'Authentication error' });
