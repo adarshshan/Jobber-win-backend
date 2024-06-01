@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = __importDefault(require("http"));
-const app_1 = require("../config/app.js");
+const app_1 = require("../config/app");
 const dotenv_1 = __importDefault(require("dotenv"));
-const db_1 = __importDefault(require("../config/db.js"));
-const socket_1 = __importDefault(require("../config/socket.js"));
+const db_1 = __importDefault(require("../config/db"));
+const socket_1 = __importDefault(require("../config/socket"));
 dotenv_1.default.config();
 (0, db_1.default)();
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {

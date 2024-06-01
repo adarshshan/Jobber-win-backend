@@ -15,10 +15,18 @@ const messageRoute_1 = __importDefault(require("../dist/routes/messageRoute"));
 const createServer = () => {
     try {
         const app = (0, express_1.default)();
+        const corsOptions = {
+            origin: process.env.CORS_URL,
+            credentials: true,
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+            allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',
+            optionsSuccessStatus: 200
+        };
         app.use(express_1.default.json());
         app.use(express_1.default.urlencoded({ extended: true }));
-        app.use((0, cors_1.default)({ origin: process.env.CORS_URL, credentials: true }));
+        app.use((0, cors_1.default)(corsOptions));
         app.use((0, cookie_parser_1.default)());
+        app.options('*', (0, cors_1.default)(corsOptions));
         app.get('/', (req, res) => {
             console.log('its working ... ');
             res.send('Hello Wolrd ');
