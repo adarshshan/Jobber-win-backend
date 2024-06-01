@@ -8,9 +8,8 @@ import { config } from "dotenv";
 
 config();
 
-const PUBLISHABLE_KEY: any = process.env.PUBLISHABLE_KEY
-console.log(PUBLISHABLE_KEY);
-const stripe = new Stripe(PUBLISHABLE_KEY);
+const STRIPE_SECRET_KEY: any = process.env.STRIPE_SECRET_KEY
+const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 
 class SubscriptionService {

@@ -15,7 +15,7 @@ const jobApplicationRepository = new JobApplicationRepository();
 const recruiterRepository = new RecruiterRepository();
 const subscriptionRepository = new SubscriptionRepository();
 const userRepository = new UserRepository();
-const recruiterService = new RecruiterService(recruiterRepository, jobApplicationRepository, userRepository,subscriptionRepository);
+const recruiterService = new RecruiterService(recruiterRepository, jobApplicationRepository, userRepository, subscriptionRepository);
 const recruiterController = new RecruiterController(recruiterService);
 
 recruiterRouter.get('/get-alljobs', authenticate, async (req: Request, res: Response) => recruiterController.getAllJobs(req, res));
@@ -37,7 +37,7 @@ const subscriptionController = new SubscriptionController(subscriptionService);
 
 recruiterRouter.get('/get-subscriptions', authenticate, async (req: Request, res: Response) => subscriptionController.getAllSubscriptions(req, res));
 recruiterRouter.post('/payment-subscription', authenticate, async (req: Request, res: Response) => subscriptionController.subscriptionPayment(req, res));
-recruiterRouter.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => subscriptionController.webHook(req, res));
+recruiterRouter.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => subscriptionController.webHook(req, res));
 recruiterRouter.get('/current-subscriptions', authenticate, async (req: Request, res: Response) => subscriptionController.getCurrentSubscription(req, res));
 
 
