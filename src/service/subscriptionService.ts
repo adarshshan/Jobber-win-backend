@@ -4,7 +4,12 @@ import { SubscriptionPlanInterface } from "../models/SubscriptionModel";
 import SubscriptionRepository from "../repositories/subscriptionRepository";
 import Stripe from 'stripe';
 import UserRepository from "../repositories/userRepository";
-const stripe = new Stripe('sk_test_51PIV6BSA3RmngPpV4yT9yLFdmZibuFh1cwOt6zt3LFueRur6HoWoPQcnCz6TqjItVsFTXz96C8hFzdrnZHCL8ZnQ00eZOy6soo');
+import { config } from "dotenv";
+
+config();
+
+const PUBLISHABLE_KEY: string = process.env.PUBLISHABLE_KEY || '';
+const stripe = new Stripe(PUBLISHABLE_KEY);
 
 
 class SubscriptionService {
@@ -81,8 +86,8 @@ class SubscriptionService {
                 payment_method_types: ["card"],
                 line_items: [lineItem],
                 mode: "payment",
-                success_url: 'http://localhost:3000/recruiter/success',
-                cancel_url: 'http://localhost:3000/recruiter/cancel',
+                success_url: `${process.env.CORS_URL}/recruiter/success`,
+                cancel_url: `${process.env.CORS_URL}/recruiter/cancel`,
             });
             return session.id;
         } catch (error) {

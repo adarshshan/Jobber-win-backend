@@ -69,9 +69,13 @@ class userController {
 
                     // const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', token, {
-                        maxAge: accessTokenMaxAge
+                        maxAge: accessTokenMaxAge,
+                        sameSite: 'none',
+                        secure: true
                     }).cookie('refresh_token', refreshToken, {
-                        maxAge: refreshTokenMaxAge
+                        maxAge: refreshTokenMaxAge,
+                        sameSite: 'none',
+                        secure: true
                     }).json(data);
                 }
 
@@ -88,9 +92,13 @@ class userController {
                 if (newUser?.data.data) {
                     // const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', newUser.data.token, {
-                        maxAge: accessTokenMaxAge
+                        maxAge: accessTokenMaxAge,
+                        sameSite: 'none',
+                        secure: true
                     }).cookie('refresh_token', newUser.data.refreshToken, {
                         maxAge: refreshTokenMaxAge,
+                        sameSite: 'none',
+                        secure: true
                     }).json(newUser.data);
                 }
             }
@@ -202,16 +210,24 @@ class userController {
                     req.app.locals = {};
                     // const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', newUser?.data.token, {
-                        maxAge: accessTokenMaxAge
+                        maxAge: accessTokenMaxAge,
+                        sameSite: 'none',
+                        secure: true
                     }).cookie('refresh_token', isNuewUser.data.refresh_token, {
-                        maxAge: refreshTokenMaxAge
+                        maxAge: refreshTokenMaxAge,
+                        sameSite: 'none',
+                        secure: true
                     }).json(newUser);
                 } else {
                     const time = this.milliseconds(23, 30, 0);
                     res.status(OK).cookie('access_token', isNuewUser.data.token, {
-                        maxAge: accessTokenMaxAge
+                        maxAge: accessTokenMaxAge,
+                        sameSite: 'none',
+                        secure: true
                     }).cookie('refresh_token', isNuewUser.data.refresh_token, {
-                        maxAge: refreshTokenMaxAge
+                        maxAge: refreshTokenMaxAge,
+                        sameSite: 'none',
+                        secure: true
                     }).json({ success: true, message: 'old user verified' });
                 }
             } else {

@@ -13,7 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const stripe_1 = __importDefault(require("stripe"));
-const stripe = new stripe_1.default('sk_test_51PIV6BSA3RmngPpV4yT9yLFdmZibuFh1cwOt6zt3LFueRur6HoWoPQcnCz6TqjItVsFTXz96C8hFzdrnZHCL8ZnQ00eZOy6soo');
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
+const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY || '';
+const stripe = new stripe_1.default(PUBLISHABLE_KEY);
 class SubscriptionService {
     constructor(subscriptionRepository, userRepository) {
         this.subscriptionRepository = subscriptionRepository;
@@ -106,8 +109,8 @@ class SubscriptionService {
                     payment_method_types: ["card"],
                     line_items: [lineItem],
                     mode: "payment",
-                    success_url: 'http://localhost:3000/recruiter/success',
-                    cancel_url: 'http://localhost:3000/recruiter/cancel',
+                    success_url: `${process.env.CORS_URL}/recruiter/success`,
+                    cancel_url: `${process.env.CORS_URL}/recruiter/cancel`,
                 });
                 return session.id;
             }
