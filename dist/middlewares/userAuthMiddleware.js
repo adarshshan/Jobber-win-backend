@@ -27,10 +27,13 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     if (!refresh_token)
         return res.json({ success: false, message: 'Token expired or not available' });
     if (!token) {
-        console.log('noooooooo');
         const newAccessToken = yield refreshAccessToken(refresh_token);
         const accessTokenMaxAge = 15 * 60 * 1000;
-        res.cookie('access_token', newAccessToken, { maxAge: accessTokenMaxAge });
+        res.cookie('access_token', newAccessToken, {
+            maxAge: accessTokenMaxAge,
+            sameSite: 'none',
+            secure: true
+        });
     }
     try {
         const decoded = jwt.verifyToken(token);

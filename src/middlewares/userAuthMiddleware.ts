@@ -27,10 +27,13 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
     if (!refresh_token) return res.json({ success: false, message: 'Token expired or not available' });
 
     if (!token) {
-        console.log('noooooooo')
         const newAccessToken = await refreshAccessToken(refresh_token);
         const accessTokenMaxAge = 15 * 60 * 1000;
-        res.cookie('access_token', newAccessToken, { maxAge: accessTokenMaxAge });
+        res.cookie('access_token', newAccessToken, {
+            maxAge: accessTokenMaxAge,
+            sameSite: 'none',
+            secure: true
+        });
     }
 
     try {
