@@ -28,7 +28,7 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         return res.json({ success: false, message: 'Token expired or not available' });
     if (!token) {
         const newAccessToken = yield refreshAccessToken(refresh_token);
-        const accessTokenMaxAge = 15 * 60 * 1000;
+        const accessTokenMaxAge = 30 * 60 * 1000;
         res.cookie('access_token', newAccessToken, {
             maxAge: accessTokenMaxAge,
             sameSite: 'none',

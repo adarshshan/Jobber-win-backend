@@ -21,6 +21,8 @@ dotenv_1.default.config();
 const adminAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let token = req.cookies.admin_access_token;
+        console.log(token);
+        console.log('this is token');
         if (!token)
             return res.status(401).json({ success: false, message: "Unauthorized - No token provided" });
         const decoded = jwt.verifyToken(token);

@@ -18,7 +18,6 @@ import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 import CommentRepository from "../repositories/CommentRepository";
 import ChatRepository from "../repositories/chatRepository";
-import MessageRepository from "../repositories/messageRepository";
 
 
 

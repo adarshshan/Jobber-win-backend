@@ -32,6 +32,10 @@ function socketServer(server) {
                 socket.in(user._id).emit("message recieved", newMessageReceived);
             });
         });
+        socket.on("new notifications", (newNotifications, userId) => {
+            console.log('new notifications are arrived...');
+            socket.in(userId).emit('receivedNotifications', newNotifications);
+        });
         socket.off("setup", () => {
             console.log('User disconnected');
             socket.leave(u);

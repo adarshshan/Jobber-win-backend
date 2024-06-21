@@ -18,12 +18,14 @@ declare global {
 const adminAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let token = req.cookies.admin_access_token
+        console.log(token);console.log('this is token');
         if (!token) return res.status(401).json({ success: false, message: "Unauthorized - No token provided" })
         
         const decoded = jwt.verifyToken(token);
 
         if (decoded) {
             let user = await adminRepository.getAdminById(decoded.toString());
+            
             req.adminId = decoded.toString();
             next();
         } else {

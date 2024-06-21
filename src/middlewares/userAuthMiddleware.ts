@@ -28,7 +28,7 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
 
     if (!token) {
         const newAccessToken = await refreshAccessToken(refresh_token);
-        const accessTokenMaxAge = 15 * 60 * 1000;
+        const accessTokenMaxAge = 30 * 60 * 1000;
         res.cookie('access_token', newAccessToken, {
             maxAge: accessTokenMaxAge,
             sameSite: 'none',

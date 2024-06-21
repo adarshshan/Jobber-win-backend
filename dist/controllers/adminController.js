@@ -27,10 +27,12 @@ class adminController {
                 }
                 else {
                     if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
+                        console.log(loginStatus);
                         const time = this.milliseconds(23, 30, 0);
                         res.status(loginStatus.status).cookie('admin_access_token', loginStatus.data.token, {
                             expires: new Date(Date.now() + time),
-                            httpOnly: true
+                            sameSite: 'none',
+                            secure: true
                         }).json(loginStatus);
                     }
                     else {
