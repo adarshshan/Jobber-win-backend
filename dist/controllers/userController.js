@@ -55,7 +55,7 @@ class userController {
     googleLogin(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, email, googlePhotoUrl } = req.body;
-            const accessTokenMaxAge = 5 * 60 * 1000;
+            const accessTokenMaxAge = 30 * 60 * 1000;
             const refreshTokenMaxAge = 48 * 60 * 60 * 1000;
             try {
                 const user = yield this.userServices.getUserByEmail(email);
@@ -296,6 +296,7 @@ class userController {
             }
             catch (error) {
                 console.log(error);
+                throw error;
                 res.json({ success: false, message: 'Failed to update' });
             }
         });

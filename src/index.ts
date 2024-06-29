@@ -3,6 +3,10 @@ import { createServer } from '../config/app';
 import dotenv from 'dotenv'
 import connectDB from '../config/db';
 import socketServer from '../config/socket';
+import axios from 'axios';
+import cron from "node-cron";
+
+const SERVER = process.env.SERVER || `http://localhost:5000`;
 
 dotenv.config();
 
@@ -20,4 +24,15 @@ const startServer = async () => {
         console.log(error);
     }
 }
+// Cron job to send request every 2 minutes
+cron.schedule("*/2 * * * *", () => {
+    axios
+        .get(SERVER)
+        .then((response) => {
+            console.log(`Request sent successfully at ${new Date()}`);
+        })
+        .catch((error) => {
+            console.error(`Error sending request: ${error.message}`);
+        });
+});
 startServer();
