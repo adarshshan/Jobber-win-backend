@@ -260,6 +260,7 @@ class userController {
             else res.json({ success: false, message: 'Failed to update the details' });
         } catch (error) {
             console.log(error as Error);
+            throw error;
             res.json({ success: false, message: 'Failed to update' });
         }
     }
