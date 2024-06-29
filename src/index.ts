@@ -6,7 +6,7 @@ import socketServer from '../config/socket';
 import axios from 'axios';
 import cron from "node-cron";
 
-const SERVER = process.env.SERVER || `http://localhost:5000`;
+const SERVER = process.env.SERVER || `https://jobber-win-backend.onrender.com`;
 
 dotenv.config();
 

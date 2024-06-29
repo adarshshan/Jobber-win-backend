@@ -19,7 +19,7 @@ const db_1 = __importDefault(require("../config/db"));
 const socket_1 = __importDefault(require("../config/socket"));
 const axios_1 = __importDefault(require("axios"));
 const node_cron_1 = __importDefault(require("node-cron"));
-const SERVER = process.env.SERVER || `http://localhost:5000`;
+const SERVER = process.env.SERVER || `https://jobber-win-backend.onrender.com`;
 dotenv_1.default.config();
 (0, db_1.default)();
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
