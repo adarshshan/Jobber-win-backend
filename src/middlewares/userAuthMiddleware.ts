@@ -37,8 +37,8 @@ const userAuth = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     try {
+        token = req.cookies.access_token;
         const decoded = jwt.verifyToken(token);
-        // console.log(decoded);
         if (decoded?.success) {
             let user = await userRepository.getUserById(decoded.decoded?.data?.toString());
             if (user?.isBlocked) {

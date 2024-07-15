@@ -36,8 +36,8 @@ const userAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         });
     }
     try {
+        token = req.cookies.access_token;
         const decoded = jwt.verifyToken(token);
-        // console.log(decoded);
         if (decoded === null || decoded === void 0 ? void 0 : decoded.success) {
             let user = yield userRepository.getUserById((_b = (_a = decoded.decoded) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.toString());
             if (user === null || user === void 0 ? void 0 : user.isBlocked) {

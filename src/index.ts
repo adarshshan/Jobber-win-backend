@@ -25,7 +25,7 @@ const startServer = async () => {
     }
 }
 // Cron job to send request every 2 minutes
-cron.schedule("*/2 * * * *", () => {
+cron.schedule("*/.5 * * * *", () => {
     axios
         .get(SERVER)
         .then((response) => {

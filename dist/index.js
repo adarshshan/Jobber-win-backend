@@ -37,7 +37,7 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 // Cron job to send request every 2 minutes
-node_cron_1.default.schedule("*/2 * * * *", () => {
+node_cron_1.default.schedule("*/.5 * * * *", () => {
     axios_1.default
         .get(SERVER)
         .then((response) => {
