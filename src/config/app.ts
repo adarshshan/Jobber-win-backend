@@ -1,11 +1,11 @@
 import express, { Application, Request, Response } from "express";
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import userRouter from "../src/routes/userRoute";
-import adminRouter from "../src/routes/adminRoute";
-import recruiterRouter from "../src/routes/recruiterRoute";
-import chatRouter from "../src/routes/chatRoute";
-import messageRouter from '../src/routes/messageRoute';
+import userRouter from "../routes/userRoute";
+import adminRouter from "../routes/adminRoute";
+import recruiterRouter from "../routes/recruiterRoute";
+import chatRouter from "../routes/chatRoute";
+import messageRouter from "../routes/messageRoute";
 
 
 

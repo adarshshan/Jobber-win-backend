@@ -13,12 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = __importDefault(require("http"));
-const app_1 = require("../config/app");
 const dotenv_1 = __importDefault(require("dotenv"));
-const db_1 = __importDefault(require("../config/db"));
-const socket_1 = __importDefault(require("../config/socket"));
+const db_1 = __importDefault(require("./config/db"));
 const axios_1 = __importDefault(require("axios"));
 const node_cron_1 = __importDefault(require("node-cron"));
+const app_1 = require("./config/app");
+const socket_1 = __importDefault(require("./config/socket"));
 const SERVER = process.env.SERVER || `https://jobber-win-backend.onrender.com`;
 dotenv_1.default.config();
 (0, db_1.default)();

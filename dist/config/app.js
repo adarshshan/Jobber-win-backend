@@ -7,11 +7,11 @@ exports.createServer = void 0;
 const express_1 = __importDefault(require("express"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
-const userRoute_1 = __importDefault(require("../dist/routes/userRoute"));
-const adminRoute_1 = __importDefault(require("../dist/routes/adminRoute"));
-const recruiterRoute_1 = __importDefault(require("../dist/routes/recruiterRoute"));
-const chatRoute_1 = __importDefault(require("../dist/routes/chatRoute"));
-const messageRoute_1 = __importDefault(require("../dist/routes/messageRoute"));
+const userRoute_1 = __importDefault(require("../routes/userRoute"));
+const adminRoute_1 = __importDefault(require("../routes/adminRoute"));
+const recruiterRoute_1 = __importDefault(require("../routes/recruiterRoute"));
+const chatRoute_1 = __importDefault(require("../routes/chatRoute"));
+const messageRoute_1 = __importDefault(require("../routes/messageRoute"));
 const createServer = () => {
     try {
         const app = (0, express_1.default)();

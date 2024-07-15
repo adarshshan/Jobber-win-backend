@@ -1,10 +1,10 @@
 import http from 'http'
-import { createServer } from '../config/app';
 import dotenv from 'dotenv'
-import connectDB from '../config/db';
-import socketServer from '../config/socket';
+import connectDB from './config/db';
 import axios from 'axios';
 import cron from "node-cron";
+import { createServer } from './config/app';
+import socketServer from './config/socket';
 
 const SERVER = process.env.SERVER || `https://jobber-win-backend.onrender.com`;
 
