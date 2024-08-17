@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = __importDefault(require("http"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const db_1 = __importDefault(require("./config/db"));
-const axios_1 = __importDefault(require("axios"));
-const node_cron_1 = __importDefault(require("node-cron"));
+// import axios from 'axios';
+// import cron from "node-cron";
 const app_1 = require("./config/app");
 const socket_1 = __importDefault(require("./config/socket"));
 const SERVER = process.env.SERVER || `https://jobber-win-backend.onrender.com`;
@@ -37,15 +37,15 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 // Cron job to send request every 2 minutes
-node_cron_1.default.schedule("*/.5 * * * *", () => {
-    axios_1.default
-        .get(SERVER)
-        .then((response) => {
-        console.log(`Request sent successfully at ${new Date()}`);
-    })
-        .catch((error) => {
-        console.error(`Error sending request: ${error.message}`);
-    });
-});
+// cron.schedule("*/.5 * * * *", () => {
+//     axios
+//         .get(SERVER)
+//         .then((response) => {
+//             console.log(`Request sent successfully at ${new Date()}`);
+//         })
+//         .catch((error) => {
+//             console.error(`Error sending request: ${error.message}`);
+//         });
+// });
 startServer();
 //# sourceMappingURL=index.js.map

@@ -116,7 +116,6 @@ class userController {
                 req.app.locals.userEmail = req.body.email;
                 const otp = await generateAndSendOTP(req.body.email);
                 req.app.locals.userOtp = otp;
-
                 const expirationMinutes = 5;
                 setTimeout(() => {
                     delete req.app.locals.userOtp;
@@ -213,7 +212,7 @@ class userController {
                         maxAge: accessTokenMaxAge,
                         sameSite: 'none',
                         secure: true
-                    }).cookie('refresh_token', isNuewUser.data.refresh_token, {
+                    }).cookie('refresh_token', newUser?.data.refreshToken, {
                         maxAge: refreshTokenMaxAge,
                         sameSite: 'none',
                         secure: true

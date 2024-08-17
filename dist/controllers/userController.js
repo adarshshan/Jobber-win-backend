@@ -237,7 +237,7 @@ class userController {
                             maxAge: accessTokenMaxAge,
                             sameSite: 'none',
                             secure: true
-                        }).cookie('refresh_token', isNuewUser.data.refresh_token, {
+                        }).cookie('refresh_token', newUser === null || newUser === void 0 ? void 0 : newUser.data.refreshToken, {
                             maxAge: refreshTokenMaxAge,
                             sameSite: 'none',
                             secure: true

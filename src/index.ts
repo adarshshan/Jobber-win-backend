@@ -1,8 +1,8 @@
 import http from 'http'
 import dotenv from 'dotenv'
 import connectDB from './config/db';
-import axios from 'axios';
-import cron from "node-cron";
+// import axios from 'axios';
+// import cron from "node-cron";
 import { createServer } from './config/app';
 import socketServer from './config/socket';
 
@@ -25,14 +25,14 @@ const startServer = async () => {
     }
 }
 // Cron job to send request every 2 minutes
-cron.schedule("*/.5 * * * *", () => {
-    axios
-        .get(SERVER)
-        .then((response) => {
-            console.log(`Request sent successfully at ${new Date()}`);
-        })
-        .catch((error) => {
-            console.error(`Error sending request: ${error.message}`);
-        });
-});
+// cron.schedule("*/.5 * * * *", () => {
+//     axios
+//         .get(SERVER)
+//         .then((response) => {
+//             console.log(`Request sent successfully at ${new Date()}`);
+//         })
+//         .catch((error) => {
+//             console.error(`Error sending request: ${error.message}`);
+//         });
+// });
 startServer();
