@@ -24,6 +24,7 @@ const startServer = async () => {
         console.log(error);
     }
 }
+
 // Cron job to send request every 2 minutes
 // cron.schedule("*/.5 * * * *", () => {
 //     axios

@@ -106,6 +106,7 @@ class userController {
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error......' });
         }
     }
+    
     async userSingnup(req: Request, res: Response): Promise<void> {
         try {
             req.app.locals.userData = req.body;
@@ -223,7 +224,7 @@ class userController {
                         maxAge: accessTokenMaxAge,
                         sameSite: 'none',
                         secure: true
-                    }).cookie('refresh_token', isNuewUser.data.refresh_token, {
+                    }).cookie('refresh_token', isNuewUser.data.refreshToken, {
                         maxAge: refreshTokenMaxAge,
                         sameSite: 'none',
                         secure: true

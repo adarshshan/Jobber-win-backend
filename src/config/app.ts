@@ -7,29 +7,24 @@ import recruiterRouter from "../routes/recruiterRoute";
 import chatRouter from "../routes/chatRoute";
 import messageRouter from "../routes/messageRoute";
 
-
+const corsOptions = {
+    origin: process.env.CORS_URL,
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',
+    optionsSuccessStatus: 200
+};
 
 export const createServer = () => {
     try {
         const app: Application | undefined = express()
-        const corsOptions = {
-            origin: process.env.CORS_URL,
-            credentials: true,
-            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-            allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization',
-            optionsSuccessStatus: 200
-        };
+
         app.use(express.json())
         app.use(express.urlencoded({ extended: true }))
         app.use(cors(corsOptions));
         app.use(cookieParser())
 
         app.options('*', cors(corsOptions));
-
-        app.get('/', (req: Request, res: Response) => {
-            console.log('its working ... ');
-            res.send('Hello Wolrd ');
-        })
 
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);
