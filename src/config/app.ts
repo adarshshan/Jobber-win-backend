@@ -26,6 +26,10 @@ export const createServer = () => {
 
         app.options('*', cors(corsOptions));
 
+        app.use('/', (req, res) => {
+            res.send("hello world....");
+        })
+
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);
         app.use('/api/recruiter', recruiterRouter);
