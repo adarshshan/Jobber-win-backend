@@ -5,6 +5,7 @@ import userModel from '../models/userModel';
 
 class AdminRepository {
     async isAdminExist(email: string): Promise<Admin | null> {
+        console.log('hellow reached here...')
         const admin = await AdminModel.findOne({ email: email });
         if (admin) return admin as Admin
         else return null;

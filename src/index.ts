@@ -1,15 +1,10 @@
 import http from 'http'
 import dotenv from 'dotenv'
 import connectDB from './config/db';
-// import axios from 'axios';
-// import cron from "node-cron";
 import { createServer } from './config/app';
 import socketServer from './config/socket';
 
-const SERVER = process.env.SERVER || `https://jobber-win-backend.onrender.com`;
-
 dotenv.config();
-
 connectDB();
 
 const startServer = async () => {
@@ -17,7 +12,7 @@ const startServer = async () => {
         const app = createServer();
         const server: any | undefined = http.createServer(app);
         if (server) socketServer(server);
-        server.listen(5000, () => {
+        server.listen(process.env.PORT, () => {
             console.log('connected to the server...');
         })
     } catch (error) {
