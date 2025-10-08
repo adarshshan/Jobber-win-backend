@@ -36,6 +36,7 @@ class adminController {
         }
     }
     async adminSignup(req: Request, res: Response): Promise<void> {
+        console.log('Hello world... how are you ...')
         try {
             const admin = await this.adminService.adminSignup(req.body);
             if (!admin) {

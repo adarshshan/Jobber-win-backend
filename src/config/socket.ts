@@ -40,7 +40,7 @@ function socketServer(server: any) {
             })
         })
 
-        socket.on("new notifications", (newNotifications,userId) => {
+        socket.on("new notifications", (newNotifications, userId) => {
             console.log('new notifications are arrived...');
             socket.in(userId).emit('receivedNotifications', newNotifications);
         })
