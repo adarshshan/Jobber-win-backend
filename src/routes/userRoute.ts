@@ -52,7 +52,6 @@ userRouter.patch('/set-profile', async (req: Request, res: Response) => await co
 userRouter.post('/report-user/:postId', authenticate, async (req: Request, res: Response) => await controller.reportUser(req, res));
 
 
-
 //postController
 const postRepository = new PostRepository();
 const commentRepository = new CommentRepository();
