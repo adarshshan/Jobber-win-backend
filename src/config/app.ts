@@ -26,6 +26,9 @@ export const createServer = () => {
 
         app.options('*', cors(corsOptions));
 
+        app.get('/', (req, res) => {
+            res.send('hellow world...')
+        })
 
         app.use('/api/user', userRouter);
         app.use('/api/admin', adminRouter);

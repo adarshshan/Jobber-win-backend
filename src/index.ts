@@ -1,4 +1,4 @@
-import http from 'http'
+import http from 'http';
 import dotenv from 'dotenv'
 import connectDB from './config/db';
 import { createServer } from './config/app';
