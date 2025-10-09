@@ -1,10 +1,9 @@
 import http from 'http';
-import dotenv from 'dotenv'
+import 'dotenv'
 import connectDB from './config/db';
 import { createServer } from './config/app';
 import socketServer from './config/socket';
 
-dotenv.config();
 connectDB();
 
 const startServer = async () => {
