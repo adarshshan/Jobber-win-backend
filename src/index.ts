@@ -1,5 +1,5 @@
-const http = require('http');
-const dotenv = require('dotenv')
+import http from 'http';
+import dotenv from 'dotenv'
 import connectDB from './config/db';
 import { createServer } from './config/app';
 import socketServer from './config/socket';
