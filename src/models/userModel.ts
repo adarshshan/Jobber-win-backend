@@ -26,7 +26,7 @@ export interface UserInterface extends Document {
 }
 
 interface SavedJob {
-    jobId: string;
+    jobId: mongoose.Types.ObjectId;
     savedAt: Date;
 }
 
@@ -87,7 +87,7 @@ const userSchema: Schema<UserInterface> = new Schema({
     },
     savedJobs: [
         {
-            jobId: { type: String, ref: 'job' },
+            jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'job' },
             savedAt: { type: Date, default: Date.now }
         }
     ],

@@ -1,6 +1,6 @@
 import mongoose, { ObjectId, Schema, Document } from "mongoose";
 
-interface ConnectionInterface extends Document {
+export interface ConnectionInterface extends Document {
     userId: mongoose.Types.ObjectId;
     friends: mongoose.Types.ObjectId[];
     requestsSend: mongoose.Types.ObjectId[];

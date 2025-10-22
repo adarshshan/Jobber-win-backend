@@ -1,9 +1,10 @@
+import { IChatRepository } from "../interfaces/repositoryInterfaces/IChatRepository";
 import ChatRepository from "../repositories/chatRepository";
 import UserRepository from "../repositories/userRepository";
 
 
 class ChatService {
-    constructor(private chatRepository: ChatRepository, private userRepository: UserRepository) { }
+    constructor(private chatRepository: IChatRepository, private userRepository: UserRepository) { }
 
     async accessChat(userId: string, current_userId: string) {
         try {

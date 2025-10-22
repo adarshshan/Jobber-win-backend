@@ -3,10 +3,11 @@ import UserInterface from '../interfaces/entityInterface/Iuser';
 import AdminModel, { AdminInterface } from '../models/adminModel';
 import userModel from '../models/userModel';
 
-class AdminRepository {
+import { IAdminRepository } from "../interfaces/repositoryInterfaces/IAdminRepository";
+
+class AdminRepository implements IAdminRepository {
     async isAdminExist(email: string): Promise<Admin | null> {
-        console.log('hellow reached here...')
-        const admin = await AdminModel.findOne({ email: email });
+        const admin = await AdminModel.findOne({ email });
         if (admin) return admin as Admin
         else return null;
     }

@@ -1,8 +1,7 @@
-import MessageRepository from "../repositories/messageRepository";
-
+import { IMessageRepository } from "../interfaces/repositoryInterfaces/IMessageRepository";
 
 class MessageService {
-    constructor(private messageRepository: MessageRepository) { }
+    constructor(private messageRepository: IMessageRepository) { }
 
     async sendMessage(content: string, chatId: string, userId: string) {
         try {

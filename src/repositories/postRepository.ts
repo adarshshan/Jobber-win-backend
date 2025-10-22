@@ -5,7 +5,9 @@ import LikeModel from '../models/likeModel';
 
 
 
-class PostRepository {
+import { IPostRepository } from "../interfaces/repositoryInterfaces/IPostRepository";
+
+class PostRepository implements IPostRepository {
     async savePost(userId: string, imageUrl: string, caption: string): Promise<IPostInterface | null> {
         try {
 

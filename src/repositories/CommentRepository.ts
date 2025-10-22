@@ -1,7 +1,9 @@
 import commentModel from "../models/commentModel";
 import { v4 as uuidV4 } from 'uuid'
 
-class CommentRepository {
+import { ICommentRepository } from "../interfaces/repositoryInterfaces/ICommentRepository";
+
+class CommentRepository implements ICommentRepository {
 
     async sendComment(postId: string, userId: string, comment: string) {
         try {

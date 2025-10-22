@@ -1,5 +1,6 @@
 import { Request } from "express";
 import AdminModel, { AdminInterface } from "../models/adminModel";
+import { IAdminRepository } from "../interfaces/repositoryInterfaces/IAdminRepository";
 import AdminRepository from "../repositories/adminRepository";
 import Admin from "../interfaces/entityInterface/Iadmin";
 import { AdminAuthResponse, IUsersAndCount } from "../interfaces/serviceInterfaces/IadminService";
@@ -7,22 +8,27 @@ import { STATUS_CODES } from "../constants/httpStatusCodes";
 import Encrypt from "../utils/comparePassword";
 import { CreateJWT } from "../utils/generateToken";
 import { IApiRes } from "../interfaces/common/Icommon";
+import { IReportRepository } from "../interfaces/repositoryInterfaces/IReportRepository";
 import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 import JobRepository from "../repositories/jobRepository";
+import { IPostRepository } from "../interfaces/repositoryInterfaces/IPostRepository";
 import PostRepository from "../repositories/postRepository";
+import { IJobApplicationRepository } from "../interfaces/repositoryInterfaces/IJobApplicationRepository";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
+import { jobReportInterface } from "../models/jobReportModel";
+import { IJobReportRepository } from "../interfaces/repositoryInterfaces/IJobReportRepository";
 
 
 
 class AdminService {
-    constructor(private adminReopsitory: AdminRepository,
+    constructor(private adminReopsitory: IAdminRepository,
         private encrypt: Encrypt,
         private createjwt: CreateJWT,
-        private jobReportRepository: JobReportRepository,
-        private reportRepository: ReportRepository,
+        private jobReportRepository: IJobReportRepository,
+        private reportRepository: IReportRepository,
         private jobRepository: JobRepository,
-        private postRepository: PostRepository,
-        private jobApplicationRepository: JobApplicationRepository) { }
+        private postRepository: IPostRepository,
+        private jobApplicationRepository: IJobApplicationRepository) { }
 
     async adminLogin(email: string, password: string): Promise<AdminAuthResponse | undefined> {
         const admin: Admin | null = await this.adminReopsitory.isAdminExist(email);
@@ -124,7 +130,7 @@ class AdminService {
             throw new Error('Error occured.');
         }
     }
-    async blockNunblockUser(userId: string){
+    async blockNunblockUser(userId: string) {
         try {
             return await this.adminReopsitory.blockNunblockUser(userId);
         } catch (error) {

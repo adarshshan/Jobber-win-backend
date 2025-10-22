@@ -1,7 +1,9 @@
 import SubscriptionModel, { SubscriptionPlanInterface } from "../models/SubscriptionModel";
 
 
-class SubscriptionRepository {
+import { ISubscriptionRepository } from "../interfaces/repositoryInterfaces/ISubscriptionRepository";
+
+class SubscriptionRepository implements ISubscriptionRepository {
 
     async createSubscription(data: SubscriptionPlanInterface) {
         try {

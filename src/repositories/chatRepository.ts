@@ -3,7 +3,9 @@ import chatModel from "../models/chatModel";
 import userModel from "../models/userModel";
 
 
-class ChatRepository {
+import { IChatRepository } from "../interfaces/repositoryInterfaces/IChatRepository";
+
+class ChatRepository implements IChatRepository {
 
     async accessChat(userId: string, current_userId: string) {
         try {

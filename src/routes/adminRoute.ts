@@ -23,8 +23,8 @@ const jobRepository = new JobRepository();
 const postRepository = new PostRepository();
 const jobReportRepository = new JobReportRepository();
 const reportRepository = new ReportRepository()
-const jobApplicationRepository=new JobApplicationRepository();
-const adminService: AdminService = new AdminService(adminReopsitory, encrypt, createjwt, jobReportRepository, reportRepository, jobRepository, postRepository,jobApplicationRepository);
+const jobApplicationRepository = new JobApplicationRepository();
+const adminService: AdminService = new AdminService(adminReopsitory, encrypt, createjwt, jobReportRepository, reportRepository, jobRepository, postRepository, jobApplicationRepository);
 const controller = new adminController(adminService);
 
 //admin login

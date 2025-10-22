@@ -7,8 +7,8 @@ export interface JobInterface {
     industry: string;
     job_img: string;
     description: string;
-    total_vaccancy: number;
-    location: string;
+    total_vaccancy?: number;
+    location?: string;
     job_type: 'part-time' | 'full-time' | 'remote';
     experience: number;
     min_salary: number;

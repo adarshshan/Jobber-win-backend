@@ -1,9 +1,11 @@
-import UserInterface from "../interfaces/entityInterface/Iuser";
+import UserInterface, { IUserCreateData } from "../interfaces/entityInterface/Iuser";
 import { UserAuthResponse } from "../interfaces/serviceInterfaces/IuserService";
+import { IUserRepository } from "../interfaces/repositoryInterfaces/IuserRepository";
 import UserRepository from "../repositories/userRepository";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { CreateJWT } from "../utils/generateToken";
 import Encrypt from "../utils/comparePassword";
+import { IReportRepository } from "../interfaces/repositoryInterfaces/IReportRepository";
 import ReportRepository from "../repositories/reportRepository";
 
 const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
@@ -11,17 +13,19 @@ const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 
 
 class userService {
-    constructor(private userRepository: UserRepository,
+    constructor(private userRepository: IUserRepository,
         private encrypt: Encrypt,
         private createjwt: CreateJWT,
-        private reportRepository: ReportRepository) { }
+        private reportRepository: IReportRepository) { }
 
     async userLogin(email: string, password: string): Promise<UserAuthResponse | undefined> {
+        console.log('its reached here.......................................................')
         try {
-            const user: UserInterface | null = await this.userRepository.emailExistCheck(email);
+            const user = await this.userRepository.emailExistCheck(email);
             const token = this.createjwt.generateToken(user?.id);
             const refreshToken = this.createjwt.generateRefreshToken(user?.id);
             if (user && user.isBlocked) {
+                console.log('its inside the UNAUTHORIZED')
                 return {
                     status: UNAUTHORIZED,
                     data: {
@@ -71,7 +75,8 @@ class userService {
         }
     }
 
-    async userSignup(userData: UserInterface): Promise<UserInterface | null> {
+    async userSignup(userData: UserInterface): Promise<UserInterface | undefined | null> {
+        console.log('its reached inside userSignup')
         try {
             return await this.userRepository.emailExistCheck(userData.email);
         } catch (error) {
@@ -80,7 +85,7 @@ class userService {
         }
 
     }
-    async saveUser(userData: UserInterface): Promise<UserAuthResponse | undefined> {
+    async saveUser(userData: IUserCreateData): Promise<UserAuthResponse | undefined> {
         try {
             const user = await this.userRepository.saveUser(userData);
             if (user) {
@@ -91,7 +96,7 @@ class userService {
                     data: {
                         success: true,
                         message: 'Success',
-                        userId: userData.id,
+                        userId: user.id, // Use user.id from the returned user
                         token: token,
                         data: user,
                         refreshToken
@@ -133,7 +138,7 @@ class userService {
             console.log(error as Error);
         }
     }
-    async getUserByEmail(email: string): Promise<UserInterface | null> {
+    async getUserByEmail(email: string): Promise<UserInterface | undefined | null> {
         return this.userRepository.emailExistCheck(email);
     }
     generateToken(payload: string | undefined): string | undefined {

@@ -6,12 +6,18 @@ dotenv.config();
 
 export class CreateJWT {
     generateToken(payload: string | undefined): string | undefined {
+        console.log('inside the generateToken')
+        console.log(payload)
         if (payload) {
+            console.log(`JWT_SECRET: ${process.env.JWT_SECRET}`)
             const token = jwt.sign({ data: payload }, process.env.JWT_SECRET as Secret, { expiresIn: '30m' });
+            console.log(`token is :${token}`)
             return token;
         }
     }
     generateRefreshToken(payload: string | undefined): string | undefined {
+        console.log('payload from refreshtoken function')
+        console.log(payload)
         return jwt.sign({ data: payload }, process.env.JWT_REFRESH_SECRET as Secret, { expiresIn: '48h' });
     }
     verifyToken(token: string): JwtPayload | null {

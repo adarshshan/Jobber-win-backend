@@ -15,7 +15,6 @@ class userController {
         try {
             const { email, password }: { email: string; password: string } = req.body;
             const loginStatus = await this.userServices.userLogin(email, password);
-            console.log(loginStatus);
             if (loginStatus && loginStatus.data && typeof loginStatus.data == 'object' && 'token' in loginStatus.data) {
                 if (!loginStatus.data.success) {
                     res.status(UNAUTHORIZED).json({ success: false, message: loginStatus.data.message });
@@ -106,11 +105,12 @@ class userController {
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error......' });
         }
     }
-    
+
     async userSingnup(req: Request, res: Response): Promise<void> {
         try {
             req.app.locals.userData = req.body;
             const newUser = await this.userServices.userSignup(req.app.locals.userData);
+
             if (!newUser) {
                 req.app.locals.newUser = true;
                 req.app.locals.userData = req.body;
@@ -128,6 +128,7 @@ class userController {
                 res.status(BAD_REQUEST).json({ success: false, message: 'The email is already in use!' });
             }
         } catch (error) {
+            console.log('its herr....')
             console.log(error as Error)
             res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: 'Internal server error' });
         }

@@ -1,16 +1,19 @@
 import { JobInterface } from "../controllers/recruiterController";
+import { IJobApplicationRepository } from "../interfaces/repositoryInterfaces/IJobApplicationRepository";
 import JobApplicationRepository from "../repositories/jobApplicationRepository";
+import { IRecruiterRepository } from "../interfaces/repositoryInterfaces/IRecruiterRepository";
 import RecruiterRepository from "../repositories/recruiterRepository";
+import { ISubscriptionRepository } from "../interfaces/repositoryInterfaces/ISubscriptionRepository";
 import SubscriptionRepository from "../repositories/subscriptionRepository";
 import UserRepository from "../repositories/userRepository";
 
 
 class RecruiterService {
     constructor(
-        private recruiterRepository: RecruiterRepository,
-        private jobApplicationRepository: JobApplicationRepository,
+        private recruiterRepository: IRecruiterRepository,
+        private jobApplicationRepository: IJobApplicationRepository,
         private userRepository: UserRepository,
-        private subscriptionRepository: SubscriptionRepository) { }
+        private subscriptionRepository: ISubscriptionRepository) { }
 
     async getAllJobs(userId: string) {
         try {

@@ -1,6 +1,7 @@
 import UserInterface from "../interfaces/entityInterface/Iuser";
 import { SubInterface } from "../interfaces/serviceInterfaces/subscription";
 import { SubscriptionPlanInterface } from "../models/SubscriptionModel";
+import { ISubscriptionRepository } from "../interfaces/repositoryInterfaces/ISubscriptionRepository";
 import SubscriptionRepository from "../repositories/subscriptionRepository";
 import Stripe from 'stripe';
 import UserRepository from "../repositories/userRepository";
@@ -14,7 +15,7 @@ const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 class SubscriptionService {
     constructor(
-        private subscriptionRepository: SubscriptionRepository,
+        private subscriptionRepository: ISubscriptionRepository,
         private userRepository: UserRepository) { }
 
     async createSubscription(data: SubscriptionPlanInterface) {

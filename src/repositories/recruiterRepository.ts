@@ -4,7 +4,9 @@ import jobApplicationModel from "../models/jobApplicationModel";
 import jobModel from "../models/jobModel";
 
 
-class RecruiterRepository {
+import { IRecruiterRepository } from "../interfaces/repositoryInterfaces/IRecruiterRepository";
+
+class RecruiterRepository implements IRecruiterRepository {
 
     async getAllJobs(recruiterId: string) {
         try {

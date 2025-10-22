@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, ObjectId } from "mongoose";
 
 
-export interface jobInterface extends Document {
+export interface JobModelInterface extends Document {
     _id: ObjectId;
     title: string;
     recruiterId: ObjectId;
@@ -17,7 +17,8 @@ export interface jobInterface extends Document {
     job_type: 'part-time' | 'full-time' | 'remote';
     max_salary: number;
     min_salary: number;
-    qualifications?: string[]
+    qualifications?: string[];
+    location?: string;
 }
 
 const adminSchema: Schema = new Schema({
@@ -63,6 +64,6 @@ const adminSchema: Schema = new Schema({
     timestamps: true,
 })
 
-const jobModel = mongoose.model<jobInterface>('job', adminSchema);
+const jobModel = mongoose.model<JobModelInterface>('job', adminSchema);
 
 export default jobModel;
