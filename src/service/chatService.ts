@@ -1,5 +1,4 @@
 import { IChatRepository } from "../interfaces/repositoryInterfaces/IChatRepository";
-import ChatRepository from "../repositories/chatRepository";
 import UserRepository from "../repositories/userRepository";
 
 

@@ -2,7 +2,6 @@ import UserInterface from "../interfaces/entityInterface/Iuser";
 import { SubInterface } from "../interfaces/serviceInterfaces/subscription";
 import { SubscriptionPlanInterface } from "../models/SubscriptionModel";
 import { ISubscriptionRepository } from "../interfaces/repositoryInterfaces/ISubscriptionRepository";
-import SubscriptionRepository from "../repositories/subscriptionRepository";
 import Stripe from 'stripe';
 import UserRepository from "../repositories/userRepository";
 import { config } from "dotenv";

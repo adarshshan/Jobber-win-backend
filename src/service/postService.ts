@@ -1,11 +1,6 @@
-import { ObjectId } from 'mongoose';
 import { IPostRepository } from "../interfaces/repositoryInterfaces/IPostRepository";
-import PostRepository from './../repositories/postRepository';
 import { ICommentRepository } from "../interfaces/repositoryInterfaces/ICommentRepository";
-import CommentRepository from '../repositories/CommentRepository';
 import ChatRepository from '../repositories/chatRepository';
-import { IMessageRepository } from "../interfaces/repositoryInterfaces/IMessageRepository";
-import MessageRepository from '../repositories/messageRepository';
 
 class PostServices {
     constructor(private PostRepository: IPostRepository,

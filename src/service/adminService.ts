@@ -1,7 +1,4 @@
-import { Request } from "express";
-import AdminModel, { AdminInterface } from "../models/adminModel";
 import { IAdminRepository } from "../interfaces/repositoryInterfaces/IAdminRepository";
-import AdminRepository from "../repositories/adminRepository";
 import Admin from "../interfaces/entityInterface/Iadmin";
 import { AdminAuthResponse, IUsersAndCount } from "../interfaces/serviceInterfaces/IadminService";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
@@ -9,13 +6,9 @@ import Encrypt from "../utils/comparePassword";
 import { CreateJWT } from "../utils/generateToken";
 import { IApiRes } from "../interfaces/common/Icommon";
 import { IReportRepository } from "../interfaces/repositoryInterfaces/IReportRepository";
-import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 import JobRepository from "../repositories/jobRepository";
 import { IPostRepository } from "../interfaces/repositoryInterfaces/IPostRepository";
-import PostRepository from "../repositories/postRepository";
 import { IJobApplicationRepository } from "../interfaces/repositoryInterfaces/IJobApplicationRepository";
-import JobApplicationRepository from "../repositories/jobApplicationRepository";
-import { jobReportInterface } from "../models/jobReportModel";
 import { IJobReportRepository } from "../interfaces/repositoryInterfaces/IJobReportRepository";
 
 

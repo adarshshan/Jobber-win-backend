@@ -1,10 +1,7 @@
 import { JobBodyInterface } from "../controllers/jobController";
 import { IJobApplicationRepository } from "../interfaces/repositoryInterfaces/IJobApplicationRepository";
-import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import { IJobRepository } from "../interfaces/repositoryInterfaces/IJobRepository";
-import JobRepository from "../repositories/jobRepository";
 import { IJobReportRepository } from "../interfaces/repositoryInterfaces/IJobReportRepository";
-import { JobReportRepository } from "../repositories/reportRepository";
 import UserRepository from "../repositories/userRepository";
 
 
@@ -16,7 +13,7 @@ class JobService {
         private jobReportRepository: IJobReportRepository
     ) { }
 
-    async landingPageJobs(search:string){
+    async landingPageJobs(search: string) {
         try {
             return await this.jobRepository.landingPageJobs(search)
         } catch (error) {

@@ -1,12 +1,10 @@
 import UserInterface, { IUserCreateData } from "../interfaces/entityInterface/Iuser";
 import { UserAuthResponse } from "../interfaces/serviceInterfaces/IuserService";
 import { IUserRepository } from "../interfaces/repositoryInterfaces/IuserRepository";
-import UserRepository from "../repositories/userRepository";
 import { STATUS_CODES } from "../constants/httpStatusCodes";
 import { CreateJWT } from "../utils/generateToken";
 import Encrypt from "../utils/comparePassword";
 import { IReportRepository } from "../interfaces/repositoryInterfaces/IReportRepository";
-import ReportRepository from "../repositories/reportRepository";
 
 const { OK, INTERNAL_SERVER_ERROR, UNAUTHORIZED } = STATUS_CODES;
 
@@ -19,13 +17,11 @@ class userService {
         private reportRepository: IReportRepository) { }
 
     async userLogin(email: string, password: string): Promise<UserAuthResponse | undefined> {
-        console.log('its reached here.......................................................')
         try {
             const user = await this.userRepository.emailExistCheck(email);
             const token = this.createjwt.generateToken(user?.id);
             const refreshToken = this.createjwt.generateRefreshToken(user?.id);
             if (user && user.isBlocked) {
-                console.log('its inside the UNAUTHORIZED')
                 return {
                     status: UNAUTHORIZED,
                     data: {

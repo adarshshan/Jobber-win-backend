@@ -1,4 +1,4 @@
-import UserInterface from "../entityInterface/Iuser";
+import UserInterface, { IUserCreateData } from "../entityInterface/Iuser";
 import { SubInterface } from "../serviceInterfaces/subscription";
 import { Document } from "mongoose"; // Import Document for Mongoose types
 
