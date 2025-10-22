@@ -3,7 +3,9 @@ import jobApplicationModel from "../models/jobApplicationModel";
 
 
 
-class JobApplicationRepository {
+import { IJobApplicationRepository } from "../interfaces/repositoryInterfaces/IJobApplicationRepository";
+
+class JobApplicationRepository implements IJobApplicationRepository {
 
     async getAllApplications(userId: string, userSide = false) {
         try {

@@ -13,7 +13,7 @@ class JobController {
 
     async landingPageJobs(req: Request, res: Response) {
         try {
-            let search:any = req.query.search;
+            let search: any = req.query.search;
             const jobs = await this.jobService.landingPageJobs(search);
             if (jobs) res.json({ success: true, data: jobs, message: 'messages fetched successfully' });
             else res.json({ success: false, message: 'Something went wrong!' });

@@ -1,10 +1,12 @@
-import jobModel from "../models/jobModel";
 import jobReportModel from "../models/jobReportModel";
 import postReportModel from "../models/postReportModel";
 import userModel from "../models/userModel";
 
 
-class ReportRepository {
+import { IReportRepository } from "../interfaces/repositoryInterfaces/IReportRepository";
+import { IJobReportRepository } from "../interfaces/repositoryInterfaces/IJobReportRepository";
+
+class ReportRepository implements IReportRepository {
 
     async reportUser(postId: string, reason: string, userId: string) {
         try {
@@ -54,7 +56,7 @@ class ReportRepository {
 
 export default ReportRepository;
 
-class JobReportRepository {
+class JobReportRepository implements IJobReportRepository {
 
     async reportJob(reason: string, jobId: string, userId: string) {
         try {

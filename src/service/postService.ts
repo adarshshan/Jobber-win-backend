@@ -1,12 +1,10 @@
-import { ObjectId } from 'mongoose';
-import PostRepository from './../repositories/postRepository';
-import CommentRepository from '../repositories/CommentRepository';
+import { IPostRepository } from "../interfaces/repositoryInterfaces/IPostRepository";
+import { ICommentRepository } from "../interfaces/repositoryInterfaces/ICommentRepository";
 import ChatRepository from '../repositories/chatRepository';
-import MessageRepository from '../repositories/messageRepository';
 
 class PostServices {
-    constructor(private PostRepository: PostRepository,
-        private commentRepository: CommentRepository,
+    constructor(private PostRepository: IPostRepository,
+        private commentRepository: ICommentRepository,
         private chatRepository: ChatRepository) { }
 
     async savePost(userId: string, imageUrl: string, caption: string) {

@@ -1,20 +1,22 @@
-import UserInterface from '../interfaces/entityInterface/Iuser';
+import UserInterface, { IUserCreateData } from '../interfaces/entityInterface/Iuser';
 import { SubInterface } from '../interfaces/serviceInterfaces/subscription';
 import userModel from '../models/userModel';
 import mongoose from 'mongoose';
 
 
-class UserRepository {
-    async emailExistCheck(email: string): Promise<UserInterface | null> {
+import { IUserRepository } from "../interfaces/repositoryInterfaces/IuserRepository";
+
+class UserRepository implements IUserRepository {
+    async emailExistCheck(email: string): Promise<UserInterface | null | undefined> {
         try {
-            const userFound = await userModel.findOne({ email: email });
-            return userFound as UserInterface;
+            const userFound = await userModel.findOne({ email });
+            return userFound as UserInterface | null;
         } catch (error) {
             console.log(error as Error);
             return null;
         }
     }
-    async saveUser(userData: UserInterface): Promise<UserInterface | null> {
+    async saveUser(userData: IUserCreateData): Promise<UserInterface | null> {
         try {
             const newUser = new userModel(userData);
             await newUser.save();
@@ -171,7 +173,7 @@ class UserRepository {
             if (User) {
                 let savedJobs;
                 if (User.savedJobs?.length) {
-                    savedJobs = User?.savedJobs.some(user => user.jobId === jobId);
+                    savedJobs = User?.savedJobs.some(user => user.jobId.toString() === jobId);
                 }
                 if (!savedJobs) {
                     const user = await userModel.findByIdAndUpdate(userId,

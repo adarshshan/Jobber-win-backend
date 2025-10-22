@@ -1,6 +1,6 @@
 import mongoose, { Model, ObjectId, Schema } from "mongoose";
 
-interface ChatInterface {
+export interface ChatInterface {
     chatName: string;
     isGroupChat: boolean;
     users: ObjectId[];

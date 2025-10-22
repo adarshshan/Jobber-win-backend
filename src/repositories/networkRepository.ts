@@ -7,7 +7,9 @@ import connectionModel from "../models/connectionModel";
 const ObjectId = mongoose.Types.ObjectId;
 
 
-class NetworkRepository {
+import { INetworkRepository } from "../interfaces/repositoryInterfaces/INetworkRepository";
+
+class NetworkRepository implements INetworkRepository {
 
     async getUserProfile(userId: string) {
         try {
@@ -163,11 +165,11 @@ class NetworkRepository {
             const id = new mongoose.Types.ObjectId(userId);
             const requestSendDetails = await userModel.aggregate([
                 {
-                    $match: { _id:id } 
+                    $match: { _id: id }
                 },
                 {
                     $lookup: {
-                        from: 'users', 
+                        from: 'users',
                         localField: 'requestsSend',
                         foreignField: '_id',
                         as: 'requestSendDetails'

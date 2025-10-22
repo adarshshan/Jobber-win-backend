@@ -1,19 +1,19 @@
 import { JobBodyInterface } from "../controllers/jobController";
-import JobApplicationRepository from "../repositories/jobApplicationRepository";
-import JobRepository from "../repositories/jobRepository";
-import { JobReportRepository } from "../repositories/reportRepository";
+import { IJobApplicationRepository } from "../interfaces/repositoryInterfaces/IJobApplicationRepository";
+import { IJobRepository } from "../interfaces/repositoryInterfaces/IJobRepository";
+import { IJobReportRepository } from "../interfaces/repositoryInterfaces/IJobReportRepository";
 import UserRepository from "../repositories/userRepository";
 
 
 class JobService {
     constructor(
-        private jobRepository: JobRepository,
+        private jobRepository: IJobRepository,
         private userRepository: UserRepository,
-        private jobApplicationRepository: JobApplicationRepository,
-        private jobReportRepository: JobReportRepository
+        private jobApplicationRepository: IJobApplicationRepository,
+        private jobReportRepository: IJobReportRepository
     ) { }
 
-    async landingPageJobs(search:string){
+    async landingPageJobs(search: string) {
         try {
             return await this.jobRepository.landingPageJobs(search)
         } catch (error) {

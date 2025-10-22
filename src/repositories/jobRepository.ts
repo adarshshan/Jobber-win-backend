@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
-import jobModel from "../models/jobModel";
+import jobModel, { JobModelInterface } from "../models/jobModel";
 import { JobBodyInterface } from "../controllers/jobController";
 import jobApplicationModel from "../models/jobApplicationModel";
 import userModel from "../models/userModel";
 
 
-class JobRepository {
+import { IJobRepository } from "../interfaces/repositoryInterfaces/IJobRepository";
 
-    async landingPageJobs(search: string | undefined) {
+class JobRepository implements IJobRepository {
+
+    async landingPageJobs(search: string | undefined): Promise<JobModelInterface[] | undefined | null> {
         try {
             const keyword = search ? {
                 $or: [

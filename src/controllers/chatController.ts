@@ -16,7 +16,7 @@ class ChatController {
             const chat = await this.chatService.accessChat(userId, current_userId);
             // console.log(chat);
 
-            if (chat.length > 0) {
+            if (chat && chat?.length > 0) {
                 console.log(chat[0]);
                 res.send({ success: true, data: chat[0], message: 'Success' });
             } else {

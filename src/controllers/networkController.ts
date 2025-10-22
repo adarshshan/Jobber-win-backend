@@ -7,7 +7,7 @@ class NetworkController {
 
     async getAllUsers(req: Request, res: Response) {
         try {
-            const search:any = req.query.search;
+            const search: any = req.query.search;
             if (req.userId) {
                 const result = await this.networkService.getAllUsers(search, req.userId);
                 res.json({ success: true, data: result, message: 'Data Fetched Successfully' });

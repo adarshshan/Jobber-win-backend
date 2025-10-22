@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { v4 as uuidV4 } from 'uuid'
 
-interface CommentInterface extends Document {
+export interface CommentInterface extends Document {
     postId: Schema.Types.ObjectId;
     comments: Array<{
         _id: string;

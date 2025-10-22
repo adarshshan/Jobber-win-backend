@@ -3,7 +3,7 @@ import mongoose, { Model, Schema, Types } from "mongoose";
 interface IlikedUsers {
     userId: string;
 }
-interface LikeDocument extends Document {
+export interface LikeInterface extends Document {
     postId: string;
     likedUsers: IlikedUsers[];
     likeCount: number;
@@ -11,7 +11,7 @@ interface LikeDocument extends Document {
     updatedAt: Date;
 }
 
-const likeSchema: Schema<LikeDocument> = new Schema({
+const likeSchema: Schema<LikeInterface> = new Schema({
     postId: {
         type: String,
         ref: 'post',
@@ -46,5 +46,5 @@ likeSchema.pre('save', async function (next) {
 
 
 
-const LikeModel: Model<LikeDocument> = mongoose.model<LikeDocument>('like', likeSchema)
+const LikeModel: Model<LikeInterface> = mongoose.model<LikeInterface>('like', likeSchema)
 export default LikeModel;
