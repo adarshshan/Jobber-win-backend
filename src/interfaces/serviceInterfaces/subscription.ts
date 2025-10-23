@@ -1,8 +1,8 @@
 export interface SubInterface {
-    _id: string;
+    _id?: string;
     planName: string;
     duration: number;
     amount: number;
-    description: string;
-    status: string;
+    description?: string;
+    status?: string;
 }

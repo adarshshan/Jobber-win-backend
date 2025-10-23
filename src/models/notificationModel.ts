@@ -1,4 +1,4 @@
-import mongoose, { Model, ObjectId, Schema } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 
 interface NotificationInterface {
 }

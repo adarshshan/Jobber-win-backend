@@ -1,4 +1,4 @@
-import mongoose, { ObjectId, Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface ConnectionInterface extends Document {
     userId: mongoose.Types.ObjectId;

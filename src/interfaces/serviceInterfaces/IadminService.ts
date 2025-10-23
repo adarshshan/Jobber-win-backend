@@ -9,6 +9,7 @@ export interface AdminAuthResponse {
         data?: Admin,
         adminId?: string;
         token?: string;
+        refreshToken?: string;
     };
 }
 export interface IUsersAndCount {

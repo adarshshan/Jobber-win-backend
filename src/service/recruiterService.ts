@@ -3,6 +3,7 @@ import { IJobApplicationRepository } from "../interfaces/repositoryInterfaces/IJ
 import { IRecruiterRepository } from "../interfaces/repositoryInterfaces/IRecruiterRepository";
 import { ISubscriptionRepository } from "../interfaces/repositoryInterfaces/ISubscriptionRepository";
 import UserRepository from "../repositories/userRepository";
+import { NotFoundError, DatabaseError } from '../utils/errors';
 
 
 class RecruiterService {
@@ -12,79 +13,123 @@ class RecruiterService {
         private userRepository: UserRepository,
         private subscriptionRepository: ISubscriptionRepository) { }
 
-    async getAllJobs(userId: string) {
+    async getAllJobs(userId: string): Promise<any[]> {
         try {
             return await this.recruiterRepository.getAllJobs(userId);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in getAllJobs:", error);
+            throw new Error("An unexpected error occurred while retrieving all jobs."); // Re-throw generic error
         }
     }
-    async isSubscribed(userId: string) {
+    async isSubscribed(userId: string): Promise<{ success: boolean; message: string }> {
         try {
-            const user = await this.userRepository.getUserById(userId);
-            if (user) {
-                let subId = user.subscription?.sub_Id;
-                let start = user.subscription?.purchased_At;
-                if (subId) {
-                    let subscr = await this.subscriptionRepository.getSubscriptionById(subId);
-                    let duration = subscr?.duration;
-                    let status = subscr?.status;
-                    if (status === 'inactive') return { success: false, message: 'This plan is deactivated. please purchase another one.' };
-                    if (start) {
-                        const date = new Date(start);
-                        let expireDate = new Date(date);
-                        if (duration) {
-                            expireDate.setMonth(date.getMonth() + duration);
-                            if (new Date(expireDate).getTime() < Date.now()) return { success: false, message: 'Your Subscription plan is Expired! Please purchase another plan.' };
-                        }
+            const user = await this.userRepository.getUserById(userId); // This will now throw NotFoundError if user not found
+
+            let subId = user.subscription?.sub_Id;
+            let start = user.subscription?.purchased_At;
+
+            if (!subId) {
+                return { success: false, message: 'You have not purchased any subscription plans. Please purchase a plan and continue.' };
+            }
+
+            const subscr = await this.subscriptionRepository.getSubscriptionById(subId); // This will now throw NotFoundError if subscription not found
+
+            let duration = subscr.duration;
+            let status = subscr.status;
+
+            if (status === 'inactive') {
+                return { success: false, message: 'This plan is deactivated. Please purchase another one.' };
+            }
+
+            if (start) {
+                const date = new Date(start);
+                let expireDate = new Date(date);
+                if (duration) {
+                    expireDate.setMonth(date.getMonth() + duration);
+                    if (new Date(expireDate).getTime() < Date.now()) {
+                        return { success: false, message: 'Your Subscription plan is Expired! Please purchase another plan.' };
                     }
-                } else return { success: false, message: 'you are not purchased any subscription plans. please purchase a plan and continue' };
-            } else return { success: false, message: 'user not found!' };
-            return { success: true, message: 'user has the valid subscription plan.' };
+                }
+            }
+            return { success: true, message: 'User has a valid subscription plan.' };
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                return { success: false, message: error.message || 'User or subscription not found.' };
+            } else if (error instanceof DatabaseError) {
+                console.error("Database error in isSubscribed:", error);
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in isSubscribed:", error);
+            throw new Error("An unexpected error occurred while checking subscription status."); // Re-throw generic error
         }
     }
-    async postNewJob(data: JobInterface, userId: string) {
+    async postNewJob(data: JobInterface, userId: string): Promise<any> {
         try {
             return await this.recruiterRepository.postNewJob(data, userId);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in postNewJob:", error);
+            throw new Error("An unexpected error occurred while posting new job."); // Re-throw generic error
         }
     }
-    async editJobs(data: JobInterface, jobId: string) {
+    async editJobs(data: JobInterface, jobId: string): Promise<any> {
         try {
             return await this.recruiterRepository.editJobs(data, jobId);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError || error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in editJobs:", error);
+            throw new Error("An unexpected error occurred while editing job."); // Re-throw generic error
         }
     }
-    async deleteJob() {
+    async deleteJob(jobId: string): Promise<void> {
         try {
-            const result = await this.recruiterRepository.deleteJob();
+            await this.recruiterRepository.deleteJob(jobId);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError || error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in deleteJob:", error);
+            throw new Error("An unexpected error occurred while deleting job."); // Re-throw generic error
         }
     }
-    async getAllApplications(userId: string) {
+    async getAllApplications(userId: string): Promise<any[]> {
         try {
             return await this.jobApplicationRepository.getAllApplications(userId);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in getAllApplications:", error);
+            throw new Error("An unexpected error occurred while retrieving all applications."); // Re-throw generic error
         }
     }
-    async changeStatus(status: string, applicationId: string) {
+    async changeStatus(status: string, applicationId: string): Promise<any> {
         try {
             return await this.recruiterRepository.changeStatus(status, applicationId);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError || error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in changeStatus:", error);
+            throw new Error("An unexpected error occurred while changing application status."); // Re-throw generic error
         }
     }
-    async getGraphData(userId: string) {
+    async getGraphData(userId: string): Promise<any> {
         try {
             return await this.jobApplicationRepository.getGraphData(userId);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in getGraphData:", error);
+            throw new Error("An unexpected error occurred while retrieving graph data."); // Re-throw generic error
         }
     }
 }

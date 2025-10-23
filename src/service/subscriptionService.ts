@@ -1,7 +1,8 @@
 import UserInterface from "../interfaces/entityInterface/Iuser";
 import { SubInterface } from "../interfaces/serviceInterfaces/subscription";
-import { SubscriptionPlanInterface } from "../models/SubscriptionModel";
 import { ISubscriptionRepository } from "../interfaces/repositoryInterfaces/ISubscriptionRepository";
+import { SubscriptionPlanInterface } from "../models/SubscriptionModel";
+import { NotFoundError, DatabaseError } from '../utils/errors';
 import Stripe from 'stripe';
 import UserRepository from "../repositories/userRepository";
 import { config } from "dotenv";
@@ -17,59 +18,87 @@ class SubscriptionService {
         private subscriptionRepository: ISubscriptionRepository,
         private userRepository: UserRepository) { }
 
-    async createSubscription(data: SubscriptionPlanInterface) {
+    async createSubscription(data: SubscriptionPlanInterface): Promise<SubscriptionPlanInterface> {
         try {
             return await this.subscriptionRepository.createSubscription(data);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in createSubscription:", error);
+            throw new Error("An unexpected error occurred while creating subscription."); // Re-throw generic error
         }
     }
-    async getSubscriptionList() {
+    async getSubscriptionList(): Promise<SubscriptionPlanInterface[]> {
         try {
             return await this.subscriptionRepository.getSubscriptionList();
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in getSubscriptionList:", error);
+            throw new Error("An unexpected error occurred while retrieving subscription list."); // Re-throw generic error
         }
     }
-    async editSubscription(id: string, duration: number, amount: number, planName: string) {
+    async editSubscription(id: string, duration: number, amount: number, planName: string): Promise<SubscriptionPlanInterface> {
         try {
             return await this.subscriptionRepository.editSubscription(id, duration, amount, planName);
         } catch (error) {
-
+            if (error instanceof NotFoundError || error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in editSubscription:", error);
+            throw new Error("An unexpected error occurred while editing subscription."); // Re-throw generic error
         }
     }
-    async deleteSubscription(id: string) {
+    async deleteSubscription(id: string): Promise<SubscriptionPlanInterface> {
         try {
             return await this.subscriptionRepository.deleteSubscription(id);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError || error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in deleteSubscription:", error);
+            throw new Error("An unexpected error occurred while deleting subscription."); // Re-throw generic error
         }
     }
-    async activateSubscription(id: string) {
+    async activateSubscription(id: string): Promise<SubscriptionPlanInterface> {
         try {
             return await this.subscriptionRepository.activateSubscription(id);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError || error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in activateSubscription:", error);
+            throw new Error("An unexpected error occurred while activating subscription."); // Re-throw generic error
         }
     }
-    async deactivateSubscription(id: string) {
+    async deactivateSubscription(id: string): Promise<SubscriptionPlanInterface> {
         try {
             return await this.subscriptionRepository.deactivateSubscription(id);
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError || error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in deactivateSubscription:", error);
+            throw new Error("An unexpected error occurred while deactivating subscription."); // Re-throw generic error
         }
     }
 
     //...............recruiter side ........................
 
-    async getAllSubscriptions() {
+    async getAllSubscriptions(): Promise<SubscriptionPlanInterface[]> {
         try {
             return await this.subscriptionRepository.getAllSubscriptions();
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in getAllSubscriptions:", error);
+            throw new Error("An unexpected error occurred while retrieving all subscriptions."); // Re-throw generic error
         }
     }
-    async subscriptionPayment(item: SubInterface, user: UserInterface) {
+    async subscriptionPayment(item: SubInterface, user: UserInterface): Promise<string> {
         try {
             const lineItem = {
                 price_data: {
@@ -80,7 +109,7 @@ class SubscriptionService {
                     unit_amount: item.amount * 100,
                 },
                 quantity: 1
-            }
+            };
 
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ["card"],
@@ -91,65 +120,85 @@ class SubscriptionService {
             });
             return session.id;
         } catch (error) {
-            console.log(error as Error);
-        }
-    }
-    async webHook(item: SubInterface, event: any, userId: string) {
-        try {
-
-            return null;
-        } catch (error) {
-            console.log(error as Error);
-        }
-    }
-    async updateSubPlan(userId: string, item: SubInterface) {
-        await this.userRepository.updateSubPlan(userId, item);
-    }
-    async getCurrentSubscription(userId: string) {
-        try {
-            const user: any = await this.userRepository.getUserById(userId);
-            if (user) {
-                const subScr = await this.subscriptionRepository.getSubscriptionById(user.subscription.sub_Id);
-                if (subScr) {
-                    if (subScr.status !== 'active')
-                        return {
-                            success: true,
-                            planData: {
-                                planName: subScr.planName,
-                                description: subScr.description,
-                                duration: subScr.duration,
-                                amount: subScr.amount,
-                                status: 'inactive'
-                            },
-                            message: 'success'
-                        }
-                    const date = new Date(user.subscription.purchased_At)
-                    let expireDate = new Date(date);
-                    expireDate.setMonth(date.getMonth() + subScr.duration);
-
-                    return {
-                        success: true,
-                        planData: {
-                            planName: subScr.planName,
-                            description: subScr.description,
-                            duration: subScr.duration,
-                            amount: subScr.amount,
-                            status: 'active',
-                            expire_at: expireDate
-                        },
-                        message: 'success'
-                    }
-                } else return {
-                    success: false,
-                    message: 'plan is not exists!!!'
-                }
-
-            } return {
-                success: false,
-                message: 'user has not purchased subscription plan!'
+            // Assuming Stripe errors might be caught here, or if any repository calls are added later
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
             }
+            console.error("Error in subscriptionPayment:", error);
+            throw new Error("An unexpected error occurred during subscription payment processing."); // Re-throw generic error
+        }
+    }
+    async webHook(item: SubInterface, event: any, userId: string): Promise<any> {
+        try {
+            // Add actual webhook logic here
+            return null; // Placeholder
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Error in webHook:", error);
+            throw new Error("An unexpected error occurred during webhook processing."); // Re-throw generic error
+        }
+    }
+    async updateSubPlan(userId: string, item: SubInterface): Promise<void> {
+        try {
+            await this.userRepository.updateSubPlan(userId, item);
+        } catch (error) {
+            if (error instanceof NotFoundError || error instanceof DatabaseError) {
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in updateSubPlan:", error);
+            throw new Error("An unexpected error occurred while updating subscription plan."); // Re-throw generic error
+        }
+    }
+    async getCurrentSubscription(userId: string): Promise<any> { // Consider a specific DTO for return type
+        try {
+            const user: any = await this.userRepository.getUserById(userId); // This will now throw NotFoundError if user not found
+
+            const subScr = await this.subscriptionRepository.getSubscriptionById(user.subscription.sub_Id); // This will now throw NotFoundError if subscription not found
+
+            if (subScr.status !== 'active') {
+                return {
+                    success: true,
+                    planData: {
+                        planName: subScr.planName,
+                        description: subScr.description,
+                        duration: subScr.duration,
+                        amount: subScr.amount,
+                        status: 'inactive'
+                    },
+                    message: 'success'
+                };
+            }
+            const date = new Date(user.subscription.purchased_At);
+            let expireDate = new Date(date);
+            expireDate.setMonth(date.getMonth() + subScr.duration);
+
+            return {
+                success: true,
+                planData: {
+                    planName: subScr.planName,
+                    description: subScr.description,
+                    duration: subScr.duration,
+                    amount: subScr.amount,
+                    status: 'active',
+                    expire_at: expireDate
+                },
+                message: 'success'
+            };
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                // User or Subscription not found
+                return {
+                    success: false,
+                    message: error.message
+                };
+            } else if (error instanceof DatabaseError) {
+                console.error("Database error in getCurrentSubscription:", error);
+                throw error; // Re-throw specific errors
+            }
+            console.error("Unexpected error in getCurrentSubscription:", error);
+            throw new Error("An unexpected error occurred while retrieving current subscription."); // Re-throw generic error
         }
     }
 }

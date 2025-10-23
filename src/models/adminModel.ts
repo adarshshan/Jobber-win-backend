@@ -2,7 +2,7 @@ import mongoose, { Document, Model, ObjectId, Schema } from "mongoose";
 import bcrypt from 'bcrypt';
 
 export interface AdminInterface extends Document {
-    _id?: ObjectId;
+    _id: ObjectId;
     username: string;
     password: string;
     email: string;
