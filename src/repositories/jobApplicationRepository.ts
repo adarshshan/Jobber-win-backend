@@ -4,10 +4,11 @@ import jobApplicationModel from "../models/jobApplicationModel";
 
 
 import { IJobApplicationRepository } from "../interfaces/repositoryInterfaces/IJobApplicationRepository";
+import { DatabaseError } from '../utils/errors';
 
 class JobApplicationRepository implements IJobApplicationRepository {
 
-    async getAllApplications(userId: string, userSide = false) {
+    async getAllApplications(userId: string, userSide = false): Promise<any[]> {
         try {
             const applications: any = await jobApplicationModel.find(userSide ? { userId } : {})
                 .populate("userId", "-password")
@@ -20,14 +21,15 @@ class JobApplicationRepository implements IJobApplicationRepository {
 
             if (userSide) return applications;
             const result: any = applications.filter((item: any) => {
-                return item.jobId.recruiterId._id == userId
-            })
+                return item.jobId.recruiterId._id == userId;
+            });
             return result;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getAllApplications:", error);
+            throw new DatabaseError(`Failed to retrieve all applications for user ID ${userId}.`, error as Error);
         }
     }
-    async getMonthlyApplicationCount() {
+    async getMonthlyApplicationCount(): Promise<any[]> {
         try {
             const monthlyCount = await jobApplicationModel.aggregate([
                 {
@@ -39,13 +41,14 @@ class JobApplicationRepository implements IJobApplicationRepository {
                 {
                     $sort: { "_id.year": 1, "_id.month": 1 }
                 }
-            ])
+            ]);
             return monthlyCount;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getMonthlyApplicationCount:", error);
+            throw new DatabaseError(`Failed to retrieve monthly application count.`, error as Error);
         }
     }
-    async getDailyApplicationCount() {
+    async getDailyApplicationCount(): Promise<any[]> {
         try {
             const dailyCount = await jobApplicationModel.aggregate([
                 {
@@ -57,13 +60,14 @@ class JobApplicationRepository implements IJobApplicationRepository {
                 {
                     $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 }
                 }
-            ])
+            ]);
             return dailyCount;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getDailyApplicationCount:", error);
+            throw new DatabaseError(`Failed to retrieve daily application count.`, error as Error);
         }
     }
-    async getYearlyApplicationCount() {
+    async getYearlyApplicationCount(): Promise<any[]> {
         try {
             const yearlyCount = await jobApplicationModel.aggregate([
                 {
@@ -75,16 +79,17 @@ class JobApplicationRepository implements IJobApplicationRepository {
                 {
                     $sort: { "_id.year": 1 }
                 }
-            ])
+            ]);
             return yearlyCount;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getYearlyApplicationCount:", error);
+            throw new DatabaseError(`Failed to retrieve yearly application count.`, error as Error);
         }
     }
-    async getGraphData(recruiterId: string) {
+    async getGraphData(recruiterId: string): Promise<any[]> {
         try {
             const ObjectId = mongoose.Types.ObjectId;
-            const UserId = new ObjectId(recruiterId)
+            const UserId = new ObjectId(recruiterId);
             const res = await jobApplicationModel.aggregate([
                 {
                     $lookup: {
@@ -115,10 +120,11 @@ class JobApplicationRepository implements IJobApplicationRepository {
                 {
                     $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 }
                 }
-            ])
+            ]);
             return res;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getGraphData:", error);
+            throw new DatabaseError(`Failed to retrieve graph data for recruiter ID ${recruiterId}.`, error as Error);
         }
     }
 }

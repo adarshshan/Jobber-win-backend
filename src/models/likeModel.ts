@@ -1,4 +1,4 @@
-import mongoose, { Model, Schema, Types } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 
 interface IlikedUsers {
     userId: string;

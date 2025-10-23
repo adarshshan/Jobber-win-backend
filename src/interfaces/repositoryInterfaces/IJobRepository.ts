@@ -1,17 +1,16 @@
-import { Document } from "mongoose";
 import { JobBodyInterface } from "../../controllers/jobController";
-import { JobInterface } from "../../controllers/recruiterController";
+import { JobModelInterface } from "../../models/jobModel"; // Assuming JobModelInterface is defined here
 
 export interface IJobRepository {
-    landingPageJobs(search: string | undefined): Promise<JobInterface[] | undefined | null>;
-    getAllJobs(search: string | undefined, userId: string): Promise<{ jobs: (JobInterface & Document)[], alljobs: (JobInterface & Document)[] } | undefined>;
-    getAllJobsByskills(): Promise<any>; // Return type is complex, leaving as any for now
-    getSingleJobDetails(jobId: string): Promise<any | undefined>; // Return type is complex due to lookup, leaving as any for now
-    applyJOb(jobId: string, userId: string, formData: JobBodyInterface): Promise<Document | undefined>;
-    getJobsByDate(num: string): Promise<(JobInterface & Document)[] | undefined>;
-    getJobsByExperience(start: string, end: string): Promise<(JobInterface & Document)[] | undefined>;
-    changeReportStatus(jobId: string): Promise<(JobInterface & Document) | undefined>;
-    getMonthlyJobPostCount(): Promise<any[] | undefined>;
-    getDailyJobPostCount(): Promise<any[] | undefined>;
-    getYearlyJobPostCount(): Promise<any[] | undefined>;
+    landingPageJobs(search: string | undefined): Promise<JobModelInterface[]>;
+    getAllJobs(search: string | undefined, userId: string): Promise<{ jobs: any[]; alljobs: JobModelInterface[] }>;
+    getAllJobsByskills(): Promise<any[]>; // Return type is complex, leaving as any for now
+    getSingleJobDetails(jobId: string): Promise<any>; // Return type is complex due to lookup, leaving as any for now
+    applyJOb(jobId: string, userId: string, formData: JobBodyInterface): Promise<any>;
+    getJobsByDate(num: string): Promise<JobModelInterface[]>;
+    getJobsByExperience(start: string, end: string): Promise<JobModelInterface[]>;
+    changeReportStatus(jobId: string): Promise<JobModelInterface>;
+    getMonthlyJobPostCount(): Promise<any[]>;
+    getDailyJobPostCount(): Promise<any[]>;
+    getYearlyJobPostCount(): Promise<any[]>;
 }

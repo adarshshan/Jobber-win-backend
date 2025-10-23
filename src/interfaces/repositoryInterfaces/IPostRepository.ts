@@ -1,16 +1,15 @@
-import { Document } from "mongoose";
 import IPostInterface from "../entityInterface/Ipost";
 import { LikeInterface } from "../../models/likeModel";
 
 export interface IPostRepository {
-    savePost(userId: string, imageUrl: string, caption: string): Promise<IPostInterface | null>;
-    getPosts(userId: string): Promise<(IPostInterface & Document)[] | undefined | null>;
-    getPostForHome(): Promise<any[] | undefined>; // Complex return type due to aggregation
-    likePost(postId: string, userId: string): Promise<{ success: boolean; data?: (LikeInterface & Document); message: string } | undefined>;
-    unLikePost(postId: string, userId: string): Promise<{ success: boolean; data?: (LikeInterface & Document); message: string } | undefined>;
-    getLikes(postId: string): Promise<(LikeInterface & Document) | undefined | null>;
-    deletePost(postId: string): Promise<(IPostInterface & Document) | undefined>;
-    updateCaption(caption: string, postId: string): Promise<(IPostInterface & Document) | undefined>;
-    getSinglePostDetails(postId: string): Promise<(IPostInterface & Document) | undefined | null>;
-    changePostReportStatus(postId: string): Promise<(IPostInterface & Document) | undefined>;
+    savePost(userId: string, imageUrl: string, caption: string): Promise<IPostInterface>;
+    getPosts(userId: string): Promise<IPostInterface[]>;
+    getPostForHome(): Promise<any[]>; // Complex return type due to aggregation
+    likePost(postId: string, userId: string): Promise<{ success: boolean; data?: LikeInterface; message: string }>;
+    unLikePost(postId: string, userId: string): Promise<{ success: boolean; data?: LikeInterface; message: string }>;
+    getLikes(postId: string): Promise<any>;
+    deletePost(postId: string): Promise<IPostInterface>;
+    updateCaption(caption: string, postId: string): Promise<IPostInterface>;
+    getSinglePostDetails(postId: string): Promise<IPostInterface>;
+    changePostReportStatus(postId: string): Promise<IPostInterface>;
 }

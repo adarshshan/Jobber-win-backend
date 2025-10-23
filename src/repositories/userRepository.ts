@@ -5,53 +5,68 @@ import mongoose from 'mongoose';
 
 
 import { IUserRepository } from "../interfaces/repositoryInterfaces/IuserRepository";
+import { NotFoundError, DatabaseError } from '../utils/errors';
 
 class UserRepository implements IUserRepository {
-    async emailExistCheck(email: string): Promise<UserInterface | null | undefined> {
+    async emailExistCheck(email: string): Promise<UserInterface> {
         try {
             const userFound = await userModel.findOne({ email });
-            return userFound as UserInterface | null;
+            if (!userFound) {
+                throw new NotFoundError(`User with email ${email} not found.`);
+            }
+            return userFound as UserInterface;
         } catch (error) {
-            console.log(error as Error);
-            return null;
+            if (error instanceof NotFoundError) {
+                throw error; // Re-throw NotFoundError
+            }
+            console.error("Error in emailExistCheck:", error); // Use console.error for errors
+            throw new DatabaseError(`Failed to check email existence for ${email}.`, error as Error);
         }
     }
-    async saveUser(userData: IUserCreateData): Promise<UserInterface | null> {
+    async saveUser(userData: IUserCreateData): Promise<UserInterface> {
         try {
             const newUser = new userModel(userData);
             await newUser.save();
-            return newUser as UserInterface
+            return newUser as UserInterface;
         } catch (error) {
-            console.log(error as Error);
-            return null;
+            console.error("Error in saveUser:", error);
+            throw new DatabaseError(`Failed to save user with email ${userData.email}.`, error as Error);
         }
     }
-    async getAllUsers(search: string | undefined, userId: string) {
+    async getAllUsers(search: string | undefined, userId: string): Promise<UserInterface[]> {
         try {
             const keyword = search ? {
                 $or: [
                     { name: { $regex: search, $options: 'i' } },
                     { email: { $regex: search, $options: 'i' } }
                 ]
-            } : {}
+            } : {};
             const allUsers = await userModel.find(keyword).find({ _id: { $ne: userId } });
-            return allUsers;
+            return allUsers as UserInterface[];
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getAllUsers:", error);
+            throw new DatabaseError(`Failed to retrieve all users.`, error as Error);
         }
     }
-    async getUserById(id: string): Promise<UserInterface | null> {
+    async getUserById(id: string): Promise<UserInterface> {
         try {
-            return await userModel.findById(id);
+            const user = await userModel.findById(id);
+            if (!user) {
+                throw new NotFoundError(`User with ID ${id} not found.`);
+            }
+            return user as UserInterface;
         } catch (error) {
-            console.log(error as Error);
-            return null;
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in getUserById:", error);
+            throw new DatabaseError(`Failed to retrieve user with ID ${id}.`, error as Error);
         }
     }
-    async getApplied(userId: string) {
+    async getApplied(userId: string): Promise<any[]> {
         try {
             const ObjectId = mongoose.Types.ObjectId;
-            const UserId = new ObjectId(userId)
+            const UserId = new ObjectId(userId);
 
             const user = await userModel.aggregate([
                 { $match: { _id: UserId } },
@@ -83,154 +98,253 @@ class UserRepository implements IUserRepository {
                         appliedJobs: { $push: "$appliedJobs" }
                     }
                 }
-            ])
+            ]);
             if (user[0]?.appliedJobs === undefined) return [];
             else return user[0]?.appliedJobs;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getApplied:", error);
+            throw new DatabaseError(`Failed to retrieve applied jobs for user ID ${userId}.`, error as Error);
         }
     }
-    async changeAboutInfo(id: string, text: string): Promise<string | undefined> {
+    async changeAboutInfo(id: string, text: string): Promise<string> {
         try {
             const updated = await userModel.findByIdAndUpdate(id, { aboutInfo: text }, { new: true });
-            if (updated) return text
+            if (!updated) {
+                throw new NotFoundError(`User with ID ${id} not found for updating about info.`);
+            }
+            return text;
         } catch (error) {
-            console.log(error as Error)
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in changeAboutInfo:", error);
+            throw new DatabaseError(`Failed to change about info for user ID ${id}.`, error as Error);
         }
     }
-    async setProfilePic(pic: string, id: string) {
+    async setProfilePic(pic: string, id: string): Promise<UserInterface> {
         try {
-            const updated = await userModel.findByIdAndUpdate(id, { profile_picture: pic });
-            return updated;
+            const updated = await userModel.findByIdAndUpdate(id, { profile_picture: pic }, { new: true });
+            if (!updated) {
+                throw new NotFoundError(`User with ID ${id} not found for setting profile picture.`);
+            }
+            return updated as UserInterface;
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in setProfilePic:", error);
+            throw new DatabaseError(`Failed to set profile picture for user ID ${id}.`, error as Error);
         }
     }
-    async deleteProfilePic(userId: string) {
+    async deleteProfilePic(userId: string): Promise<any> { // Mongoose UpdateWriteOpResult or similar
         try {
             const updatedUser = await userModel.updateOne({ _id: userId }, { $set: { profile_picture: "" } });
+            if (updatedUser.matchedCount === 0) {
+                throw new NotFoundError(`User with ID ${userId} not found for deleting profile picture.`);
+            }
             return updatedUser;
         } catch (error) {
-            console.log(error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in deleteProfilePic:", error);
+            throw new DatabaseError(`Failed to delete profile picture for user ID ${userId}.`, error as Error);
         }
     }
-    async addSkill(id: string, skill: string) {
+    async addSkill(id: string, skill: string): Promise<UserInterface> {
         try {
-            const updated = await userModel.findOneAndUpdate({ _id: id }, { $addToSet: { skills: skill } });
-            return updated;
+            const updated = await userModel.findOneAndUpdate({ _id: id }, { $addToSet: { skills: skill } }, { new: true });
+            if (!updated) {
+                throw new NotFoundError(`User with ID ${id} not found for adding skill.`);
+            }
+            return updated as UserInterface;
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in addSkill:", error);
+            throw new DatabaseError(`Failed to add skill for user ID ${id}.`, error as Error);
         }
     }
-    async getAllSkill(userId: string) {
+    async getAllSkill(userId: string): Promise<string[]> {
         try {
             const data = await userModel.findOne({ _id: userId }, { _id: 0, skills: 1 });
-            const skills = data?.skills;
-            return skills;
+            if (!data) {
+                throw new NotFoundError(`User with ID ${userId} not found for retrieving skills.`);
+            }
+            const skills = data.skills;
+            return skills || []; // Ensure an empty array is returned if skills is null/undefined
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in getAllSkill:", error);
+            throw new DatabaseError(`Failed to retrieve skills for user ID ${userId}.`, error as Error);
         }
     }
-    async removeSkill(id: string, skill: string) {
+    async removeSkill(id: string, skill: string): Promise<any> { // Mongoose UpdateWriteOpResult or similar
         try {
             const updated = await userModel.updateOne({ _id: id }, { $pull: { skills: skill } });
+            if (updated.matchedCount === 0) {
+                throw new NotFoundError(`User with ID ${id} not found for removing skill.`);
+            }
             return updated;
         } catch (error) {
-            console.log(error as Error);
-        }
-    }
-    async editUserDetails(name: string, phoneNumber: number, gender: string, location: string, headLine: string, qualification: string, userId: string) {
-        try {
-            const user = await userModel.findById(userId);
-            if (user) {
-                user.name = name || user.name;
-                user.phoneNumber = phoneNumber || user.phoneNumber;
-                user.gender = gender || user.gender;
-                user.location = location || user.location;
-                user.headLine = headLine || user.headLine;
-                user.qualification = qualification || user.qualification;
+            if (error instanceof NotFoundError) {
+                throw error;
             }
-            const updatedUser = await user?.save();
-            return updatedUser
-        } catch (error) {
-            console.log(error as Error);
+            console.error("Error in removeSkill:", error);
+            throw new DatabaseError(`Failed to remove skill for user ID ${id}.`, error as Error);
         }
     }
-    async updateNewPassword(password: string, userId: string) {
+    async editUserDetails(name: string, phoneNumber: number, gender: string, location: string, headLine: string, qualification: string, userId: string): Promise<UserInterface> {
+        try {
+            const updatedUser = await userModel.findByIdAndUpdate(
+                userId,
+                {
+                    name: name,
+                    phoneNumber: phoneNumber,
+                    gender: gender,
+                    location: location,
+                    headLine: headLine,
+                    qualification: qualification,
+                },
+                { new: true }
+            );
+            if (!updatedUser) {
+                throw new NotFoundError(`User with ID ${userId} not found for updating details.`);
+            }
+            return updatedUser as UserInterface;
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in editUserDetails:", error);
+            throw new DatabaseError(`Failed to edit user details for user ID ${userId}.`, error as Error);
+        }
+    }
+    async updateNewPassword(password: string, userId: string): Promise<UserInterface> {
+        try {
+            const updatedUser = await userModel.findByIdAndUpdate(
+                userId,
+                { password: password },
+                { new: true }
+            );
+            if (!updatedUser) {
+                throw new NotFoundError(`User with ID ${userId} not found for updating password.`);
+            }
+            return updatedUser as UserInterface;
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in updateNewPassword:", error);
+            throw new DatabaseError(`Failed to update password for user ID ${userId}.`, error as Error);
+        }
+    }
+
+    async saveJob(userId: string, jobId: string): Promise<{ success: boolean; data?: UserInterface; message: string }> {
         try {
             const user = await userModel.findById(userId);
-            if (user) user.password = password;
-            const updatedUser = await user?.save();
-            return updatedUser;
+            if (!user) {
+                throw new NotFoundError(`User with ID ${userId} not found for saving job.`);
+            }
+
+            const savedJobs = user.savedJobs?.some(job => job.jobId.toString() === jobId);
+
+            if (!savedJobs) {
+                const updatedUser = await userModel.findByIdAndUpdate(
+                    userId,
+                    { $addToSet: { savedJobs: { jobId: jobId } } },
+                    { new: true }
+                );
+                return { success: true, data: updatedUser as UserInterface, message: 'successfully saved the job' };
+            } else {
+                return { success: false, message: 'already saved the job' };
+            }
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in saveJob:", error);
+            throw new DatabaseError(`Failed to save job for user ID ${userId}.`, error as Error);
         }
     }
 
-    async saveJob(userId: string, jobId: string) {
+    async unsaveJob(userId: string, jobId: string): Promise<UserInterface> {
         try {
-            const User = await userModel.findById(userId);
-            if (User) {
-                let savedJobs;
-                if (User.savedJobs?.length) {
-                    savedJobs = User?.savedJobs.some(user => user.jobId.toString() === jobId);
-                }
-                if (!savedJobs) {
-                    const user = await userModel.findByIdAndUpdate(userId,
-                        { $addToSet: { savedJobs: { jobId: jobId } } },
-                        { new: true }
-                    )
-                    return { success: true, data: user, message: 'successfully saved the job' } as const;
-                } else return { success: false, message: 'already saved the job' } as const;
-            } else return { success: false, message: `unauthorized user, couldn't load the saved list` };
-        } catch (error) {
-            console.error(error as Error);
-            return null
-        }
-    }
-
-    async unsaveJob(userId: string, jobId: string) {
-        try {
-            const user = await userModel.findByIdAndUpdate(userId,
+            const user = await userModel.findByIdAndUpdate(
+                userId,
                 { $pull: { savedJobs: { jobId: jobId } } },
                 { new: true }
-            )
-            return user
+            );
+            if (!user) {
+                throw new NotFoundError(`User with ID ${userId} not found for unsaving job.`);
+            }
+            return user as UserInterface;
         } catch (error) {
-            console.error(error)
-            return null
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in unsaveJob:", error);
+            throw new DatabaseError(`Failed to unsave job for user ID ${userId}.`, error as Error);
         }
     }
-    async getAllSavedJobs(userId: string) {
+    async getAllSavedJobs(userId: string): Promise<any[]> {
         try {
             const allData = await userModel.findById(userId)
                 .populate('savedJobs.jobId');
-            const savedJobs = allData?.savedJobs?.map((item) => item.jobId);
-            return savedJobs;
+            if (!allData) {
+                throw new NotFoundError(`User with ID ${userId} not found for retrieving saved jobs.`);
+            }
+            const savedJobs = allData.savedJobs?.map((item) => item.jobId);
+            return savedJobs || [];
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in getAllSavedJobs:", error);
+            throw new DatabaseError(`Failed to retrieve saved jobs for user ID ${userId}.`, error as Error);
         }
     }
 
-    async appliedJob(userId: string, jobId: string) {
+    async appliedJob(userId: string, jobId: string): Promise<UserInterface> {
         try {
-            const user = await userModel.findByIdAndUpdate(userId,
+            const user = await userModel.findByIdAndUpdate(
+                userId,
                 { $push: { appliedJobs: { jobId: jobId } } },
                 { new: true }
             );
-            return user
+            if (!user) {
+                throw new NotFoundError(`User with ID ${userId} not found for applying job.`);
+            }
+            return user as UserInterface;
         } catch (error) {
-            console.error(error)
-            return null
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in appliedJob:", error);
+            throw new DatabaseError(`Failed to apply job for user ID ${userId}.`, error as Error);
         }
     }
     //.............subscription//................
 
-    async updateSubPlan(userId: string, item: SubInterface) {
+    async updateSubPlan(userId: string, item: SubInterface): Promise<void> {
         try {
-            await userModel.findByIdAndUpdate(userId, { $set: { subscription: { sub_Id: item._id, purchased_At: Date.now() } } }, { new: true });
+            const updatedUser = await userModel.findByIdAndUpdate(
+                userId,
+                { $set: { subscription: { sub_Id: item._id, purchased_At: Date.now() } } },
+                { new: true }
+            );
+            if (!updatedUser) {
+                throw new NotFoundError(`User with ID ${userId} not found for updating subscription plan.`);
+            }
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in updateSubPlan:", error);
+            throw new DatabaseError(`Failed to update subscription plan for user ID ${userId}.`, error as Error);
         }
     }
 }

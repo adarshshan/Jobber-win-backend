@@ -1,44 +1,46 @@
 import chatModel from "../models/chatModel";
 import messageModel from "../models/messageModel";
-
-
 import { IMessageRepository } from "../interfaces/repositoryInterfaces/IMessageRepository";
+import { DatabaseError } from '../utils/errors';
 
 class MessageRepository implements IMessageRepository {
 
-    async sendMessage(content: string, chatId: string, userId: string) {
-        const newMessage = {
-            sender: userId,
-            content: content,
-            chat: chatId
-        }
+    async sendMessage(sender: string, content: string, chatId: string): Promise<any> {
         try {
-            let message = await messageModel.create(newMessage);
-            if (!message._id) {
-                throw new Error("Message creation failed");
-            }
-            message = await message.populate("sender", "name pic");
-            message = await message.populate("chat");
-            message = await message.populate({ path: "chat.users", select: "name pic email" });
+            var newMessage = {
+                sender: sender,
+                content: content,
+                chat: chatId,
+            };
 
-            await chatModel.findByIdAndUpdate(chatId, {
-                $push: { latestMessages: message._id },
+            var message = await messageModel.create(newMessage);
+
+            message = await message.populate("sender", "name profile_picture");
+            message = await message.populate({
+                path: "chat",
+                populate: {
+                    path: "users",
+                    select: "name profile_picture email"
+                }
             });
+
+            await chatModel.findByIdAndUpdate(chatId, { latestMessage: message });
+
             return message;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in sendMessage:", error);
+            throw new DatabaseError(`Failed to send message in chat ${chatId} by sender ${sender}.`, error as Error);
         }
     }
-    async allMessages(chatId: string) {
+    async allMessages(chatId: string): Promise<any[]> {
         try {
             const messages = await messageModel.find({ chat: chatId })
-                .populate('sender', 'name pic email')
-                .populate('chat')
-                .populate('shared_post', 'imageUrl userId')
-            console.log(messages); console.log('this is the messages...');
-            return messages
+                .populate("sender", "name profile_picture email")
+                .populate("chat");
+            return messages;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in allMessages:", error);
+            throw new DatabaseError(`Failed to retrieve all messages for chat ID ${chatId}.`, error as Error);
         }
     }
     async sharePostMessage(postId: string, chatId: string, userId: string) {

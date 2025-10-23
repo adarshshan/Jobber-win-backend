@@ -1,75 +1,57 @@
 import userModel from "../models/userModel";
-import mongoose, { Schema, ObjectId } from 'mongoose'
+import mongoose from 'mongoose'
 import PostModel from "../models/postModel";
 import connectionModel from "../models/connectionModel";
 
 
-const ObjectId = mongoose.Types.ObjectId;
 
 
 import { INetworkRepository } from "../interfaces/repositoryInterfaces/INetworkRepository";
+import { NotFoundError, DatabaseError } from '../utils/errors';
 
 class NetworkRepository implements INetworkRepository {
 
-    async getUserProfile(userId: string) {
+    async getUserProfile(userId: string): Promise<any> {
         try {
             const user = await userModel.findOne({ _id: userId });
+            if (!user) {
+                throw new NotFoundError(`User profile with ID ${userId} not found.`);
+            }
             return user;
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in getUserProfile:", error);
+            throw new DatabaseError(`Failed to retrieve user profile for ID ${userId}.`, error as Error);
         }
     }
-    async getUserPostsById(userId: string) {
+    async getUserPostsById(userId: string): Promise<any[]> {
         try {
             const posts = await PostModel.find({ userId });
             return posts;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getUserPostsById:", error);
+            throw new DatabaseError(`Failed to retrieve user posts for ID ${userId}.`, error as Error);
         }
     }
 
-    async sendRequest(receiverId: string, senderId: string) {
+    async sendRequest(senderId: string, recieverId: string): Promise<any> {
         try {
-            if (!mongoose.Types.ObjectId.isValid(receiverId) || !mongoose.Types.ObjectId.isValid(senderId)) {
-                return { success: false, message: 'Receiver or sender id is not valid!' };
+            const result = await userModel.findByIdAndUpdate(recieverId, { $push: { connectionRequests: senderId } }, { new: true });
+            if (!result) {
+                throw new NotFoundError(`Receiver with ID ${recieverId} not found for sending connection request.`);
             }
-            const receiverObjectId = new mongoose.Types.ObjectId(receiverId);
-            const senderObjectId = new mongoose.Types.ObjectId(senderId);
-
-            let receiver = await connectionModel.findOne({ userId: receiverObjectId });
-            if (!receiver) {
-                receiver = new connectionModel({
-                    userId: receiverObjectId,
-                    friends: [],
-                    requestsSend: [],
-                    requestsReceived: []
-                });
-                await receiver.save();
-            }
-
-            let sender = await connectionModel.findOne({ userId: senderObjectId });
-            if (!sender) {
-                sender = new connectionModel({
-                    userId: senderObjectId,
-                    friends: [],
-                    requestsSend: [],
-                    requestsReceived: []
-                });
-                await sender.save();
-            }
-            if (!receiver.requestsReceived.includes(senderObjectId)) receiver.requestsReceived.push(senderObjectId);
-            if (!sender.requestsSend.includes(receiverObjectId)) sender.requestsSend.push(receiverObjectId);
-
-            await receiver.save();
-            await sender.save();
-
-            return { success: true, receiver, sender };
+            return result;
         } catch (error) {
-            console.log(error as Error);
-            return { success: false, message: 'An error occurred while processing the request.' };
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in sendRequest:", error);
+            throw new DatabaseError(`Failed to send connection request from ${senderId} to ${recieverId}.`, error as Error);
         }
     }
-    async getAllRequests(userId: string) {
+    async getAllRequests(userId: string): Promise<any[]> {
         try {
             const result = await connectionModel.aggregate([
                 {
@@ -99,10 +81,11 @@ class NetworkRepository implements INetworkRepository {
             const receivedRequestsArray = result.map(item => item.receivedRequests);
             return receivedRequestsArray;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getAllRequests:", error);
+            throw new DatabaseError(`Failed to retrieve all connection requests for user ID ${userId}.`, error as Error);
         }
     }
-    async addToFriend(userId: string, friendId: string) {
+    async addToFriend(userId: string, friendId: string): Promise<any> {
         try {
             const userAId = new mongoose.Types.ObjectId(userId);
             const userBId = new mongoose.Types.ObjectId(friendId);
@@ -120,47 +103,74 @@ class NetworkRepository implements INetworkRepository {
                     $push: { friends: userAId }
                 }
             );
+            if (user.modifiedCount === 0 && friend.modifiedCount === 0) {
+                throw new NotFoundError(`Could not add friend. User ${userId} or friend ${friendId} not found or no changes made.`);
+            }
             return user;
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in addToFriend:", error);
+            throw new DatabaseError(`Failed to add friend ${friendId} to user ${userId}.`, error as Error);
         }
     }
-    async getAllFriends(userId: string) {
+    async getAllFriends(userId: string): Promise<any[]> {
         try {
             const id = new mongoose.Types.ObjectId(userId);
             const data = await connectionModel.aggregate([
                 { $match: { userId: id } },
                 { $lookup: { from: 'users', localField: 'friends', foreignField: '_id', as: 'data' } }]);
-            if (data) return data[0].data;
+            if (data && data[0] && data[0].data) {
+                return data[0].data;
+            } else {
+                return []; // Return empty array if no friends found
+            }
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getAllFriends:", error);
+            throw new DatabaseError(`Failed to retrieve all friends for user ID ${userId}.`, error as Error);
         }
     }
-    async unFriend(id: string, userId: string) {
+    async unFriend(id: string, userId: string): Promise<any> {
         try {
             const updatedConnection = await connectionModel.updateOne({ userId }, { $pull: { friends: id } });
+            if (updatedConnection.modifiedCount === 0) {
+                throw new NotFoundError(`Connection for user ${userId} with friend ${id} not found or no changes made.`);
+            }
             return updatedConnection;
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in unFriend:", error);
+            throw new DatabaseError(`Failed to unfriend user ${id} from user ${userId}.`, error as Error);
         }
     }
-    async removeRequest(id: string, userId: string) {
+    async removeRequest(id: string, userId: string): Promise<any> {
         try {
             const updated = await connectionModel.updateOne({ userId }, { $pull: { requestsReceived: id } });
+            if (updated.modifiedCount === 0) {
+                throw new NotFoundError(`Connection request from ${id} to user ${userId} not found or no changes made.`);
+            }
             return updated;
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in removeRequest:", error);
+            throw new DatabaseError(`Failed to remove connection request from ${id} to user ${userId}.`, error as Error);
         }
     }
-    async getAllsendRequests(userId: string) {
+    async getAllsendRequests(userId: string): Promise<any[]> {
         try {
             const connection = await connectionModel.findOne({ userId });
-            return connection?.requestsSend;
+            return connection?.requestsSend || [];
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getAllsendRequests:", error);
+            throw new DatabaseError(`Failed to retrieve all sent requests for user ID ${userId}.`, error as Error);
         }
     }
-    async getAllsendReqDetails(userId: string) {
+    async getAllsendReqDetails(userId: string): Promise<any[]> {
         try {
             const id = new mongoose.Types.ObjectId(userId);
             const requestSendDetails = await userModel.aggregate([
@@ -176,16 +186,25 @@ class NetworkRepository implements INetworkRepository {
                     }
                 }
             ]);
+            return requestSendDetails;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getAllsendReqDetails:", error);
+            throw new DatabaseError(`Failed to retrieve all sent request details for user ID ${userId}.`, error as Error);
         }
     }
-    async withdrawSentRequest(userId: string, id: string) {
+    async withdrawSentRequest(userId: string, id: string): Promise<any> {
         try {
             const updated = await connectionModel.updateOne({ userId }, { $pull: { requestsSend: id } });
+            if (updated.modifiedCount === 0) {
+                throw new NotFoundError(`Sent request from user ${userId} to ${id} not found or no changes made.`);
+            }
             return updated;
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in withdrawSentRequest:", error);
+            throw new DatabaseError(`Failed to withdraw sent request from user ${userId} to ${id}.`, error as Error);
         }
     }
 

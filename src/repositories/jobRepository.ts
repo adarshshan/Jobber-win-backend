@@ -6,10 +6,11 @@ import userModel from "../models/userModel";
 
 
 import { IJobRepository } from "../interfaces/repositoryInterfaces/IJobRepository";
+import { NotFoundError, DatabaseError } from '../utils/errors';
 
 class JobRepository implements IJobRepository {
 
-    async landingPageJobs(search: string | undefined): Promise<JobModelInterface[] | undefined | null> {
+    async landingPageJobs(search: string | undefined): Promise<JobModelInterface[]> {
         try {
             const keyword = search ? {
                 $or: [
@@ -19,15 +20,16 @@ class JobRepository implements IJobRepository {
                     { location: { $regex: search, $options: 'i' } },
                     { job_type: { $regex: search, $options: 'i' } }
                 ]
-            } : {}
-            const alljobs = await jobModel.find(keyword).sort({ createdAt: -1 }).limit(6)
+            } : {};
+            const alljobs = await jobModel.find(keyword).sort({ createdAt: -1 }).limit(6);
             return alljobs;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in landingPageJobs:", error);
+            throw new DatabaseError(`Failed to retrieve landing page jobs with search query "${search}".`, error as Error);
         }
     }
 
-    async getAllJobs(search: string | undefined, userId: string) {
+    async getAllJobs(search: string | undefined, userId: string): Promise<{ jobs: any[]; alljobs: JobModelInterface[] }> {
         try {
             const keyword = search ? {
                 $or: [
@@ -37,9 +39,8 @@ class JobRepository implements IJobRepository {
                     { location: { $regex: search, $options: 'i' } },
                     { job_type: { $regex: search, $options: 'i' } }
                 ]
-            } : {}
-            // const alljobs = await jobModel.find(keyword).sort({ createdAt: -1 })
-            const alljobs = await jobModel.find({ $and: [{ isReported: false }, keyword] }).sort({ createdAt: -1 })
+            } : {};
+            const alljobs = await jobModel.find({ $and: [{ isReported: false }, keyword] }).sort({ createdAt: -1 });
 
             var userSkills: string[] | any = await userModel.findOne({ _id: userId }, { skills: 1 });
             if (userSkills) userSkills = userSkills.skills;
@@ -61,12 +62,13 @@ class JobRepository implements IJobRepository {
                     }
                 }
             ]);
-            return { jobs, alljobs }
+            return { jobs, alljobs };
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getAllJobs:", error);
+            throw new DatabaseError(`Failed to retrieve all jobs for user ID ${userId} with search query "${search}".`, error as Error);
         }
     }
-    async getAllJobsByskills() {
+    async getAllJobsByskills(): Promise<any[]> {
         try {
             const jobs = await jobModel.aggregate([
                 {
@@ -85,45 +87,55 @@ class JobRepository implements IJobRepository {
                     }
                 }
             ]);
-
+            return jobs;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getAllJobsByskills:", error);
+            throw new DatabaseError(`Failed to retrieve jobs by skills.`, error as Error);
         }
     }
-    async getSingleJobDetails(jobId: string) {
+    async getSingleJobDetails(jobId: string): Promise<any> {
         try {
             const job = await jobModel.aggregate([
                 { $match: { _id: new mongoose.Types.ObjectId(jobId) } },
                 { $lookup: { from: 'users', localField: 'recruiterId', foreignField: '_id', as: 'recruiter_details' } },
                 { $addFields: { recruiter_details: { $first: '$recruiter_details' } } }
-            ])
+            ]);
+            if (!job || job.length === 0) {
+                throw new NotFoundError(`Job with ID ${jobId} not found.`);
+            }
             return job[0];
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in getSingleJobDetails:", error);
+            throw new DatabaseError(`Failed to retrieve single job details for job ID ${jobId}.`, error as Error);
         }
     }
-    async applyJOb(jobId: string, userId: string, formData: JobBodyInterface) {
+    async applyJOb(jobId: string, userId: string, formData: JobBodyInterface): Promise<any> {
         try {
             const jobApplication = new jobApplicationModel({
                 ...formData,
                 userId,
                 jobId
-            })
+            });
             await jobApplication.save();
             return jobApplication;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in applyJOb:", error);
+            throw new DatabaseError(`Failed to apply for job ${jobId} by user ${userId}.`, error as Error);
         }
     }
-    async getJobsByDate(num: string) {
+    async getJobsByDate(num: string): Promise<JobModelInterface[]> {
         try {
             const jobs = await jobModel.find({ updatedAt: { $gte: new Date(Date.now() - parseInt(num) * 24 * 60 * 60 * 1000) } });
             return jobs;
         } catch (error) {
-            console.log(error as Error)
+            console.error("Error in getJobsByDate:", error);
+            throw new DatabaseError(`Failed to retrieve jobs by date for ${num} days.`, error as Error);
         }
     }
-    async getJobsByExperience(start: string, end: string) {
+    async getJobsByExperience(start: string, end: string): Promise<JobModelInterface[]> {
         try {
             let jobs;
             if (start === '0' && end === '0') jobs = await jobModel.find({ experience: 0 });
@@ -131,22 +143,28 @@ class JobRepository implements IJobRepository {
             else jobs = await jobModel.find({ experience: { $gt: start, $lt: end } });
             return jobs;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getJobsByExperience:", error);
+            throw new DatabaseError(`Failed to retrieve jobs by experience range ${start}-${end}.`, error as Error);
         }
     }
-    async changeReportStatus(jobId: string) {
+    async changeReportStatus(jobId: string): Promise<JobModelInterface> {
         try {
             const job = await jobModel.findById(jobId);
-            if (job) {
-                job.isReported = true;
-                await job.save();
-                return job;
+            if (!job) {
+                throw new NotFoundError(`Job with ID ${jobId} not found for changing report status.`);
             }
+            job.isReported = true;
+            await job.save();
+            return job;
         } catch (error) {
-            console.log(error as Error);
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in changeReportStatus:", error);
+            throw new DatabaseError(`Failed to change report status for job with ID ${jobId}.`, error as Error);
         }
     }
-    async getMonthlyJobPostCount() {
+    async getMonthlyJobPostCount(): Promise<any[]> {
         try {
             const monthlyCount = await jobModel.aggregate([
                 {
@@ -158,15 +176,16 @@ class JobRepository implements IJobRepository {
                 {
                     $sort: { "_id.year": 1, "_id.month": 1 }
                 }
-            ])
+            ]);
 
             console.log('Monthly Job Post Count:', monthlyCount);
             return monthlyCount;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getMonthlyJobPostCount:", error);
+            throw new DatabaseError(`Failed to retrieve monthly job post count.`, error as Error);
         }
     }
-    async getDailyJobPostCount() {
+    async getDailyJobPostCount(): Promise<any[]> {
         try {
             const dailyCount = await jobModel.aggregate([
                 {
@@ -178,15 +197,16 @@ class JobRepository implements IJobRepository {
                 {
                     $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 }
                 }
-            ])
+            ]);
 
             console.log('Daily Job Post Count:', dailyCount);
             return dailyCount;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getDailyJobPostCount:", error);
+            throw new DatabaseError(`Failed to retrieve daily job post count.`, error as Error);
         }
     }
-    async getYearlyJobPostCount() {
+    async getYearlyJobPostCount(): Promise<any[]> {
         try {
             const yearlyCount = await jobModel.aggregate([
                 {
@@ -198,12 +218,13 @@ class JobRepository implements IJobRepository {
                 {
                     $sort: { "_id.year": 1 }
                 }
-            ])
+            ]);
 
             console.log('Yearly Job Post Count:', yearlyCount);
             return yearlyCount;
         } catch (error) {
-            console.log(error as Error);
+            console.error("Error in getYearlyJobPostCount:", error);
+            throw new DatabaseError(`Failed to retrieve yearly job post count.`, error as Error);
         }
     }
 }

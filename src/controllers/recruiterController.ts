@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import RecruiterService from "../service/recruiterService";
+import { NotFoundError, DatabaseError } from '../utils/errors';
 
 export interface JobInterface {
     title: string;
@@ -21,83 +22,139 @@ class RecruiterController {
     async getAllJobs(req: Request, res: Response) {
         try {
             const userId = req.userId;
-            if (userId) {
-                const result = await this.recruiterService.getAllJobs(userId);
-                if (result) res.json({ success: true, data: result, message: 'All jobs fetched successfully' });
-                else res.json({ success: false, message: 'Somthing went wrong while fetching the jobs!' });
-            } else res.json({ success: false, message: 'Authentication Error occurred' });
+            if (!userId) {
+                return res.status(401).json({ success: false, message: 'Authentication Error: User ID not found.' });
+            }
+            const result = await this.recruiterService.getAllJobs(userId);
+            res.json({ success: true, data: result, message: 'All jobs fetched successfully' });
         } catch (error) {
-            console.log(error as Error);
-            res.json({ success: false, message: 'Internal server Error occured!' });
+            if (error instanceof DatabaseError) {
+                console.error("Database error in getAllJobs controller:", error);
+                res.status(500).json({ success: false, message: 'Internal server error while fetching jobs.' });
+            } else if (error instanceof Error) {
+                console.error("Error in getAllJobs controller:", error);
+                res.status(500).json({ success: false, message: error.message || 'An unexpected error occurred while fetching jobs.' });
+            } else {
+                console.error("Unexpected error in getAllJobs controller:", error);
+                res.status(500).json({ success: false, message: 'An unexpected error occurred while fetching jobs.' });
+            }
         }
     }
     async postNewJob(req: Request, res: Response) {
         try {
             const userId = req.userId;
             const { data } = req.body;
-            if (userId) {
-                const isSubscribed = await this.recruiterService.isSubscribed(userId);
-                console.log(isSubscribed); console.log('this is the isSubscribed anwer..');
-                if (isSubscribed?.success) {
-                    const result = await this.recruiterService.postNewJob(data, userId);
-                    if (result) res.json({ success: true, data: result, message: 'Job posted successfully' });
-                    else res.json({ success: false, message: 'Somthing went wrong while posting the job!' });
-                } else res.json(isSubscribed);
-            } else res.json({ success: false, message: 'Authentication Error!' });
+            if (!userId) {
+                return res.status(401).json({ success: false, message: 'Authentication Error: User ID not found.' });
+            }
+
+            const isSubscribed = await this.recruiterService.isSubscribed(userId);
+            if (!isSubscribed.success) {
+                return res.status(403).json(isSubscribed); // Return the message from isSubscribed service
+            }
+
+            const result = await this.recruiterService.postNewJob(data, userId);
+            res.json({ success: true, data: result, message: 'Job posted successfully' });
         } catch (error) {
-            console.log(error as Error);
-            res.json({ success: false, message: 'Internal Server error occured' });
+            if (error instanceof NotFoundError) {
+                res.status(404).json({ success: false, message: 'Resource not found for posting job.' });
+            } else if (error instanceof DatabaseError) {
+                console.error("Database error in postNewJob controller:", error);
+                res.status(500).json({ success: false, message: 'Internal server error while posting job.' });
+            } else if (error instanceof Error) {
+                console.error("Error in postNewJob controller:", error);
+                res.status(500).json({ success: false, message: error.message || 'An unexpected error occurred while posting job.' });
+            } else {
+                console.error("Unexpected error in postNewJob controller:", error);
+                res.status(500).json({ success: false, message: 'An unexpected error occurred while posting job.' });
+            }
         }
     }
     async editJobs(req: Request, res: Response) {
         try {
             const userId = req.userId;
             const { data, jobId } = req.body;
-            if (userId) {
-                const result = await this.recruiterService.editJobs(data, jobId);
-                if (result) res.json({ success: true, data: result, message: 'job details updated' });
-                else res.json({ success: false, message: 'Something went wrong' });
+            if (!userId) {
+                return res.status(401).json({ success: false, message: 'Authentication Error: User ID not found.' });
             }
+            const result = await this.recruiterService.editJobs(data, jobId);
+            res.json({ success: true, data: result, message: 'Job details updated successfully.' });
         } catch (error) {
-            console.log(error as Error);
-            res.json({ success: false, message: 'Internal server Error!' });
+            if (error instanceof NotFoundError) {
+                res.status(404).json({ success: false, message: 'Job not found for editing.' });
+            } else if (error instanceof DatabaseError) {
+                console.error("Database error in editJobs controller:", error);
+                res.status(500).json({ success: false, message: 'Internal server error while editing job.' });
+            } else if (error instanceof Error) {
+                console.error("Error in editJobs controller:", error);
+                res.status(500).json({ success: false, message: error.message || 'An unexpected error occurred while editing job.' });
+            }
+            else {
+                console.error("Unexpected error in editJobs controller:", error);
+                res.status(500).json({ success: false, message: 'An unexpected error occurred while editing job.' });
+            }
         }
     }
     async getAllApplications(req: Request, res: Response) {
         try {
             const userId = req.userId;
-            if (userId) {
-                const result = await this.recruiterService.getAllApplications(userId);
-                if (result) res.json({ success: true, data: result, message: 'success' });
-                else res.json({ success: false, message: 'Something went wrong while fetching the applications' });
+            if (!userId) {
+                return res.status(401).json({ success: false, message: 'Authentication Error: User ID not found.' });
             }
+            const result = await this.recruiterService.getAllApplications(userId);
+            res.json({ success: true, data: result, message: 'All applications fetched successfully.' });
         } catch (error) {
-            console.log(error as Error);
-            res.json({ success: false, message: 'Internal SErver error occured!' });
+            if (error instanceof DatabaseError) {
+                console.error("Database error in getAllApplications controller:", error);
+                res.status(500).json({ success: false, message: 'Internal server error while fetching applications.' });
+            } else if (error instanceof Error) {
+                console.error("Error in getAllApplications controller:", error);
+                res.status(500).json({ success: false, message: error.message || 'An unexpected error occurred while fetching applications.' });
+            } else {
+                console.error("Unexpected error in getAllApplications controller:", error);
+                res.status(500).json({ success: false, message: 'An unexpected error occurred while fetching applications.' });
+            }
         }
     }
     async changeStatus(req: Request, res: Response) {
         try {
             const { status, applicationId } = req.params;
             const result = await this.recruiterService.changeStatus(status, applicationId);
-            if (result) res.json({ success: true, data: result, message: 'success' });
-            else res.json({ success: false, message: 'Something went wrong while approve/remove' })
+            res.json({ success: true, data: result, message: 'Application status changed successfully.' });
         } catch (error) {
-            console.log(error as Error);
-            res.json({ success: false, message: 'Inernal Server Error occured!' });
+            if (error instanceof NotFoundError) {
+                res.status(404).json({ success: false, message: 'Application not found for status change.' });
+            } else if (error instanceof DatabaseError) {
+                console.error("Database error in changeStatus controller:", error);
+                res.status(500).json({ success: false, message: 'Internal server error while changing application status.' });
+            } else if (error instanceof Error) {
+                console.error("Error in changeStatus controller:", error);
+                res.status(500).json({ success: false, message: error.message || 'An unexpected error occurred while changing application status.' });
+            } else {
+                console.error("Unexpected error in changeStatus controller:", error);
+                res.status(500).json({ success: false, message: 'An unexpected error occurred while changing application status.' });
+            }
         }
     }
     async getGraphData(req: Request, res: Response) {
         try {
             const userId = req.userId;
-            if (userId) {
-                const result = await this.recruiterService.getGraphData(userId);
-                if (result) res.json({ success: true, data: result, message: 'Graph data Fetched successfully' });
-                else res.json({ success: false, message: 'Something went wrong!' });
+            if (!userId) {
+                return res.status(401).json({ success: false, message: 'Authentication Error: User ID not found.' });
             }
+            const result = await this.recruiterService.getGraphData(userId);
+            res.json({ success: true, data: result, message: 'Graph data fetched successfully.' });
         } catch (error) {
-            console.log(error as Error);
-            res.json({ success: false, message: 'Internal server Error occured!' });
+            if (error instanceof DatabaseError) {
+                console.error("Database error in getGraphData controller:", error);
+                res.status(500).json({ success: false, message: 'Internal server error while fetching graph data.' });
+            } else if (error instanceof Error) {
+                console.error("Error in getGraphData controller:", error);
+                res.status(500).json({ success: false, message: error.message || 'An unexpected error occurred while fetching graph data.' });
+            } else {
+                console.error("Unexpected error in getGraphData controller:", error);
+                res.status(500).json({ success: false, message: 'An unexpected error occurred while fetching graph data.' });
+            }
         }
     }
 }

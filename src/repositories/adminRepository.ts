@@ -4,21 +4,32 @@ import AdminModel, { AdminInterface } from '../models/adminModel';
 import userModel from '../models/userModel';
 
 import { IAdminRepository } from "../interfaces/repositoryInterfaces/IAdminRepository";
+import { NotFoundError, DatabaseError } from '../utils/errors';
 
 class AdminRepository implements IAdminRepository {
-    async isAdminExist(email: string): Promise<Admin | null> {
-        const admin = await AdminModel.findOne({ email });
-        if (admin) return admin as Admin
-        else return null;
+    async isAdminExist(email: string): Promise<Admin> {
+        try {
+            const admin = await AdminModel.findOne({ email });
+            if (!admin) {
+                throw new NotFoundError(`Admin with email ${email} not found.`);
+            }
+            return admin as Admin;
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in isAdminExist:", error);
+            throw new DatabaseError(`Failed to check admin existence for ${email}.`, error as Error);
+        }
     }
-    async saveAdmin(adminData: Admin): Promise<Admin | null> {
+    async saveAdmin(adminData: Admin): Promise<Admin> {
         try {
             const newAdmin = new AdminModel(adminData);
             await newAdmin.save();
             return newAdmin as Admin;
         } catch (error) {
-            console.log(error as Error);
-            return null;
+            console.error("Error in saveAdmin:", error);
+            throw new DatabaseError(`Failed to save admin with email ${adminData.email}.`, error as Error);
         }
     }
     async getUserList(page: number, limit: number, searchQuery: string): Promise<UserInterface[]> {
@@ -37,8 +48,8 @@ class AdminRepository implements IAdminRepository {
                 .exec();
             return result as UserInterface[];
         } catch (error) {
-            console.log(error as Error);
-            throw new Error('Error occured');
+            console.error("Error in getUserList:", error);
+            throw new DatabaseError(`Failed to retrieve user list with search query "${searchQuery}".`, error as Error);
         }
     }
     async getUserCount(searchQuery: string): Promise<number> {
@@ -52,33 +63,40 @@ class AdminRepository implements IAdminRepository {
                     ]
                 }).countDocuments();
         } catch (error) {
-            console.log(error as Error);
-            throw new Error('Error occured');
+            console.error("Error in getUserCount:", error);
+            throw new DatabaseError(`Failed to retrieve user count with search query "${searchQuery}".`, error as Error);
         }
     }
-    async blockNunblockUser(userId: string) {
+    async blockNunblockUser(userId: string): Promise<UserInterface> {
         try {
             const user = await userModel.findById(userId);
-            if (user) {
-                user.isBlocked = !user?.isBlocked;
-                await user.save();
-                return user;
-            } else {
-                throw new Error('Somthing went wrong!!!');
-                return null;
+            if (!user) {
+                throw new NotFoundError(`User with ID ${userId} not found for block/unblock operation.`);
             }
+            user.isBlocked = !user.isBlocked;
+            await user.save();
+            return user as UserInterface;
         } catch (error) {
-            console.log(error as Error);
-            return null;
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in blockNunblockUser:", error);
+            throw new DatabaseError(`Failed to block/unblock user with ID ${userId}.`, error as Error);
         }
     }
-    async getAdminById(id: string): Promise<AdminInterface | null> {
+    async getAdminById(id: string): Promise<AdminInterface> {
         try {
             const admin = await AdminModel.findById(id);
-            return admin;
+            if (!admin) {
+                throw new NotFoundError(`Admin with ID ${id} not found.`);
+            }
+            return admin as AdminInterface;
         } catch (error) {
-            console.log(error as Error);
-            return null;
+            if (error instanceof NotFoundError) {
+                throw error;
+            }
+            console.error("Error in getAdminById:", error);
+            throw new DatabaseError(`Failed to retrieve admin with ID ${id}.`, error as Error);
         }
     }
 }
