@@ -18,6 +18,7 @@ import JobApplicationRepository from "../repositories/jobApplicationRepository";
 import ReportRepository, { JobReportRepository } from "../repositories/reportRepository";
 import CommentRepository from "../repositories/CommentRepository";
 import ChatRepository from "../repositories/chatRepository";
+import { upload } from "../utils/multer";
 
 
 
@@ -113,6 +114,8 @@ userRouter.get('/savedjobs', authenticate, async (req: Request, res: Response) =
 userRouter.post('/report-job/:jobId', authenticate, async (req: Request, res: Response) => await jobController.reportJob(req, res));
 userRouter.get('/getjobs/:num', authenticate, async (req: Request, res: Response) => await jobController.getJobsByDate(req, res));
 userRouter.get('/getjobs-by-experience/:start/:end', authenticate, async (req: Request, res: Response) => await jobController.getJobsByExperience(req, res));
+userRouter.post('/upload-resume', authenticate, upload.single('file'), async (req: Request, res: Response) => await jobController.uploadResume(req, res));
+
 
 
 

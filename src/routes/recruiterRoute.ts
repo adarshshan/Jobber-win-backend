@@ -8,6 +8,7 @@ import SubscriptionRepository from "../repositories/subscriptionRepository";
 import SubscriptionService from "../service/subscriptionService";
 import SubscriptionController from "../controllers/subscriptionController";
 import UserRepository from "../repositories/userRepository";
+import { upload } from "../utils/multer";
 
 const recruiterRouter: Router = express.Router();
 
@@ -25,6 +26,9 @@ recruiterRouter.put('/edit-jobs', authenticate, async (req: Request, res: Respon
 recruiterRouter.get('/get-all-applications', authenticate, async (req: Request, res: Response) => recruiterController.getAllApplications(req, res));
 recruiterRouter.put('/change-application-states/:status/:applicationId', authenticate, async (req: Request, res: Response) => recruiterController.changeStatus(req, res));
 recruiterRouter.get('/change-application/graph', authenticate, async (req: Request, res: Response) => recruiterController.getGraphData(req, res));
+
+
+recruiterRouter.post('/upload-logo' , upload.single('file'),  async (req: Request, res: Response) => recruiterController.uploadLogo(req, res));
 
 
 
