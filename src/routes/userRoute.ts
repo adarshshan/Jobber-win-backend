@@ -74,6 +74,7 @@ userRouter.delete('/delete-post/:postId', authenticate, async (req: Request, res
 userRouter.put('/postcaption-edit/:postId', authenticate, async (req: Request, res: Response) => await postController.updateCaption(req, res))
 userRouter.get('/share-post-suggession', authenticate, async (req: Request, res: Response) => await postController.postShareSuggestedUsers(req, res))
 userRouter.get('/get-post-details/:postId', async (req: Request, res: Response) => await postController.getSinglePostDetails(req, res))
+userRouter.post('/upload-post-img', authenticate, upload.single('file'), async (req: Request, res: Response) => await postController.uploadPostImage(req, res))
 
 
 //netWorkcontroller
@@ -115,9 +116,6 @@ userRouter.post('/report-job/:jobId', authenticate, async (req: Request, res: Re
 userRouter.get('/getjobs/:num', authenticate, async (req: Request, res: Response) => await jobController.getJobsByDate(req, res));
 userRouter.get('/getjobs-by-experience/:start/:end', authenticate, async (req: Request, res: Response) => await jobController.getJobsByExperience(req, res));
 userRouter.post('/upload-resume', authenticate, upload.single('file'), async (req: Request, res: Response) => await jobController.uploadResume(req, res));
-
-
-
 
 
 
